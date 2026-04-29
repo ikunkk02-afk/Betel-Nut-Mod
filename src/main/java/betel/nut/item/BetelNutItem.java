@@ -5,6 +5,7 @@ import java.util.function.IntSupplier;
 
 import betel.nut.BetelNutConfig;
 import betel.nut.component.BetelNutEntityComponents;
+import betel.nut.skyblock.BetelSkyblockManager;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -44,6 +45,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 						Math.max(0, this.addictionIncreaseSupplier.getAsInt()),
 						level.getGameTime());
 			}
+			BetelSkyblockManager.onBetelNutEaten(player);
 
 			if (isEnderBetelNut) {
 				EnderBetelTeleportHandler.tryTeleport(player);

@@ -72,5 +72,6 @@
   "config.betel_nut_mod.hud.x": "HUD X 坐标",
   "config.betel_nut_mod.hud.y": "HUD Y 坐标",
   "config.betel_nut_mod.hud.reset": "重置 HUD 位置",
-  "config.betel_nut_mod.hud.edit": "调整 HUD 位置"
+  "config.betel_nut_mod.hud.edit": "调整 HUD 位置",
+  "generator.betel-nut-mod.betel_skyblock": "\u69df\u6994\u7a7a\u5c9b"
 }

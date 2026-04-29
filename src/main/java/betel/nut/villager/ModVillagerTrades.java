@@ -5,6 +5,7 @@ import java.util.Optional;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.item.ModItems;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -18,7 +19,11 @@ public final class ModVillagerTrades {
 	private static final float PRICE_MULTIPLIER = 0.05F;
 	private static boolean registered;
 
-	public static void registerTrades() {
+	public static void register() {
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> registerTrades());
+	}
+
+	private static void registerTrades() {
 		if (registered) {
 			return;
 		}

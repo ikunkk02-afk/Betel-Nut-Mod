@@ -10,6 +10,9 @@ import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.event.WithdrawalEatingRestrictions;
 import betel.nut.event.WithdrawalEatingRestrictions.EatingRestrictionCheck;
 import betel.nut.item.EnderBetelTeleportHandler;
+import betel.nut.skyblock.BetelSkyblockManager;
+import betel.nut.component.BetelNutWorldComponents;
+import betel.nut.component.BetelSkyblockWorldComponent;
 import betel.nut.worldgen.BetelPalmTreeGenerator;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
@@ -23,36 +26,50 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public final class BetelCommands {
 	public static void register() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
-				literal("betel")
-						.requires(source -> source.hasPermission(2))
-						.then(literal("addiction")
-								.then(literal("get").executes(BetelCommands::getAddiction))
-								.then(literal("set")
-										.then(argument("value", IntegerArgumentType.integer(0))
-												.executes(BetelCommands::setAddiction)
-												.then(literal("reset_timer")
-														.executes(BetelCommands::setAddictionAndResetTimer))))
-								.then(literal("clear").executes(BetelCommands::clearAddiction))
-								.then(literal("add")
-										.then(argument("value", IntegerArgumentType.integer(0))
-												.executes(BetelCommands::addAddiction))))
-						.then(literal("withdrawal")
-								.then(literal("set")
-										.then(argument("value", IntegerArgumentType.integer(0))
-												.executes(BetelCommands::setWithdrawal)))
-								.then(literal("trigger").executes(BetelCommands::triggerWithdrawal)))
-						.then(literal("ender")
-								.then(literal("teleport").executes(BetelCommands::teleportEnderBetel)))
-						.then(literal("tree")
-								.then(literal("generate").executes(BetelCommands::generateTree)))
-						.then(literal("trades")
-								.then(literal("info").executes(BetelCommands::showTradeInfo)))
-						.then(literal("eatingtest").executes(BetelCommands::eatingTest))
-						.then(literal("reload").executes(BetelCommands::reloadConfig))));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(literal("betel")
+					.requires(source -> source.hasPermission(2))
+					.then(literal("addiction")
+							.then(literal("get").executes(BetelCommands::getAddiction))
+							.then(literal("set")
+									.then(argument("value", IntegerArgumentType.integer(0))
+											.executes(BetelCommands::setAddiction)
+											.then(literal("reset_timer")
+													.executes(BetelCommands::setAddictionAndResetTimer))))
+							.then(literal("clear").executes(BetelCommands::clearAddiction))
+							.then(literal("add")
+									.then(argument("value", IntegerArgumentType.integer(0))
+											.executes(BetelCommands::addAddiction))))
+					.then(literal("withdrawal")
+							.then(literal("set")
+									.then(argument("value", IntegerArgumentType.integer(0))
+											.executes(BetelCommands::setWithdrawal)))
+							.then(literal("trigger").executes(BetelCommands::triggerWithdrawal)))
+					.then(literal("ender")
+							.then(literal("teleport").executes(BetelCommands::teleportEnderBetel)))
+					.then(literal("tree")
+							.then(literal("generate").executes(BetelCommands::generateTree)))
+					.then(literal("skyblock")
+							.then(literal("status").executes(BetelCommands::skyblockStatus))
+							.then(literal("generate").executes(BetelCommands::generateSkyblock))
+							.then(literal("reset").executes(BetelCommands::resetSkyblock))
+							.then(literal("tp").executes(BetelCommands::teleportSkyblock)))
+					.then(literal("trades")
+							.then(literal("info").executes(BetelCommands::showTradeInfo)))
+					.then(literal("eatingtest").executes(BetelCommands::eatingTest))
+					.then(literal("reload").executes(BetelCommands::reloadConfig)));
+
+			dispatcher.register(literal("betelskyblock")
+					.requires(source -> source.hasPermission(2))
+					.then(literal("status").executes(BetelCommands::skyblockStatus))
+					.then(literal("generate").executes(BetelCommands::generateSkyblock))
+					.then(literal("reset").executes(BetelCommands::resetSkyblock))
+					.then(literal("tp").executes(BetelCommands::teleportSkyblock)));
+		});
 
 		BetelNutMod.LOGGER.info("Betel nut debug commands registered successfully");
 	}
@@ -251,6 +268,107 @@ public final class BetelCommands {
 						+ " emeralds + 1 roasted betel nut -> 1 synthetic world betel."),
 				false);
 		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int skyblockStatus(CommandContext<CommandSourceStack> context) {
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			return 0;
+		}
+
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		context.getSource().sendSuccess(() -> Component.literal(
+				"Betel Skyblock: enabled=" + BetelSkyblockManager.isEnabled(overworld)
+						+ ", isBetelSkyblockPreset=" + BetelSkyblockManager.isBetelSkyblockPreset(overworld)
+						+ ", configFallback=" + BetelSkyblockManager.isConfigEnabled()
+						+ ", hasGeneratedBetelSkyIsland=" + skyblock.hasGeneratedBetelSkyIsland()
+						+ ", islandCenter=" + skyblock.getIslandCenter()
+						+ ", fixedIslandCenter=" + BetelSkyblockManager.getIslandCenter()
+						+ ", skyblockSpawn=" + BetelSkyblockManager.getSkyblockSpawn(overworld)
+						+ ", hasSetSkyblockSpawn=" + skyblock.hasSetSkyblockSpawn() + "."),
+				false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int generateSkyblock(CommandContext<CommandSourceStack> context) {
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			return 0;
+		}
+
+		boolean generated = BetelSkyblockManager.generateForCommand(overworld);
+		if (generated) {
+			boolean teleported = teleportSourcePlayerToSkyblockSpawn(context, overworld);
+			context.getSource().sendSuccess(() -> Component.literal(
+					"Generated Betel Skyblock island at " + BetelSkyblockManager.getIslandCenter()
+							+ ", set spawn to " + BetelSkyblockManager.getSkyblockSpawn(overworld)
+							+ ", teleportedCommandPlayer=" + teleported + "."),
+					true);
+			return Command.SINGLE_SUCCESS;
+		}
+
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		context.getSource().sendFailure(Component.literal(
+				"Betel Skyblock island was not generated. Generated="
+						+ skyblock.hasGeneratedBetelSkyIsland()
+						+ ", center=" + skyblock.getIslandCenter() + "."));
+		return 0;
+	}
+
+	private static int resetSkyblock(CommandContext<CommandSourceStack> context) {
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			return 0;
+		}
+
+		BetelSkyblockManager.resetGenerationState(overworld);
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		context.getSource().sendSuccess(() -> Component.literal(
+				"Reset Betel Skyblock generation state. hasGeneratedBetelSkyIsland="
+						+ skyblock.hasGeneratedBetelSkyIsland()
+						+ ", islandCenter=" + skyblock.getIslandCenter()
+						+ ", hasSetSkyblockSpawn=" + skyblock.hasSetSkyblockSpawn() + "."),
+				true);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	private static int teleportSkyblock(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+		ServerPlayer player = context.getSource().getPlayerOrException();
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			return 0;
+		}
+
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		if (!skyblock.hasGeneratedBetelSkyIsland()) {
+			context.getSource().sendFailure(Component.literal(
+					"\u5f53\u524d\u4e16\u754c\u8fd8\u6ca1\u6709\u8bb0\u5f55\u69df\u6994\u7a7a\u5c9b\u5750\u6807\u3002"));
+			return 0;
+		}
+
+		boolean teleported = BetelSkyblockManager.teleportPlayerToSkyblockSpawn(player, overworld);
+		if (teleported) {
+			context.getSource().sendSuccess(() -> Component.literal(
+					"\u5df2\u4f20\u9001\u5230\u69df\u6994\u7a7a\u5c9b\u51fa\u751f\u70b9\u3002"), true);
+			return Command.SINGLE_SUCCESS;
+		}
+
+		context.getSource().sendFailure(Component.literal("Failed to teleport to Betel Skyblock spawn."));
+		return 0;
+	}
+
+	private static boolean teleportSourcePlayerToSkyblockSpawn(CommandContext<CommandSourceStack> context,
+			ServerLevel overworld) {
+		try {
+			ServerPlayer player = context.getSource().getPlayerOrException();
+			return BetelSkyblockManager.teleportPlayerToSkyblockSpawn(player, overworld);
+		} catch (CommandSyntaxException exception) {
+			return false;
+		}
 	}
 
 	private static int eatingTest(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

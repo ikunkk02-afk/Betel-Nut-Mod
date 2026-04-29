@@ -7,6 +7,7 @@ import betel.nut.command.BetelCommands;
 import betel.nut.item.ModItemGroups;
 import betel.nut.item.ModItems;
 import betel.nut.network.AddictionSyncPayload;
+import betel.nut.skyblock.BetelSkyblockManager;
 import betel.nut.villager.ModVillagerTrades;
 import betel.nut.worldgen.ModWorldGeneration;
 import net.fabricmc.api.ModInitializer;
@@ -38,7 +39,8 @@ public class BetelNutMod implements ModInitializer {
 		WithdrawalEatingRestrictions.register();
 		BetelNutEvents.register();
 		ModWorldGeneration.register();
-		ModVillagerTrades.registerTrades();
+		BetelSkyblockManager.register();
+		ModVillagerTrades.register();
 		BetelCommands.register();
 
 		LOGGER.info("Betel Nut Mod initialized");

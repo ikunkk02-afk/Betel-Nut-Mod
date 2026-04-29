@@ -16,7 +16,7 @@ import net.fabricmc.loader.api.FabricLoader;
 public final class BetelNutConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String CONFIG_FILE_NAME = "betel_nut.json";
-	private static final int CONFIG_VERSION = 7;
+	private static final int CONFIG_VERSION = 9;
 	private static BetelNutConfig INSTANCE = new BetelNutConfig();
 
 	public static final int ROASTED_ADDICTION = 5;
@@ -108,6 +108,13 @@ public final class BetelNutConfig {
 	public int farmerTradeRoastedBetelBuyCount = 4;
 	public int farmerTradeFlavorEmeraldCost = 3;
 	public int farmerTradeSyntheticWorldEmeraldCost = 16;
+
+	public boolean betelSkyblockEnabled = false;
+	public boolean enableBetelSkyblockVoidProtection = true;
+	public int betelSkyblockVoidProtectionMinY = 0;
+	public boolean betelSkyblockVoidProtectionDamage = false;
+	public double betelSkyblockVoidProtectionDamageAmount = 2.0D;
+	public int betelSkyblockSpawnProtectionTicks = 60;
 
 	public static BetelNutConfig get() {
 		return INSTANCE;
@@ -220,6 +227,8 @@ public final class BetelNutConfig {
 		this.farmerTradeRoastedBetelBuyCount = clamp(this.farmerTradeRoastedBetelBuyCount, 1, 64);
 		this.farmerTradeFlavorEmeraldCost = clamp(this.farmerTradeFlavorEmeraldCost, 1, 64);
 		this.farmerTradeSyntheticWorldEmeraldCost = clamp(this.farmerTradeSyntheticWorldEmeraldCost, 1, 64);
+		this.betelSkyblockSpawnProtectionTicks = atLeast(this.betelSkyblockSpawnProtectionTicks, 0);
+		this.betelSkyblockVoidProtectionDamageAmount = atLeast(this.betelSkyblockVoidProtectionDamageAmount, 0.0D);
 		this.configVersion = CONFIG_VERSION;
 		return this;
 	}
@@ -269,6 +278,16 @@ public final class BetelNutConfig {
 			if (this.enderBetelTeleportRadiusMax == 32) {
 				this.enderBetelTeleportRadiusMax = 24;
 			}
+		}
+		if (this.configVersion < 8) {
+			this.enableBetelSkyblockVoidProtection = true;
+			this.betelSkyblockVoidProtectionMinY = 0;
+			this.betelSkyblockVoidProtectionDamage = false;
+			this.betelSkyblockVoidProtectionDamageAmount = 2.0D;
+			this.betelSkyblockSpawnProtectionTicks = 60;
+		}
+		if (this.configVersion < 9) {
+			this.betelSkyblockEnabled = false;
 		}
 	}
 

@@ -13,7 +13,9 @@
 	},
 	"custom": {
 		"cardinal-components": [
-			"betel-nut-mod:addiction"
+			"betel-nut-mod:addiction",
+			"betel-nut-mod:skyblock_player",
+			"betel-nut-mod:skyblock_world"
 		]
 	},
 	"license": "MIT License",
@@ -25,6 +27,9 @@
 		],
 		"cardinal-components-entity": [
 			"betel.nut.component.BetelNutEntityComponents"
+		],
+		"cardinal-components-world": [
+			"betel.nut.component.BetelNutWorldComponents"
 		],
 		"client": [
 			"betel.nut.client.BetelNutModClient"
@@ -46,7 +51,8 @@
 		"java": ">=21",
 		"fabric-api": ">=0.116.11+1.21.1",
 		"cardinal-components-base": ">=6.1.3 <7.0.0",
-		"cardinal-components-entity": ">=6.1.3 <7.0.0"
+		"cardinal-components-entity": ">=6.1.3 <7.0.0",
+		"cardinal-components-world": ">=6.1.3 <7.0.0"
 	},
 	"suggests": {
 		"farmersdelight": "*"

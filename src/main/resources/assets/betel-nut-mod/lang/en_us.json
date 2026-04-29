@@ -72,5 +72,6 @@
   "config.betel_nut_mod.hud.x": "HUD X",
   "config.betel_nut_mod.hud.y": "HUD Y",
   "config.betel_nut_mod.hud.reset": "Reset HUD Position",
-  "config.betel_nut_mod.hud.edit": "Edit HUD Position"
+  "config.betel_nut_mod.hud.edit": "Edit HUD Position",
+  "generator.betel-nut-mod.betel_skyblock": "Betel Nut Skyblock"
 }
