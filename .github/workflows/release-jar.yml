@@ -1,0 +1,67 @@
+name: Release JAR on Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # 监听以 v 开头的语义化标签，如 v1.0.0, v2.3.4
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 检出代码仓库
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 设置 JDK 环境
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17' # 修改为您需要的 Java 版本
+        distribution: 'temurin'
+
+    # 缓存 Maven 依赖（如果您使用 Maven）
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    # 编译 JAR 
+    - name: Build JAR
+      run: mvn clean package
+
+    # 上传构建的内容作为 Release 资源
+    - name: Upload JAR Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: my-jar
+        path: target/*.jar
+
+    # 创建 Release
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }} # 触发事件的标签名
+        release_name: Release ${{ github.ref_name }} # 该 Release 的标题
+        body: |
+          This is the release for version ${{ github.ref_name }}.
+        draft: false
+        prerelease: false
+
+    # 上传 JAR 到 Release
+    - name: Upload JAR to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/*.jar
+        asset_name: my-application-${{ github.ref_name }}.jar
+        asset_content_type: application/java-archive
