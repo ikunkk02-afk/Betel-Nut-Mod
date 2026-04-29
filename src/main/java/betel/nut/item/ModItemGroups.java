@@ -26,6 +26,8 @@ public final class ModItemGroups {
 						output.accept(ModItems.RAW_BETEL_NUT);
 						output.accept(ModItems.ROASTED_BETEL_NUT);
 						output.accept(ModItems.BETEL_LEAF);
+						output.accept(ModItems.BETEL_NUT_RESIDUE);
+						output.accept(ModBlocks.BETEL_NUT_RESIDUE_BLOCK_ITEM);
 						output.accept(ModItems.SPICY_BETEL_NUT);
 						output.accept(ModItems.SWEET_BETEL_NUT);
 						output.accept(ModItems.REFRESHING_BETEL_NUT);

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "betel-nut-mod:block/betel_nut_residue_block"
+  }
+}

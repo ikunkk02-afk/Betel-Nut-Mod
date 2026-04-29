@@ -16,6 +16,7 @@ import net.minecraft.world.item.Rarity;
 public final class ModItems {
 	public static final Item RAW_BETEL_NUT = register("raw_betel_nut", new Item(new Item.Properties()));
 	public static final Item BETEL_LEAF = register("betel_leaf", new Item(new Item.Properties()));
+	public static final Item BETEL_NUT_RESIDUE = register("betel_nut_residue", new Item(new Item.Properties()));
 
 	public static final Item ROASTED_BETEL_NUT = register("roasted_betel_nut",
 			new BetelNutItem(foodProperties(2, 0.3F), BetelNutConfig.ROASTED_ADDICTION,

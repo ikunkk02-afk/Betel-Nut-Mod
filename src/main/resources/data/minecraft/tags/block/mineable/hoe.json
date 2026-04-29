@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "betel-nut-mod:betel_palm_leaves"
+    "betel-nut-mod:betel_palm_leaves",
+    "betel-nut-mod:betel_nut_residue_block"
   ]
 }

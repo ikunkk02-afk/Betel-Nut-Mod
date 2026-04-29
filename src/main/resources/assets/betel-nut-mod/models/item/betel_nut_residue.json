@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "betel-nut-mod:item/betel_nut_residue"
+  }
+}

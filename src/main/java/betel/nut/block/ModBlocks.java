@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -49,6 +50,8 @@ public final class ModBlocks {
 			new LeavesBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LEAVES)));
 	public static final Block BETEL_PALM_SAPLING = registerBlock("betel_palm_sapling",
 			new BetelPalmSaplingBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SAPLING)));
+	public static final Block BETEL_NUT_RESIDUE_BLOCK = registerBlock("betel_nut_residue_block",
+			new Block(BlockBehaviour.Properties.of().strength(0.6F).sound(SoundType.MUD)));
 
 	public static final Item BETEL_PALM_LOG_ITEM = registerBlockItem("betel_palm_log", BETEL_PALM_LOG);
 	public static final Item BETEL_PALM_PLANKS_ITEM = registerBlockItem("betel_palm_planks", BETEL_PALM_PLANKS);
@@ -62,6 +65,8 @@ public final class ModBlocks {
 			BETEL_PALM_PRESSURE_PLATE);
 	public static final Item BETEL_PALM_LEAVES_ITEM = registerBlockItem("betel_palm_leaves", BETEL_PALM_LEAVES);
 	public static final Item BETEL_PALM_SAPLING_ITEM = registerBlockItem("betel_palm_sapling", BETEL_PALM_SAPLING);
+	public static final Item BETEL_NUT_RESIDUE_BLOCK_ITEM = registerBlockItem("betel_nut_residue_block",
+			BETEL_NUT_RESIDUE_BLOCK);
 
 	private static Block registerBlock(String path, Block block) {
 		return Registry.register(BuiltInRegistries.BLOCK, BetelNutMod.id(path), block);

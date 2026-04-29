@@ -33,6 +33,7 @@ public class BetelNutMod implements ModInitializer {
 		AddictionSyncPayload.register();
 		ModBlocks.register();
 		ModItems.register();
+		ModComposting.registerCompostables();
 		ModItemGroups.register();
 		WithdrawalEatingRestrictions.register();
 		BetelNutEvents.register();
