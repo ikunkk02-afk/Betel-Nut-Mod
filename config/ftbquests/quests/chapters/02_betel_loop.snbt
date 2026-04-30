@@ -1,0 +1,95 @@
+{
+	id: "0000000000010002",
+	filename: "02_betel_loop",
+	order_index: 1,
+	icon: { id: "betel-nut-mod:roasted_betel_nut", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: [
+		{
+			id: "0000000000100005",
+			x: 0.0d,
+			y: 0.0d,
+			icon: { id: "betel-nut-mod:roasted_betel_nut", count: 1 },
+			dependencies: [
+				"0000000000100004"
+			],
+			tasks: [
+				{
+					id: "0000000000200005",
+					type: "advancement",
+					advancement: "betel-nut-mod:skyblock/eat_first_betel_nut",
+					criterion: ""
+				}
+			]
+		},
+		{
+			id: "0000000000100006",
+			x: 1.5d,
+			y: 0.0d,
+			icon: { id: "betel-nut-mod:betel_nut_residue", count: 1 },
+			dependencies: [
+				"0000000000100005"
+			],
+			tasks: [
+				{
+					id: "0000000000200006",
+					type: "advancement",
+					advancement: "betel-nut-mod:skyblock/get_first_residue",
+					criterion: ""
+				}
+			]
+		},
+		{
+			id: "0000000000100008",
+			x: 3.0d,
+			y: 0.0d,
+			icon: { id: "minecraft:composter", count: 1 },
+			dependencies: [
+				"0000000000100007"
+			],
+			tasks: [
+				{
+					id: "0000000000200008",
+					type: "checkmark"
+				}
+			]
+		},
+		{
+			id: "0000000000100009",
+			x: 4.5d,
+			y: 0.0d,
+			icon: { id: "betel-nut-mod:betel_nut_residue_block", count: 1 },
+			dependencies: [
+				"0000000000100008"
+			],
+			tasks: [
+				{
+					id: "0000000000200009",
+					type: "item",
+					item: { id: "betel-nut-mod:betel_nut_residue_block", count: 1 },
+					count: 1L,
+					consume_items: false
+				}
+			]
+		},
+		{
+			id: "000000000010000B",
+			x: 6.0d,
+			y: 0.0d,
+			icon: { id: "betel-nut-mod:raw_betel_nut", count: 1 },
+			dependencies: [
+				"000000000010000A"
+			],
+			tasks: [
+				{
+					id: "000000000020000B",
+					type: "item",
+					item: { id: "betel-nut-mod:raw_betel_nut", count: 1 },
+					count: 1L,
+					consume_items: false
+				}
+			]
+		}
+	]
+}

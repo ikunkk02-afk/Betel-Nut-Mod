@@ -38,6 +38,24 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 	public static double residueBlockCompostChance = 1.0D;
 	@Entry(category = "gameplay_values")
 	public static boolean allowEndPortalCommand = true;
+	@Entry(category = "gameplay_values")
+	public static boolean enableEndFrameWaterRitual = true;
+	@Entry(category = "gameplay_values", min = 1)
+	public static int endFrameRitualEnderEyeCost = 16;
+	@Entry(category = "gameplay_values", min = 1)
+	public static int endFrameRitualHechengBetelCost = 12;
+	@Entry(category = "gameplay_values", min = 1)
+	public static int endFrameRitualFrameReward = 12;
+	@Entry(category = "gameplay_values", min = 5)
+	public static int endFrameRitualCheckIntervalTicks = 20;
+	@Entry(category = "gameplay_values", min = 1, max = 1800)
+	public static int hechengTianxiaPositiveDurationSeconds = 300;
+	@Entry(category = "gameplay_values", min = 1, max = 600)
+	public static int hechengTianxiaComaDurationSeconds = 120;
+	@Entry(category = "gameplay_values", min = 1, max = 3600)
+	public static int hechengTianxiaNegativeDurationSeconds = 600;
+	@Entry(category = "gameplay_values")
+	public static boolean hechengTianxiaAllowRepeatBeforeAftermath = false;
 
 	public static void load() {
 		if (!initialized) {
@@ -64,6 +82,13 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 		oneBlockStarterDirtCount = atLeast(oneBlockStarterDirtCount, 0);
 		residueCompostChance = clamp(residueCompostChance, 0.0D, 1.0D);
 		residueBlockCompostChance = clamp(residueBlockCompostChance, 0.0D, 1.0D);
+		endFrameRitualEnderEyeCost = atLeast(endFrameRitualEnderEyeCost, 1);
+		endFrameRitualHechengBetelCost = atLeast(endFrameRitualHechengBetelCost, 1);
+		endFrameRitualFrameReward = atLeast(endFrameRitualFrameReward, 1);
+		endFrameRitualCheckIntervalTicks = atLeast(endFrameRitualCheckIntervalTicks, 5);
+		hechengTianxiaPositiveDurationSeconds = clamp(hechengTianxiaPositiveDurationSeconds, 1, 1800);
+		hechengTianxiaComaDurationSeconds = clamp(hechengTianxiaComaDurationSeconds, 1, 600);
+		hechengTianxiaNegativeDurationSeconds = clamp(hechengTianxiaNegativeDurationSeconds, 1, 3600);
 	}
 
 	private static void logLoadedValues() {
@@ -73,6 +98,24 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] residueCompostChance = {}", residueCompostChance);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] residueBlockCompostChance = {}",
 				residueBlockCompostChance);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] enableEndFrameWaterRitual = {}",
+				enableEndFrameWaterRitual);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] endFrameRitualEnderEyeCost = {}",
+				endFrameRitualEnderEyeCost);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] endFrameRitualHechengBetelCost = {}",
+				endFrameRitualHechengBetelCost);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] endFrameRitualFrameReward = {}",
+				endFrameRitualFrameReward);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] endFrameRitualCheckIntervalTicks = {}",
+				endFrameRitualCheckIntervalTicks);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] hechengTianxiaPositiveDurationSeconds = {}",
+				hechengTianxiaPositiveDurationSeconds);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] hechengTianxiaComaDurationSeconds = {}",
+				hechengTianxiaComaDurationSeconds);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] hechengTianxiaNegativeDurationSeconds = {}",
+				hechengTianxiaNegativeDurationSeconds);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] hechengTianxiaAllowRepeatBeforeAftermath = {}",
+				hechengTianxiaAllowRepeatBeforeAftermath);
 	}
 
 	private static int atLeast(int value, int min) {

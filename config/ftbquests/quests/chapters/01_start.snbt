@@ -1,0 +1,75 @@
+{
+	id: "0000000000010001",
+	filename: "01_start",
+	order_index: 0,
+	icon: { id: "minecraft:grass_block", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: [
+		{
+			id: "0000000000100001",
+			x: 0.0d,
+			y: 0.0d,
+			icon: { id: "minecraft:writable_book", count: 1 },
+			tasks: [
+				{
+					id: "0000000000200001",
+					type: "advancement",
+					advancement: "betel-nut-mod:skyblock/enter_betel_skyblock",
+					criterion: ""
+				}
+			]
+		},
+		{
+			id: "0000000000100002",
+			x: 1.5d,
+			y: 0.0d,
+			icon: { id: "minecraft:grass_block", count: 1 },
+			dependencies: [
+				"0000000000100001"
+			],
+			tasks: [
+				{
+					id: "0000000000200002",
+					type: "checkmark"
+				}
+			]
+		},
+		{
+			id: "0000000000100003",
+			x: 3.0d,
+			y: 0.0d,
+			icon: { id: "minecraft:dirt", count: 1 },
+			dependencies: [
+				"0000000000100002"
+			],
+			tasks: [
+				{
+					id: "0000000000200003",
+					type: "item",
+					item: { id: "minecraft:dirt", count: 1 },
+					count: 1L,
+					consume_items: false
+				}
+			]
+		},
+		{
+			id: "0000000000100004",
+			x: 4.5d,
+			y: 0.0d,
+			icon: { id: "betel-nut-mod:betel_palm_sapling", count: 1 },
+			dependencies: [
+				"0000000000100003"
+			],
+			tasks: [
+				{
+					id: "0000000000200004",
+					type: "item",
+					item: { id: "betel-nut-mod:betel_palm_sapling", count: 1 },
+					count: 1L,
+					consume_items: false
+				}
+			]
+		}
+	]
+}

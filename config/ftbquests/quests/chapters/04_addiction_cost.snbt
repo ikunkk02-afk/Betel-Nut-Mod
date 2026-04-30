@@ -1,0 +1,9 @@
+{
+	id: "0000000000010004",
+	filename: "04_addiction_cost",
+	order_index: 3,
+	icon: { id: "minecraft:rotten_flesh", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: []
+}

@@ -14,6 +14,10 @@ public final class BetelMessages {
 	public static final String EATING_RESTRICTION_STAGE2 = "\u4f60\u7684\u5634\u90e8\u50f5\u786c\uff0c\u5df2\u7ecf\u5f88\u96be\u5403\u4e0b\u666e\u901a\u98df\u7269\u3002";
 	public static final String EATING_RESTRICTION_STAGE3 = "\u4e25\u91cd\u6212\u65ad\u8ba9\u4f60\u51e0\u4e4e\u65e0\u6cd5\u8fdb\u98df\uff0c\u53ea\u6709\u9644\u9b54\u91d1\u82f9\u679c\u8fd8\u80fd\u8d77\u6548\u3002";
 	public static final String EATING_RESTRICTION_STAGE4 = "\u4f60\u7684\u8eab\u4f53\u5df2\u7ecf\u65e0\u6cd5\u63a5\u53d7\u666e\u901a\u98df\u7269\u3002";
+	public static final String HECHENG_TIANXIA_COMA_STARTED = "\u5408\u6210\u5929\u4e0b\u7684\u5927\u679c\u540e\u52b2\u88ad\u6765\uff0c\u4f60\u660f\u8ff7\u4e86\u3002";
+	public static final String HECHENG_TIANXIA_COMA_ENDED = "\u4f60\u4ece\u660f\u8ff7\u4e2d\u9192\u6765\uff0c\u4f46\u8eab\u4f53\u72b6\u6001\u53d8\u5f97\u6781\u5dee\u3002";
+	public static final String HECHENG_TIANXIA_REPEAT_BLOCKED = "\u4f60\u7684\u8eab\u4f53\u8fd8\u627f\u53d7\u4e0d\u4e86\u7b2c\u4e8c\u9897\u5408\u6210\u5929\u4e0b\u7684\u5927\u679c\u3002";
+	public static final String HECHENG_TIANXIA_COMA_BLOCKED = "\u4f60\u4ecd\u5728\u660f\u8ff7\u4e2d\uff0c\u65e0\u6cd5\u884c\u52a8\u3002";
 
 	public static boolean send(ServerPlayer player, String message) {
 		BetelNutConfig config = BetelNutConfig.get();

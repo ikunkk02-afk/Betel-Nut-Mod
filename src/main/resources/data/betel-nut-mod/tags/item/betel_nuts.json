@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "betel-nut-mod:roasted_betel_nut",
+    "betel-nut-mod:spicy_betel_nut",
+    "betel-nut-mod:sweet_betel_nut",
+    "betel-nut-mod:refreshing_betel_nut",
+    "betel-nut-mod:night_betel_nut",
+    "betel-nut-mod:energizing_betel_nut",
+    "betel-nut-mod:honey_betel_nut",
+    "betel-nut-mod:glow_betel_nut",
+    "betel-nut-mod:phantom_betel_nut",
+    "betel-nut-mod:ender_betel_nut",
+    "betel-nut-mod:lapis_betel_nut",
+    "betel-nut-mod:quartz_betel_nut",
+    "betel-nut-mod:magma_betel_nut",
+    "betel-nut-mod:amethyst_betel_nut",
+    "betel-nut-mod:synthetic_world_betel",
+    "betel-nut-mod:rich_world_betel",
+    "betel-nut-mod:underground_betel"
+  ]
+}

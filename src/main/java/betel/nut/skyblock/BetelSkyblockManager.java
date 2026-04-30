@@ -6,6 +6,7 @@ import java.util.Set;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMidnightConfig;
 import betel.nut.BetelNutMod;
+import betel.nut.advancement.BetelQuestAdvancements;
 import betel.nut.block.ModBlocks;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.component.BetelNutWorldComponents;
@@ -66,6 +67,7 @@ public final class BetelSkyblockManager {
 		ServerTickEvents.START_SERVER_TICK.register(BetelSkyblockManager::runScheduledStartupCheck);
 		ServerTickEvents.END_SERVER_TICK.register(BetelSkyblockManager::handleSkyblockPlayers);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> resetStartupCheckState());
+		EndFrameWaterRitualManager.register();
 	}
 
 	public static boolean isConfigEnabled() {
@@ -145,12 +147,22 @@ public final class BetelSkyblockManager {
 	}
 
 	public static void onBetelNutEaten(ServerPlayer player) {
-		if (player.level().dimension() != Level.OVERWORLD || !isEnabled(player.serverLevel())) {
+		if (player.level().dimension() != Level.OVERWORLD) {
 			return;
 		}
 
-		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(player.level());
-		if (!worldData.hasGeneratedBetelSkyIsland()) {
+		ServerLevel level = player.serverLevel();
+		boolean normalSkyblockMode = isEnabled(level);
+		boolean oneBlockMode = isOneBlockEnabled(level);
+		if (!normalSkyblockMode && !oneBlockMode) {
+			return;
+		}
+
+		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
+		if (normalSkyblockMode && !worldData.hasGeneratedBetelSkyIsland()) {
+			return;
+		}
+		if (oneBlockMode && !worldData.hasGeneratedBetelOneBlockIsland()) {
 			return;
 		}
 
@@ -164,6 +176,7 @@ public final class BetelSkyblockManager {
 			BetelNutMod.LOGGER.info("Player {} ate their first betel nut in Betel Skyblock mode.",
 					player.getScoreboardName());
 		}
+		BetelQuestAdvancements.grantEatFirstBetelNut(player);
 	}
 
 	public static boolean generateForCommand(ServerLevel level) {
@@ -308,6 +321,7 @@ public final class BetelSkyblockManager {
 				continue;
 			}
 			handleFirstSkyblockJoin(player, overworld, worldData);
+			BetelQuestAdvancements.grantEnterBetelSkyblock(player);
 			handleVoidProtection(player, overworld, worldData);
 		}
 	}
@@ -327,6 +341,7 @@ public final class BetelSkyblockManager {
 				continue;
 			}
 			handleFirstOneBlockSkyblockJoin(player, overworld, worldData);
+			BetelQuestAdvancements.grantEnterBetelSkyblock(player);
 			handleOneBlockVoidProtection(player, overworld, worldData);
 		}
 	}

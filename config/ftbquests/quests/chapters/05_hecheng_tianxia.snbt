@@ -1,0 +1,9 @@
+{
+	id: "0000000000010005",
+	filename: "05_hecheng_tianxia",
+	order_index: 4,
+	icon: { id: "betel-nut-mod:synthetic_world_betel", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: []
+}

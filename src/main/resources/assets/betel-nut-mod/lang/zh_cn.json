@@ -109,5 +109,21 @@
   "betel-nut-mod.midnightconfig.residueCompostChance": "槟榔渣堆肥概率",
   "betel-nut-mod.midnightconfig.residueCompostChance.tooltip": "槟榔渣放入堆肥桶时成功增加堆肥层数的概率。范围建议为 0.0 到 1.0，修改后可能需要重启游戏生效。",
   "betel-nut-mod.midnightconfig.residueBlockCompostChance": "槟榔渣块堆肥概率",
-  "betel-nut-mod.midnightconfig.residueBlockCompostChance.tooltip": "槟榔渣块放入堆肥桶时成功增加堆肥层数的概率。范围建议为 0.0 到 1.0，修改后可能需要重启游戏生效。"
+  "betel-nut-mod.midnightconfig.residueBlockCompostChance.tooltip": "槟榔渣块放入堆肥桶时成功增加堆肥层数的概率。范围建议为 0.0 到 1.0，修改后可能需要重启游戏生效。",
+  "betel-nut-mod.midnightconfig.enableEndFrameWaterRitual": "启用水中召雷仪式",
+  "betel-nut-mod.midnightconfig.enableEndFrameWaterRitual.tooltip": "开启后，玩家可以在槟榔空岛模式中把末影之眼和合成天下槟榔丢进水里，通过雷击仪式获得末地传送门框架。普通世界不会触发。",
+  "betel-nut-mod.midnightconfig.endFrameRitualEnderEyeCost": "仪式消耗末影之眼数量",
+  "betel-nut-mod.midnightconfig.endFrameRitualEnderEyeCost.tooltip": "水中召雷仪式需要消耗的末影之眼数量。默认 16。",
+  "betel-nut-mod.midnightconfig.endFrameRitualHechengBetelCost": "仪式消耗合成天下槟榔数量",
+  "betel-nut-mod.midnightconfig.endFrameRitualHechengBetelCost.tooltip": "水中召雷仪式需要消耗的合成天下槟榔数量。默认 12。",
+  "betel-nut-mod.midnightconfig.endFrameRitualFrameReward": "仪式生成末地框架数量",
+  "betel-nut-mod.midnightconfig.endFrameRitualFrameReward.tooltip": "水中召雷仪式成功后生成的末地传送门框架数量。默认 12。",
+  "betel-nut-mod.midnightconfig.endFrameRitualCheckIntervalTicks": "仪式检测间隔",
+  "betel-nut-mod.midnightconfig.endFrameRitualCheckIntervalTicks.tooltip": "水中召雷仪式的检测间隔，单位为 tick。默认 20。",
+  "betel-nut-mod.midnightconfig.hechengTianxiaPositiveDurationSeconds": "合成天下大果正面效果时间",
+  "betel-nut-mod.midnightconfig.hechengTianxiaComaDurationSeconds": "合成天下大果昏迷时间",
+  "betel-nut-mod.midnightconfig.hechengTianxiaNegativeDurationSeconds": "合成天下大果负面效果时间",
+  "betel-nut-mod.midnightconfig.hechengTianxiaAllowRepeatBeforeAftermath": "允许后劲结束前重复食用合成天下大果",
+  "message.betel-nut-mod.withdrawal.no_solid_food": "戒断反应让你无法吃下普通食物。",
+  "message.betel-nut-mod.end_frame_ritual.success": "水中的祭品被雷霆吞噬，末地传送门框架出现了。"
 }

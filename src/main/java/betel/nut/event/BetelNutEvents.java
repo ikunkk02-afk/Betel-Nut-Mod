@@ -5,11 +5,13 @@ import betel.nut.BetelNutMod;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.network.AddictionSyncPayload;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -20,7 +22,9 @@ public final class BetelNutEvents {
 			if (!config.enableAddictionSystem) {
 				for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 					if (player.isAlive()) {
-						BetelNutEntityComponents.ADDICTION.get(player).clearActiveWithdrawalPenalties(player);
+						BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
+						addiction.clearActiveWithdrawalPenalties(player);
+						addiction.tickHechengTianxiaAftereffects(player);
 						if (server.getTickCount() % 20 == 0) {
 							AddictionSyncPayload.send(player);
 						}
@@ -37,6 +41,7 @@ public final class BetelNutEvents {
 					}
 					addiction.handleRespawnWithdrawalCheck(player);
 					addiction.serverTick(player);
+					addiction.tickHechengTianxiaAftereffects(player);
 				}
 			}
 
@@ -66,6 +71,16 @@ public final class BetelNutEvents {
 				BetelNutEntityComponents.ADDICTION.get(newPlayer).scheduleRespawnWithdrawalCheck(newPlayer);
 			}
 			AddictionSyncPayload.send(newPlayer);
+		});
+
+		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+			if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+				BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(serverPlayer);
+				if (addiction.blockHechengTianxiaActionIfComatose(serverPlayer, true)) {
+					return InteractionResult.FAIL;
+				}
+			}
+			return InteractionResult.PASS;
 		});
 
 		BetelNutMod.LOGGER.info("Betel nut addiction system initialized successfully");

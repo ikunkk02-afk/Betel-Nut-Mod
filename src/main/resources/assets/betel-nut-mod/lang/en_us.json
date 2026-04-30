@@ -109,5 +109,21 @@
   "betel-nut-mod.midnightconfig.residueCompostChance": "Residue Compost Chance",
   "betel-nut-mod.midnightconfig.residueCompostChance.tooltip": "The chance for Betel Nut Residue to add a compost level. Recommended range: 0.0 to 1.0. A game restart may be required.",
   "betel-nut-mod.midnightconfig.residueBlockCompostChance": "Residue Block Compost Chance",
-  "betel-nut-mod.midnightconfig.residueBlockCompostChance.tooltip": "The chance for a Betel Nut Residue Block to add a compost level. Recommended range: 0.0 to 1.0. A game restart may be required."
+  "betel-nut-mod.midnightconfig.residueBlockCompostChance.tooltip": "The chance for a Betel Nut Residue Block to add a compost level. Recommended range: 0.0 to 1.0. A game restart may be required.",
+  "betel-nut-mod.midnightconfig.enableEndFrameWaterRitual": "Enable Water Lightning Ritual",
+  "betel-nut-mod.midnightconfig.enableEndFrameWaterRitual.tooltip": "If enabled, players can throw Ender Eyes and Hecheng Tianxia Betel Nuts into water in Betel Skyblock worlds to summon lightning and obtain End Portal Frames. This does not work in normal worlds.",
+  "betel-nut-mod.midnightconfig.endFrameRitualEnderEyeCost": "Ender Eye Cost",
+  "betel-nut-mod.midnightconfig.endFrameRitualEnderEyeCost.tooltip": "The number of Ender Eyes consumed by the water lightning ritual. Default: 16.",
+  "betel-nut-mod.midnightconfig.endFrameRitualHechengBetelCost": "Hecheng Betel Nut Cost",
+  "betel-nut-mod.midnightconfig.endFrameRitualHechengBetelCost.tooltip": "The number of Hecheng Tianxia Betel Nuts consumed by the water lightning ritual. Default: 12.",
+  "betel-nut-mod.midnightconfig.endFrameRitualFrameReward": "End Portal Frame Reward",
+  "betel-nut-mod.midnightconfig.endFrameRitualFrameReward.tooltip": "The number of End Portal Frames generated after a successful ritual. Default: 12.",
+  "betel-nut-mod.midnightconfig.endFrameRitualCheckIntervalTicks": "Ritual Check Interval",
+  "betel-nut-mod.midnightconfig.endFrameRitualCheckIntervalTicks.tooltip": "How often the water lightning ritual checks for items, in ticks. Default: 20.",
+  "betel-nut-mod.midnightconfig.hechengTianxiaPositiveDurationSeconds": "Craft the World big fruit positive duration",
+  "betel-nut-mod.midnightconfig.hechengTianxiaComaDurationSeconds": "Craft the World big fruit coma duration",
+  "betel-nut-mod.midnightconfig.hechengTianxiaNegativeDurationSeconds": "Craft the World big fruit aftermath duration",
+  "betel-nut-mod.midnightconfig.hechengTianxiaAllowRepeatBeforeAftermath": "Allow repeated Craft the World big fruit before aftermath ends",
+  "message.betel-nut-mod.withdrawal.no_solid_food": "Withdrawal prevents you from eating ordinary food.",
+  "message.betel-nut-mod.end_frame_ritual.success": "The offerings in the water were consumed by lightning. End Portal Frames have appeared."
 }

@@ -1,0 +1,9 @@
+{
+	id: "0000000000010006",
+	filename: "06_end_ritual",
+	order_index: 5,
+	icon: { id: "minecraft:end_portal_frame", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: []
+}

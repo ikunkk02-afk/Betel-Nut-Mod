@@ -104,11 +104,24 @@ public final class WithdrawalEatingRestrictions {
 		return !stack.isEmpty() && stack.has(DataComponents.FOOD);
 	}
 
+	public static boolean isBetelNut(ItemStack stack) {
+		return !stack.isEmpty() && stack.is(ModItemTags.BETEL_NUTS);
+	}
+
+	public static boolean canEatDuringWithdrawal(ItemStack stack) {
+		return isBetelNut(stack);
+	}
+
+	public static boolean shouldClearWithdrawalEffectsOnEat(ItemStack stack) {
+		return false;
+	}
+
 	public static EatingRestrictionCheck evaluate(ServerPlayer player,
 			BetelNutAddictionComponent addiction, ItemStack stack) {
 		RestrictionLevel level = getRestrictionLevel(player, addiction);
 		boolean checkedItem = isCheckedItem(stack);
-		boolean allowed = level == RestrictionLevel.NONE
+		boolean allowed = canEatDuringWithdrawal(stack)
+				|| level == RestrictionLevel.NONE
 				|| !checkedItem
 				|| isAllowedAtLevel(stack, level, BetelNutConfig.get());
 		return new EatingRestrictionCheck(level, isFoodItem(stack), checkedItem, allowed,
@@ -183,8 +196,21 @@ public final class WithdrawalEatingRestrictions {
 	}
 
 	private static String matchedAllowedTags(ItemStack stack) {
+		boolean betelNut = stack.is(ModItemTags.BETEL_NUTS);
 		boolean stage2 = stack.is(ModItemTags.WITHDRAWAL_STAGE2_ALLOWED_FOODS);
 		boolean stage3 = stack.is(ModItemTags.WITHDRAWAL_STAGE3_ALLOWED_FOODS);
+		if (betelNut && stage2 && stage3) {
+			return "betel_nuts,withdrawal_stage2_allowed_foods,withdrawal_stage3_allowed_foods";
+		}
+		if (betelNut && stage2) {
+			return "betel_nuts,withdrawal_stage2_allowed_foods";
+		}
+		if (betelNut && stage3) {
+			return "betel_nuts,withdrawal_stage3_allowed_foods";
+		}
+		if (betelNut) {
+			return "betel_nuts";
+		}
 		if (stage2 && stage3) {
 			return "withdrawal_stage2_allowed_foods,withdrawal_stage3_allowed_foods";
 		}
@@ -219,6 +245,9 @@ public final class WithdrawalEatingRestrictions {
 			return "withdrawal_below_eating_restriction_threshold";
 		}
 		if (allowed) {
+			if (isBetelNut(stack)) {
+				return "allowed_betel_nuts";
+			}
 			if (stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
 				return "allowed_enchanted_golden_apple";
 			}

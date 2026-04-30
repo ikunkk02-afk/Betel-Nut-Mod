@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "has_residue": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:betel_nut_residue"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_residue"
+    ]
+  ]
+}

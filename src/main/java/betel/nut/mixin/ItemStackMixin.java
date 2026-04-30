@@ -1,5 +1,7 @@
 package betel.nut.mixin;
 
+import betel.nut.component.BetelNutAddictionComponent;
+import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.event.BetelNutEvents;
 import betel.nut.event.WithdrawalEatingRestrictions;
 import net.minecraft.world.InteractionHand;
@@ -21,6 +23,11 @@ public class ItemStackMixin {
 			CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
 		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 			ItemStack stack = (ItemStack) (Object) this;
+			BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(serverPlayer);
+			if (addiction.blockHechengTianxiaActionIfComatose(serverPlayer, true)) {
+				cir.setReturnValue(InteractionResultHolder.fail(stack));
+				return;
+			}
 			if (WithdrawalEatingRestrictions.shouldBlockUse(serverPlayer, stack, true)) {
 				cir.setReturnValue(InteractionResultHolder.fail(stack));
 			}
@@ -32,6 +39,11 @@ public class ItemStackMixin {
 			CallbackInfoReturnable<ItemStack> cir) {
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
 			ItemStack stack = (ItemStack) (Object) this;
+			BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
+			if (addiction.blockHechengTianxiaActionIfComatose(player, true)) {
+				cir.setReturnValue(stack);
+				return;
+			}
 			if (WithdrawalEatingRestrictions.shouldBlockUse(player, stack, true)) {
 				cir.setReturnValue(stack);
 				return;

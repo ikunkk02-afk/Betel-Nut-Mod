@@ -1,0 +1,60 @@
+{
+	id: "0000000000010003",
+	filename: "03_compost_expand",
+	order_index: 2,
+	icon: { id: "minecraft:bone_meal", count: 1 },
+	default_quest_shape: "circle",
+	default_hide_dependency_lines: false,
+	quests: [
+		{
+			id: "0000000000100007",
+			x: 0.75d,
+			y: 0.75d,
+			icon: { id: "minecraft:bone_meal", count: 1 },
+			dependencies: [
+				"0000000000100006"
+			],
+			tasks: [
+				{
+					id: "0000000000200007",
+					type: "advancement",
+					advancement: "betel-nut-mod:skyblock/first_compost",
+					criterion: ""
+				}
+			]
+		},
+		{
+			id: "000000000010000A",
+			x: 3.75d,
+			y: 0.75d,
+			icon: { id: "betel-nut-mod:betel_nut_residue_block", count: 4 },
+			dependencies: [
+				"0000000000100009"
+			],
+			tasks: [
+				{
+					id: "000000000020000A",
+					type: "item",
+					item: { id: "betel-nut-mod:betel_nut_residue_block", count: 1 },
+					count: 4L,
+					consume_items: false
+				}
+			]
+		},
+		{
+			id: "000000000010000C",
+			x: 6.75d,
+			y: 0.75d,
+			icon: { id: "betel-nut-mod:betel_palm_planks", count: 1 },
+			dependencies: [
+				"000000000010000B"
+			],
+			tasks: [
+				{
+					id: "000000000020000C",
+					type: "checkmark"
+				}
+			]
+		}
+	]
+}

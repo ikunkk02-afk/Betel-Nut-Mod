@@ -2,7 +2,9 @@ package betel.nut.component;
 
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
+import betel.nut.advancement.BetelQuestAdvancements;
 import betel.nut.addiction.AddictionStageUtil;
+import betel.nut.effect.HechengTianxiaEffects;
 import betel.nut.message.BetelMessages;
 import betel.nut.network.AddictionSyncPayload;
 import net.minecraft.core.HolderLookup;
@@ -24,6 +26,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	private static final String CLEAN_TIME_KEY = "cleanTime";
 	private static final String NEXT_WITHDRAWAL_TIME_KEY = "nextWithdrawalTime";
 	private static final String NOTIFIED_WITHDRAWAL_STAGE_KEY = "notifiedWithdrawalStage";
+	private static final String HECHENG_TIANXIA_POSITIVE_TICKS_KEY = "hechengTianxiaPositiveTicks";
+	private static final String HECHENG_TIANXIA_COMA_TICKS_KEY = "hechengTianxiaComaTicks";
+	private static final String HECHENG_TIANXIA_NEGATIVE_TICKS_KEY = "hechengTianxiaNegativeTicks";
 	private static final int VISIBLE_WITHDRAWAL_THRESHOLD = 25;
 	private static final ResourceLocation WITHDRAWAL_MAX_HEALTH_PENALTY_ID = BetelNutMod
 			.id("withdrawal_max_health_penalty");
@@ -38,6 +43,10 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	private long nextEatingRestrictionMessageTime;
 	private long respawnWithdrawalCheckTime = -1;
 	private boolean showRespawnWithdrawalMessage;
+	private int hechengTianxiaPositiveTicks;
+	private int hechengTianxiaComaTicks;
+	private int hechengTianxiaNegativeTicks;
+	private long nextHechengTianxiaMessageTime;
 
 	public BetelNutAddictionComponent(Player player) {
 	}
@@ -94,29 +103,115 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	public void eatBetelNut(ServerPlayer player, int addictionIncrease, long gameTime) {
+		eatBetelNut(player, addictionIncrease, gameTime, false);
+	}
+
+	public void eatBetelNut(ServerPlayer player, int addictionIncrease, long gameTime,
+			boolean clearWithdrawalEffectsOnEat) {
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!config.enableAddictionSystem) {
 			return;
 		}
 
 		int previousAddiction = this.addictionValue;
+		int previousStage = getAddictionStage();
 		int previousWithdrawal = this.withdrawalValue;
+		boolean preserveActiveWithdrawal = !clearWithdrawalEffectsOnEat
+				&& previousWithdrawal >= visibleWithdrawalThreshold(config);
 		this.addictionValue = clamp(this.addictionValue + addictionIncrease, 0, config.maxAddictionValue);
-		this.withdrawalValue = 0;
-		this.notifiedWithdrawalStage = 0;
+		if (clearWithdrawalEffectsOnEat) {
+			this.withdrawalValue = 0;
+			this.notifiedWithdrawalStage = 0;
+		}
 		this.lastEatTime = gameTime;
-		scheduleNextWithdrawal(config, gameTime);
-		boolean removedMaxHealthPenalty = clearWithdrawalPenalties(player);
+		if (preserveActiveWithdrawal) {
+			if (this.nextWithdrawalTime < 0) {
+				this.nextWithdrawalTime = gameTime;
+			}
+		} else {
+			scheduleNextWithdrawal(config, gameTime);
+		}
+		boolean removedMaxHealthPenalty = clearWithdrawalEffectsOnEat && clearWithdrawalPenalties(player);
 
-		if (previousWithdrawal >= visibleWithdrawalThreshold(config)) {
+		if (clearWithdrawalEffectsOnEat && previousWithdrawal >= visibleWithdrawalThreshold(config)) {
 			sendFeedback(player, gameTime, BetelMessages.WITHDRAWAL_SUPPRESSED);
 		} else {
 			sendFeedback(player, gameTime,
 					BetelMessages.betelNutEatenMessage(previousAddiction, this.addictionValue,
 							config.maxAddictionValue));
 		}
-		sendRecoveryFeedbackIfNeeded(player, removedMaxHealthPenalty);
+		if (clearWithdrawalEffectsOnEat) {
+			sendRecoveryFeedbackIfNeeded(player, removedMaxHealthPenalty);
+		}
+		if (previousStage < 1 && getAddictionStage() >= 1) {
+			BetelQuestAdvancements.grantAddictionStarted(player);
+		}
 		AddictionSyncPayload.send(player);
+	}
+
+	public boolean hasActiveHechengTianxiaAftermath() {
+		return this.hechengTianxiaPositiveTicks > 0
+				|| this.hechengTianxiaComaTicks > 0
+				|| this.hechengTianxiaNegativeTicks > 0;
+	}
+
+	public boolean isHechengTianxiaComatose() {
+		return this.hechengTianxiaComaTicks > 0;
+	}
+
+	public boolean startHechengTianxiaAftermath(ServerPlayer player, boolean allowRepeat) {
+		if (!allowRepeat && hasActiveHechengTianxiaAftermath()) {
+			sendHechengTianxiaRepeatBlockedMessage(player);
+			return false;
+		}
+
+		this.hechengTianxiaPositiveTicks = HechengTianxiaEffects.positiveDurationTicks();
+		this.hechengTianxiaComaTicks = 0;
+		this.hechengTianxiaNegativeTicks = 0;
+		HechengTianxiaEffects.applyPositiveBurst(player);
+		BetelNutMod.LOGGER.info(
+				"Started synthetic world betel aftereffect for {}: positiveTicks={}, comaTicks={}, negativeTicks={}",
+				player.getScoreboardName(), this.hechengTianxiaPositiveTicks,
+				HechengTianxiaEffects.comaDurationTicks(), HechengTianxiaEffects.negativeDurationTicks());
+		return true;
+	}
+
+	public void tickHechengTianxiaAftereffects(ServerPlayer player) {
+		if (this.hechengTianxiaPositiveTicks > 0) {
+			this.hechengTianxiaPositiveTicks--;
+			if (this.hechengTianxiaPositiveTicks == 0) {
+				enterHechengTianxiaComa(player);
+			}
+		}
+
+		if (this.hechengTianxiaComaTicks > 0) {
+			HechengTianxiaEffects.maintainComa(player, this.hechengTianxiaComaTicks);
+			this.hechengTianxiaComaTicks--;
+			if (this.hechengTianxiaComaTicks == 0) {
+				finishHechengTianxiaComa(player);
+			}
+			return;
+		}
+
+		if (this.hechengTianxiaNegativeTicks > 0) {
+			HechengTianxiaEffects.maintainNegativeAftermath(player, this.hechengTianxiaNegativeTicks);
+			this.hechengTianxiaNegativeTicks--;
+		}
+	}
+
+	public boolean blockHechengTianxiaActionIfComatose(ServerPlayer player, boolean notify) {
+		if (!isHechengTianxiaComatose()) {
+			return false;
+		}
+
+		if (notify) {
+			sendHechengTianxiaMessage(player, BetelMessages.HECHENG_TIANXIA_COMA_BLOCKED);
+		}
+		return true;
+	}
+
+	public void sendHechengTianxiaRepeatBlockedMessage(ServerPlayer player) {
+		sendHechengTianxiaMessage(player, BetelMessages.HECHENG_TIANXIA_REPEAT_BLOCKED);
 	}
 
 	public void applyMilkRelief(ServerPlayer player, long gameTime) {
@@ -400,6 +495,33 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 	}
 
+	private void enterHechengTianxiaComa(ServerPlayer player) {
+		this.hechengTianxiaComaTicks = HechengTianxiaEffects.comaDurationTicks();
+		HechengTianxiaEffects.maintainComa(player, this.hechengTianxiaComaTicks);
+		BetelMessages.send(player, BetelMessages.HECHENG_TIANXIA_COMA_STARTED);
+		BetelNutMod.LOGGER.info("Synthetic world betel coma started for {}: comaTicks={}",
+				player.getScoreboardName(), this.hechengTianxiaComaTicks);
+	}
+
+	private void finishHechengTianxiaComa(ServerPlayer player) {
+		this.hechengTianxiaNegativeTicks = HechengTianxiaEffects.negativeDurationTicks();
+		HechengTianxiaEffects.applyNegativeAftermath(player, this.hechengTianxiaNegativeTicks);
+		BetelMessages.send(player, BetelMessages.HECHENG_TIANXIA_COMA_ENDED);
+		BetelNutMod.LOGGER.info("Synthetic world betel aftermath started for {}: negativeTicks={}",
+				player.getScoreboardName(), this.hechengTianxiaNegativeTicks);
+	}
+
+	private void sendHechengTianxiaMessage(ServerPlayer player, String message) {
+		long gameTime = player.level().getGameTime();
+		if (gameTime < this.nextHechengTianxiaMessageTime) {
+			return;
+		}
+
+		if (BetelMessages.send(player, message)) {
+			this.nextHechengTianxiaMessageTime = gameTime + BetelNutConfig.get().feedbackCooldownTicks;
+		}
+	}
+
 	private int withdrawalGainPerInterval(BetelNutConfig config) {
 		int addictionStage = getAddictionStage();
 		if (addictionStage >= 4) {
@@ -453,6 +575,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			return;
 		}
 
+		BetelQuestAdvancements.grantWithdrawalStarted(player);
 		BetelNutMod.LOGGER.debug(
 				"[BetelNut Debug] Withdrawal triggered: player={}, stage={}, severity={}, addictionValue={}, withdrawalValue={}",
 				player.getScoreboardName(), addictionStage, severity, this.addictionValue, this.withdrawalValue);
@@ -675,6 +798,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 				? tag.getLong(NEXT_WITHDRAWAL_TIME_KEY)
 				: -1;
 		this.notifiedWithdrawalStage = clamp(tag.getInt(NOTIFIED_WITHDRAWAL_STAGE_KEY), 0, 5);
+		this.hechengTianxiaPositiveTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_POSITIVE_TICKS_KEY));
+		this.hechengTianxiaComaTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_COMA_TICKS_KEY));
+		this.hechengTianxiaNegativeTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_NEGATIVE_TICKS_KEY));
 	}
 
 	@Override
@@ -685,6 +811,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		tag.putLong(CLEAN_TIME_KEY, this.cleanTime);
 		tag.putLong(NEXT_WITHDRAWAL_TIME_KEY, this.nextWithdrawalTime);
 		tag.putInt(NOTIFIED_WITHDRAWAL_STAGE_KEY, this.notifiedWithdrawalStage);
+		tag.putInt(HECHENG_TIANXIA_POSITIVE_TICKS_KEY, this.hechengTianxiaPositiveTicks);
+		tag.putInt(HECHENG_TIANXIA_COMA_TICKS_KEY, this.hechengTianxiaComaTicks);
+		tag.putInt(HECHENG_TIANXIA_NEGATIVE_TICKS_KEY, this.hechengTianxiaNegativeTicks);
 	}
 
 	@Override
@@ -697,6 +826,8 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			copyAllFrom(other);
 			return;
 		}
+
+		copyHechengTianxiaFrom(other);
 
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!config.keepAddictionAfterDeath) {
@@ -727,6 +858,13 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.cleanTime = other.cleanTime;
 		this.nextWithdrawalTime = other.nextWithdrawalTime;
 		this.notifiedWithdrawalStage = other.notifiedWithdrawalStage;
+		copyHechengTianxiaFrom(other);
+	}
+
+	private void copyHechengTianxiaFrom(BetelNutAddictionComponent other) {
+		this.hechengTianxiaPositiveTicks = other.hechengTianxiaPositiveTicks;
+		this.hechengTianxiaComaTicks = other.hechengTianxiaComaTicks;
+		this.hechengTianxiaNegativeTicks = other.hechengTianxiaNegativeTicks;
 	}
 
 	private void clearStoredData() {
