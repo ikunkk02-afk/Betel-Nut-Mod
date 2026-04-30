@@ -31,6 +31,7 @@ public class BetelNutMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		BetelNutConfig.load();
+		BetelNutMidnightConfig.load();
 		AddictionSyncPayload.register();
 		ModBlocks.register();
 		ModItems.register();

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import betel.nut.BetelNutConfig;
+import betel.nut.BetelNutMidnightConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.block.ModBlocks;
 import betel.nut.component.BetelNutEntityComponents;
@@ -36,12 +37,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.FlatLevelSource;
+import net.minecraft.world.level.levelgen.flat.FlatLayerInfo;
 import net.minecraft.world.phys.Vec3;
 
 public final class BetelSkyblockManager {
 	private static final boolean REPAIR_MISSING_OR_MOVED_ISLAND = true;
-	private static final BlockPos ISLAND_CENTER = new BlockPos(0, 128, 0);
+	private static final int CENTER_X = 0;
+	private static final int CENTER_Z = 0;
 	private static final int SPAWN_CLEAR_RADIUS = 2;
 	private static final int STARTUP_CHECK_DELAY_TICKS = 1;
 
@@ -69,33 +73,51 @@ public final class BetelSkyblockManager {
 	}
 
 	public static boolean isEnabled(ServerLevel level) {
-		return isBetelSkyblockPreset(level) || isConfigEnabled();
+		return isBetelSkyblockPreset(level) && BetelNutMidnightConfig.enableClassicSkyblock;
+	}
+
+	public static boolean isOneBlockEnabled(ServerLevel level) {
+		return isBetelOneBlockSkyblockPreset(level) && BetelNutMidnightConfig.enableOneBlockSkyblock;
 	}
 
 	public static boolean isBetelSkyblockPreset(ServerLevel level) {
-		if (level.dimension() != Level.OVERWORLD) {
-			return false;
-		}
+		FlatLevelSource flatLevelSource = getOverworldFlatLevelSource(level);
+		return flatLevelSource != null
+				&& usesTheVoidBiome(flatLevelSource)
+				&& hasNoFlatLayers(flatLevelSource);
+	}
 
-		if (!(level.getChunkSource().getGenerator() instanceof FlatLevelSource flatLevelSource)) {
-			return false;
-		}
-
-		return flatLevelSource.settings().getLayersInfo().isEmpty()
-				&& flatLevelSource.settings().getLayers().isEmpty();
+	public static boolean isBetelOneBlockSkyblockPreset(ServerLevel level) {
+		FlatLevelSource flatLevelSource = getOverworldFlatLevelSource(level);
+		return flatLevelSource != null
+				&& usesTheVoidBiome(flatLevelSource)
+				&& hasOneAirMarkerLayer(flatLevelSource);
 	}
 
 	public static BlockPos getIslandCenter() {
-		return ISLAND_CENTER;
+		return getConfiguredIslandCenter();
 	}
 
 	public static BlockPos getSkyblockSpawn() {
-		return getSkyblockSpawnForCenter(ISLAND_CENTER);
+		return getSkyblockSpawnForCenter(getConfiguredIslandCenter());
 	}
 
 	public static BlockPos getSkyblockSpawn(ServerLevel level) {
 		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
 		return getSkyblockSpawn(worldData);
+	}
+
+	public static BlockPos getOneBlockCenter() {
+		return getConfiguredOneBlockCenter();
+	}
+
+	public static BlockPos getOneBlockSpawn() {
+		return getOneBlockSpawnForCenter(getConfiguredOneBlockCenter());
+	}
+
+	public static BlockPos getOneBlockSpawn(ServerLevel level) {
+		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
+		return getOneBlockSpawn(worldData);
 	}
 
 	private static BlockPos getSkyblockSpawn(BetelSkyblockWorldComponent worldData) {
@@ -104,6 +126,22 @@ public final class BetelSkyblockManager {
 
 	private static BlockPos getSkyblockSpawnForCenter(BlockPos islandCenter) {
 		return islandCenter.above(4);
+	}
+
+	private static BlockPos getOneBlockSpawn(BetelSkyblockWorldComponent worldData) {
+		return getOneBlockSpawnForCenter(worldData.getOneBlockCenter());
+	}
+
+	private static BlockPos getOneBlockSpawnForCenter(BlockPos oneBlockCenter) {
+		return oneBlockCenter.above(2);
+	}
+
+	private static BlockPos getConfiguredIslandCenter() {
+		return new BlockPos(CENTER_X, BetelNutMidnightConfig.classicIslandY, CENTER_Z);
+	}
+
+	private static BlockPos getConfiguredOneBlockCenter() {
+		return new BlockPos(CENTER_X, BetelNutMidnightConfig.oneBlockY, CENTER_Z);
 	}
 
 	public static void onBetelNutEaten(ServerPlayer player) {
@@ -138,11 +176,28 @@ public final class BetelSkyblockManager {
 		return true;
 	}
 
+	public static boolean generateOneBlockForCommand(ServerLevel level) {
+		if (level.dimension() != Level.OVERWORLD) {
+			return false;
+		}
+
+		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
+		generateOneBlockIsland(level, worldData, true);
+		return true;
+	}
+
 	public static void resetGenerationState(ServerLevel level) {
 		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
 		worldData.resetBetelSkyIslandGeneration();
 		BetelNutMod.LOGGER.info(
 				"[Betel Nut Mod] hasGeneratedBetelSkyIsland reset to false; next startup check or /betelskyblock generate can create the island again.");
+	}
+
+	public static void resetOneBlockGenerationState(ServerLevel level) {
+		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
+		worldData.resetBetelOneBlockIslandGeneration();
+		BetelNutMod.LOGGER.info(
+				"[Betel Nut Mod] hasGeneratedBetelOneBlockIsland reset to false; next startup check or /betelskyblock generate_one_block can create the one-block island again.");
 	}
 
 	public static boolean teleportPlayerToSkyblockSpawn(ServerPlayer player, ServerLevel level) {
@@ -158,6 +213,21 @@ public final class BetelSkyblockManager {
 			setSkyblockSpawn(level, worldData);
 		}
 		return teleportPlayerToSkyblockSpawn(player, level, getSkyblockSpawn(worldData));
+	}
+
+	public static boolean teleportPlayerToOneBlockSpawn(ServerPlayer player, ServerLevel level) {
+		if (level.dimension() != Level.OVERWORLD) {
+			return false;
+		}
+
+		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
+		if (!worldData.hasGeneratedBetelOneBlockIsland()) {
+			return false;
+		}
+		if (!worldData.hasSetBetelOneBlockSpawn()) {
+			setBetelOneBlockSpawn(level, worldData);
+		}
+		return teleportPlayerToSkyblockSpawn(player, level, getOneBlockSpawn(worldData));
 	}
 
 	private static void scheduleStartupCheck(String reason) {
@@ -213,11 +283,18 @@ public final class BetelSkyblockManager {
 			return;
 		}
 
-		if (!isEnabled(overworld)) {
+		boolean oneBlockMode = isOneBlockEnabled(overworld);
+		boolean normalSkyblockMode = isEnabled(overworld);
+		if (!oneBlockMode && !normalSkyblockMode) {
 			return;
 		}
 
 		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		if (oneBlockMode) {
+			handleOneBlockSkyblockPlayers(server, overworld, worldData);
+			return;
+		}
+
 		if (!worldData.hasGeneratedBetelSkyIsland()) {
 			return;
 		}
@@ -232,6 +309,25 @@ public final class BetelSkyblockManager {
 			}
 			handleFirstSkyblockJoin(player, overworld, worldData);
 			handleVoidProtection(player, overworld, worldData);
+		}
+	}
+
+	private static void handleOneBlockSkyblockPlayers(MinecraftServer server, ServerLevel overworld,
+			BetelSkyblockWorldComponent worldData) {
+		if (!worldData.hasGeneratedBetelOneBlockIsland()) {
+			return;
+		}
+
+		if (!worldData.hasSetBetelOneBlockSpawn()) {
+			setBetelOneBlockSpawn(overworld, worldData);
+		}
+
+		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			if (player.level().dimension() != Level.OVERWORLD || !player.isAlive()) {
+				continue;
+			}
+			handleFirstOneBlockSkyblockJoin(player, overworld, worldData);
+			handleOneBlockVoidProtection(player, overworld, worldData);
 		}
 	}
 
@@ -256,10 +352,37 @@ public final class BetelSkyblockManager {
 				player.getScoreboardName());
 	}
 
+	private static void handleFirstOneBlockSkyblockJoin(ServerPlayer player, ServerLevel overworld,
+			BetelSkyblockWorldComponent worldData) {
+		BetelSkyblockPlayerComponent playerData = BetelNutEntityComponents.SKYBLOCK_PLAYER.get(player);
+		if (playerData.hasReceivedBetelOneBlockStarterItems()) {
+			return;
+		}
+
+		boolean teleported = teleportPlayerToSkyblockSpawn(player, overworld, getOneBlockSpawn(worldData));
+		if (!teleported) {
+			BetelNutMod.LOGGER.warn(
+					"[Betel Nut Mod] Failed to move first-time Betel One Block Skyblock player {} to spawn.",
+					player.getScoreboardName());
+			return;
+		}
+
+		applySpawnProtection(player);
+		if (BetelNutMidnightConfig.oneBlockGiveStarterItems) {
+			giveOneBlockStarterItems(player);
+		}
+		sendOneBlockWelcomeMessage(player);
+		playerData.markReceivedBetelOneBlockStarterItems();
+		BetelNutMod.LOGGER.info(
+				"Player {} joined Betel One Block Skyblock for the first time and received starter items.",
+				player.getScoreboardName());
+	}
+
 	private static void handleVoidProtection(ServerPlayer player, ServerLevel overworld,
 			BetelSkyblockWorldComponent worldData) {
 		BetelNutConfig config = BetelNutConfig.get();
-		if (!config.enableBetelSkyblockVoidProtection || player.getY() >= config.betelSkyblockVoidProtectionMinY) {
+		if (!BetelNutMidnightConfig.classicEnableVoidRescue
+				|| player.getY() >= config.betelSkyblockVoidProtectionMinY) {
 			return;
 		}
 
@@ -276,6 +399,29 @@ public final class BetelSkyblockManager {
 		applySpawnProtection(player);
 		player.sendSystemMessage(Component.literal(
 				"\u4f60\u4ece\u865a\u7a7a\u4e2d\u88ab\u69df\u6994\u7a7a\u5c9b\u62c9\u4e86\u56de\u6765\u3002"));
+	}
+
+	private static void handleOneBlockVoidProtection(ServerPlayer player, ServerLevel overworld,
+			BetelSkyblockWorldComponent worldData) {
+		BetelNutConfig config = BetelNutConfig.get();
+		if (!BetelNutMidnightConfig.oneBlockEnableVoidRescue
+				|| player.getY() >= config.betelSkyblockVoidProtectionMinY) {
+			return;
+		}
+
+		boolean teleported = teleportPlayerToSkyblockSpawn(player, overworld, getOneBlockSpawn(worldData));
+		if (!teleported) {
+			return;
+		}
+
+		if (config.betelSkyblockVoidProtectionDamage
+				&& config.betelSkyblockVoidProtectionDamageAmount > 0.0D) {
+			player.hurt(player.damageSources().generic(),
+					(float) config.betelSkyblockVoidProtectionDamageAmount);
+		}
+		applySpawnProtection(player);
+		player.sendSystemMessage(Component.literal(
+				"\u4f60\u4ece\u865a\u7a7a\u4e2d\u88ab\u69df\u6994\u4e00\u65b9\u5757\u7a7a\u5c9b\u62c9\u4e86\u56de\u6765\u3002"));
 	}
 
 	private static boolean teleportPlayerToSkyblockSpawn(ServerPlayer player, ServerLevel level, BlockPos spawnPos) {
@@ -297,6 +443,33 @@ public final class BetelSkyblockManager {
 		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, 0, false, false, true));
 	}
 
+	private static void giveOneBlockStarterItems(ServerPlayer player) {
+		giveOrDrop(player, new ItemStack(ModBlocks.BETEL_PALM_SAPLING_ITEM,
+				BetelNutMidnightConfig.oneBlockStarterSaplingCount));
+		giveOrDrop(player, new ItemStack(Items.DIRT, BetelNutMidnightConfig.oneBlockStarterDirtCount));
+		giveOrDrop(player, new ItemStack(ModItems.ROASTED_BETEL_NUT,
+				BetelNutMidnightConfig.oneBlockStarterBetelNutCount));
+	}
+
+	private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
+		if (stack.isEmpty() || stack.getCount() <= 0) {
+			return;
+		}
+		if (!player.getInventory().add(stack)) {
+			player.drop(stack, false);
+		}
+	}
+
+	private static void sendOneBlockWelcomeMessage(ServerPlayer player) {
+		player.sendSystemMessage(Component.literal(
+				"\u6b22\u8fce\u6765\u5230\u69df\u6994\u4e00\u65b9\u5757\u7a7a\u5c9b\u3002\n"
+						+ "\u4f60\u53ea\u6709\u4e00\u4e2a\u69df\u6994\u6e23\u5757\u3001\u4e00\u68f5\u69df\u6994\u6811\u82d7\u3001\u4e00\u5757\u6ce5\u571f\u548c\u4e00\u4e2a\u69df\u6994\u3002\n"
+						+ "\u5403\u4e0b\u69df\u6994\u53ef\u4ee5\u83b7\u5f97\u69df\u6994\u6e23\u3002\n"
+						+ "\u63a5\u4e0b\u6765\uff0c\u5c31\u770b\u4f60\u7684\u9020\u5316\u4e86\u3002\n"
+						+ "\u672c\u6a21\u7ec4\u5185\u5bb9\u53ea\u662f\u6e38\u620f\u673a\u5236\u8bbe\u8ba1\uff0c"
+						+ "\u4e0d\u4ee3\u8868\u73b0\u5b9e\u5065\u5eb7\u5efa\u8bae\uff0c\u4e5f\u4e0d\u9f13\u52b1\u73b0\u5b9e\u4e2d\u98df\u7528\u69df\u6994\u3002"));
+	}
+
 	private static void generateInitialIslandIfNeeded(ServerLevel level) {
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Checking Betel Skyblock world...");
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Current dimension: {}", dimensionLabel(level));
@@ -308,34 +481,59 @@ public final class BetelSkyblockManager {
 
 		BetelSkyblockWorldComponent worldData = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
 		boolean isPreset = isBetelSkyblockPreset(level);
-		boolean configEnabled = isConfigEnabled();
-		boolean enabled = isPreset || configEnabled;
+		boolean isOneBlockPreset = isBetelOneBlockSkyblockPreset(level);
+		boolean classicEnabled = isPreset && BetelNutMidnightConfig.enableClassicSkyblock;
+		boolean oneBlockEnabled = isOneBlockPreset && BetelNutMidnightConfig.enableOneBlockSkyblock;
+		BlockPos configuredIslandCenter = getConfiguredIslandCenter();
+		BlockPos configuredOneBlockCenter = getConfiguredOneBlockCenter();
 		BlockPos islandPosition = worldData.hasGeneratedBetelSkyIsland()
 				? worldData.getIslandCenter()
-				: ISLAND_CENTER;
+				: configuredIslandCenter;
+		BlockPos oneBlockPosition = worldData.hasGeneratedBetelOneBlockIsland()
+				? worldData.getOneBlockCenter()
+				: configuredOneBlockCenter;
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Is Betel Skyblock preset: {}", isPreset);
-		BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel Skyblock config fallback enabled: {}", configEnabled);
-		BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel Skyblock enabled: {}", enabled);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Is Betel One Block Skyblock preset: {}", isOneBlockPreset);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Classic Betel Skyblock enabled: {}", classicEnabled);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel One Block Skyblock enabled: {}", oneBlockEnabled);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Has generated island: {}",
 				worldData.hasGeneratedBetelSkyIsland());
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Island position: x={}, y={}, z={}",
 				islandPosition.getX(), islandPosition.getY(), islandPosition.getZ());
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Has generated one-block island: {}",
+				worldData.hasGeneratedBetelOneBlockIsland());
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] One-block island position: x={}, y={}, z={}",
+				oneBlockPosition.getX(), oneBlockPosition.getY(), oneBlockPosition.getZ());
 
-		if (!enabled) {
+		if (isOneBlockPreset) {
+			if (!BetelNutMidnightConfig.enableOneBlockSkyblock) {
+				BetelNutMod.LOGGER.info(
+						"[Betel Nut Mod] One block skyblock preset detected, but one block skyblock generation is disabled by config.");
+				return;
+			}
+			generateOneBlockIslandIfNeeded(level, worldData);
+			return;
+		}
+
+		if (!isPreset) {
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel Skyblock disabled because current world is not a skyblock preset.");
+			return;
+		}
+
+		if (!BetelNutMidnightConfig.enableClassicSkyblock) {
 			BetelNutMod.LOGGER.info(
-					"[Betel Nut Mod] Betel Skyblock disabled because current world is not Betel Skyblock preset and config betelSkyblockEnabled is false.");
+					"[Betel Nut Mod] Classic skyblock preset detected, but classic skyblock generation is disabled by config.");
 			return;
 		}
 
 		if (worldData.hasGeneratedBetelSkyIsland()) {
 			BlockPos recordedCenter = worldData.getIslandCenter();
-			boolean centerMatches = ISLAND_CENTER.equals(recordedCenter);
-			boolean islandCorePresent = isIslandCorePresent(level, ISLAND_CENTER);
+			boolean islandCorePresent = isIslandCorePresent(level, recordedCenter);
 			BetelNutMod.LOGGER.info("[Betel Nut Mod] recorded island center = {}", recordedCenter);
-			BetelNutMod.LOGGER.info("[Betel Nut Mod] fixed island center expected = {}", ISLAND_CENTER);
-			BetelNutMod.LOGGER.info("[Betel Nut Mod] island core present at fixed center = {}", islandCorePresent);
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] configured island center = {}", configuredIslandCenter);
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] island core present at recorded center = {}", islandCorePresent);
 
-			if (centerMatches && islandCorePresent) {
+			if (islandCorePresent) {
 				if (!worldData.hasSetSkyblockSpawn()) {
 					setSkyblockSpawn(level, worldData);
 				}
@@ -351,27 +549,78 @@ public final class BetelSkyblockManager {
 			}
 
 			BetelNutMod.LOGGER.warn(
-					"[Betel Nut Mod] CCA says the sky island was generated, but the fixed island is missing or moved; regenerating at x={}, y={}, z={}",
-					ISLAND_CENTER.getX(), ISLAND_CENTER.getY(), ISLAND_CENTER.getZ());
+					"[Betel Nut Mod] CCA says the sky island was generated, but the recorded island is missing; regenerating at x={}, y={}, z={}",
+					configuredIslandCenter.getX(), configuredIslandCenter.getY(), configuredIslandCenter.getZ());
 		}
 
 		generateInitialIsland(level, worldData, false);
 	}
 
+	private static void generateOneBlockIslandIfNeeded(ServerLevel level, BetelSkyblockWorldComponent worldData) {
+		BlockPos configuredOneBlockCenter = getConfiguredOneBlockCenter();
+		if (worldData.hasGeneratedBetelOneBlockIsland()) {
+			BlockPos recordedCenter = worldData.getOneBlockCenter();
+			boolean oneBlockCorePresent = isOneBlockCorePresent(level, recordedCenter);
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] recorded one-block center = {}", recordedCenter);
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] configured one-block center = {}", configuredOneBlockCenter);
+			BetelNutMod.LOGGER.info("[Betel Nut Mod] one-block core present at recorded center = {}",
+					oneBlockCorePresent);
+
+			if (oneBlockCorePresent) {
+				if (!worldData.hasSetBetelOneBlockSpawn()) {
+					setBetelOneBlockSpawn(level, worldData);
+				}
+				BetelNutMod.LOGGER.info(
+						"[Betel Nut Mod] Betel One Block Skyblock already generated; startup generation skipped");
+				return;
+			}
+
+			if (!REPAIR_MISSING_OR_MOVED_ISLAND) {
+				BetelNutMod.LOGGER.warn(
+						"[Betel Nut Mod] CCA says the one-block island was generated, but the fixed block check failed; use /betelskyblock reset_one_block then /betelskyblock generate_one_block to repair it.");
+				return;
+			}
+
+			BetelNutMod.LOGGER.warn(
+					"[Betel Nut Mod] CCA says the one-block island was generated, but the recorded block is missing; regenerating at x={}, y={}, z={}",
+					configuredOneBlockCenter.getX(), configuredOneBlockCenter.getY(), configuredOneBlockCenter.getZ());
+		}
+
+		generateOneBlockIsland(level, worldData, false);
+	}
+
 	private static void generateInitialIsland(ServerLevel level, BetelSkyblockWorldComponent worldData,
 			boolean forced) {
+		BlockPos islandCenter = getConfiguredIslandCenter();
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] generating island at x={}, y={}, z={}{}",
-				ISLAND_CENTER.getX(), ISLAND_CENTER.getY(), ISLAND_CENTER.getZ(), forced ? " (forced)" : "");
+				islandCenter.getX(), islandCenter.getY(), islandCenter.getZ(), forced ? " (forced)" : "");
 
 		int setBlockCalls = 0;
-		setBlockCalls += clearBuildArea(level, ISLAND_CENTER);
-		setBlockCalls += buildVanillaIslandTerrain(level, ISLAND_CENTER);
-		setBlockCalls += placeVanillaStarterContents(level, ISLAND_CENTER);
-		setBlockCalls += placeOptionalBetelContents(level, ISLAND_CENTER);
+		setBlockCalls += clearBuildArea(level, islandCenter);
+		setBlockCalls += buildVanillaIslandTerrain(level, islandCenter);
+		setBlockCalls += placeVanillaStarterContents(level, islandCenter);
+		setBlockCalls += placeOptionalBetelContents(level, islandCenter);
 
-		worldData.markGenerated(ISLAND_CENTER);
+		worldData.markGenerated(islandCenter);
 		setBlockCalls += setSkyblockSpawn(level, worldData);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] island generation finished; setBlockState calls = {}",
+				setBlockCalls);
+	}
+
+	private static void generateOneBlockIsland(ServerLevel level, BetelSkyblockWorldComponent worldData,
+			boolean forced) {
+		BlockPos oneBlockCenter = getConfiguredOneBlockCenter();
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] generating one-block island at x={}, y={}, z={}{}",
+				oneBlockCenter.getX(), oneBlockCenter.getY(), oneBlockCenter.getZ(),
+				forced ? " (forced)" : "");
+
+		int setBlockCalls = 0;
+		setBlockCalls += setBlockState(level, oneBlockCenter,
+				ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState());
+
+		worldData.markOneBlockGenerated(oneBlockCenter);
+		setBlockCalls += setBetelOneBlockSpawn(level, worldData);
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] one-block island generation finished; setBlockState calls = {}",
 				setBlockCalls);
 	}
 
@@ -381,6 +630,16 @@ public final class BetelSkyblockManager {
 		level.setDefaultSpawnPos(spawnPos, 0.0F);
 		worldData.markSkyblockSpawnSet();
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] world spawn set to x={}, y={}, z={}",
+				spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
+		return setBlockCalls;
+	}
+
+	private static int setBetelOneBlockSpawn(ServerLevel level, BetelSkyblockWorldComponent worldData) {
+		BlockPos spawnPos = getOneBlockSpawn(worldData);
+		int setBlockCalls = clearSpawnSpace(level, spawnPos);
+		level.setDefaultSpawnPos(spawnPos, 0.0F);
+		worldData.markBetelOneBlockSpawnSet();
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] one-block world spawn set to x={}, y={}, z={}",
 				spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
 		return setBlockCalls;
 	}
@@ -426,10 +685,14 @@ public final class BetelSkyblockManager {
 		int setBlockCalls = 0;
 		BlockPos composterPos = center.offset(-2, 1, 0);
 		BlockPos campfirePos = center.offset(0, 1, 2);
-		BlockPos chestPos = center.offset(2, 1, 0);
 
 		setBlockCalls += setBlockState(level, composterPos, Blocks.COMPOSTER.defaultBlockState());
 		setBlockCalls += setBlockState(level, campfirePos, Blocks.CAMPFIRE.defaultBlockState());
+		if (!BetelNutMidnightConfig.classicGenerateStarterChest) {
+			return setBlockCalls;
+		}
+
+		BlockPos chestPos = center.offset(2, 1, 0);
 		setBlockCalls += setBlockState(level, chestPos,
 				Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.WEST));
 		fillStarterChest(level, chestPos);
@@ -484,7 +747,9 @@ public final class BetelSkyblockManager {
 			chest.setItem(5, new ItemStack(Items.STICK, 4));
 			chest.setItem(6, new ItemStack(Items.ICE, 1));
 			chest.setItem(7, new ItemStack(Items.LAVA_BUCKET, 1));
-			chest.setItem(8, createGuideBook());
+			if (BetelNutMidnightConfig.classicGiveGuideBook) {
+				chest.setItem(8, createGuideBook());
+			}
 		} catch (RuntimeException exception) {
 			BetelNutMod.LOGGER.warn(
 					"[Betel Nut Mod] Starter chest fill failed; island terrain generation remains intact.",
@@ -563,17 +828,45 @@ public final class BetelSkyblockManager {
 		return !level.isOutsideBuildHeight(pos) && level.getWorldBorder().isWithinBounds(pos);
 	}
 
+	private static FlatLevelSource getOverworldFlatLevelSource(ServerLevel level) {
+		if (level.dimension() != Level.OVERWORLD) {
+			return null;
+		}
+		if (level.getChunkSource().getGenerator() instanceof FlatLevelSource flatLevelSource) {
+			return flatLevelSource;
+		}
+		return null;
+	}
+
+	private static boolean usesTheVoidBiome(FlatLevelSource flatLevelSource) {
+		return flatLevelSource.settings().getBiome().is(Biomes.THE_VOID);
+	}
+
+	private static boolean hasNoFlatLayers(FlatLevelSource flatLevelSource) {
+		return flatLevelSource.settings().getLayersInfo().isEmpty()
+				&& flatLevelSource.settings().getLayers().isEmpty();
+	}
+
+	private static boolean hasOneAirMarkerLayer(FlatLevelSource flatLevelSource) {
+		List<FlatLayerInfo> layers = flatLevelSource.settings().getLayersInfo();
+		return layers.size() == 1
+				&& layers.get(0).getHeight() == 1
+				&& layers.get(0).getBlockState().is(Blocks.AIR);
+	}
+
 	private static boolean isIslandCorePresent(ServerLevel level, BlockPos center) {
 		BlockState centerState = level.getBlockState(center);
 		BlockState belowState = level.getBlockState(center.below());
 		BlockState composterState = level.getBlockState(center.offset(-2, 1, 0));
 		BlockState campfireState = level.getBlockState(center.offset(0, 1, 2));
-		BlockState chestState = level.getBlockState(center.offset(2, 1, 0));
 		return centerState.is(Blocks.GRASS_BLOCK)
 				&& (belowState.is(Blocks.DIRT) || belowState.is(Blocks.STONE))
 				&& composterState.is(Blocks.COMPOSTER)
-				&& campfireState.is(Blocks.CAMPFIRE)
-				&& chestState.is(Blocks.CHEST);
+				&& campfireState.is(Blocks.CAMPFIRE);
+	}
+
+	private static boolean isOneBlockCorePresent(ServerLevel level, BlockPos center) {
+		return level.getBlockState(center).is(ModBlocks.BETEL_NUT_RESIDUE_BLOCK);
 	}
 
 	private static String dimensionLabel(ServerLevel level) {

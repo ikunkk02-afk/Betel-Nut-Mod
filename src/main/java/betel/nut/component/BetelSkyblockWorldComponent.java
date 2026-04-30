@@ -12,12 +12,22 @@ public class BetelSkyblockWorldComponent implements Component {
 	private static final String ISLAND_Y_KEY = "islandY";
 	private static final String ISLAND_Z_KEY = "islandZ";
 	private static final String HAS_SET_SKYBLOCK_SPAWN_KEY = "hasSetSkyblockSpawn";
+	private static final String HAS_GENERATED_BETEL_ONE_BLOCK_ISLAND_KEY = "hasGeneratedBetelOneBlockIsland";
+	private static final String ONE_BLOCK_X_KEY = "oneBlockX";
+	private static final String ONE_BLOCK_Y_KEY = "oneBlockY";
+	private static final String ONE_BLOCK_Z_KEY = "oneBlockZ";
+	private static final String HAS_SET_BETEL_ONE_BLOCK_SPAWN_KEY = "hasSetBetelOneBlockSpawn";
 
 	private boolean hasGeneratedBetelSkyIsland;
 	private int islandX;
 	private int islandY = 128;
 	private int islandZ;
 	private boolean hasSetSkyblockSpawn;
+	private boolean hasGeneratedBetelOneBlockIsland;
+	private int oneBlockX;
+	private int oneBlockY = 128;
+	private int oneBlockZ;
+	private boolean hasSetBetelOneBlockSpawn;
 
 	public BetelSkyblockWorldComponent(Level level) {
 	}
@@ -34,6 +44,18 @@ public class BetelSkyblockWorldComponent implements Component {
 		return this.hasSetSkyblockSpawn;
 	}
 
+	public boolean hasGeneratedBetelOneBlockIsland() {
+		return this.hasGeneratedBetelOneBlockIsland;
+	}
+
+	public BlockPos getOneBlockCenter() {
+		return new BlockPos(this.oneBlockX, this.oneBlockY, this.oneBlockZ);
+	}
+
+	public boolean hasSetBetelOneBlockSpawn() {
+		return this.hasSetBetelOneBlockSpawn;
+	}
+
 	public void markGenerated(BlockPos islandCenter) {
 		this.hasGeneratedBetelSkyIsland = true;
 		this.islandX = islandCenter.getX();
@@ -45,12 +67,31 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.hasSetSkyblockSpawn = true;
 	}
 
+	public void markOneBlockGenerated(BlockPos oneBlockCenter) {
+		this.hasGeneratedBetelOneBlockIsland = true;
+		this.oneBlockX = oneBlockCenter.getX();
+		this.oneBlockY = oneBlockCenter.getY();
+		this.oneBlockZ = oneBlockCenter.getZ();
+	}
+
+	public void markBetelOneBlockSpawnSet() {
+		this.hasSetBetelOneBlockSpawn = true;
+	}
+
 	public void resetBetelSkyIslandGeneration() {
 		this.hasGeneratedBetelSkyIsland = false;
 		this.islandX = 0;
 		this.islandY = 128;
 		this.islandZ = 0;
 		this.hasSetSkyblockSpawn = false;
+	}
+
+	public void resetBetelOneBlockIslandGeneration() {
+		this.hasGeneratedBetelOneBlockIsland = false;
+		this.oneBlockX = 0;
+		this.oneBlockY = 128;
+		this.oneBlockZ = 0;
+		this.hasSetBetelOneBlockSpawn = false;
 	}
 
 	@Override
@@ -60,6 +101,11 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.islandY = tag.contains(ISLAND_Y_KEY) ? tag.getInt(ISLAND_Y_KEY) : 128;
 		this.islandZ = tag.getInt(ISLAND_Z_KEY);
 		this.hasSetSkyblockSpawn = tag.getBoolean(HAS_SET_SKYBLOCK_SPAWN_KEY);
+		this.hasGeneratedBetelOneBlockIsland = tag.getBoolean(HAS_GENERATED_BETEL_ONE_BLOCK_ISLAND_KEY);
+		this.oneBlockX = tag.getInt(ONE_BLOCK_X_KEY);
+		this.oneBlockY = tag.contains(ONE_BLOCK_Y_KEY) ? tag.getInt(ONE_BLOCK_Y_KEY) : 128;
+		this.oneBlockZ = tag.getInt(ONE_BLOCK_Z_KEY);
+		this.hasSetBetelOneBlockSpawn = tag.getBoolean(HAS_SET_BETEL_ONE_BLOCK_SPAWN_KEY);
 	}
 
 	@Override
@@ -69,5 +115,10 @@ public class BetelSkyblockWorldComponent implements Component {
 		tag.putInt(ISLAND_Y_KEY, this.islandY);
 		tag.putInt(ISLAND_Z_KEY, this.islandZ);
 		tag.putBoolean(HAS_SET_SKYBLOCK_SPAWN_KEY, this.hasSetSkyblockSpawn);
+		tag.putBoolean(HAS_GENERATED_BETEL_ONE_BLOCK_ISLAND_KEY, this.hasGeneratedBetelOneBlockIsland);
+		tag.putInt(ONE_BLOCK_X_KEY, this.oneBlockX);
+		tag.putInt(ONE_BLOCK_Y_KEY, this.oneBlockY);
+		tag.putInt(ONE_BLOCK_Z_KEY, this.oneBlockZ);
+		tag.putBoolean(HAS_SET_BETEL_ONE_BLOCK_SPAWN_KEY, this.hasSetBetelOneBlockSpawn);
 	}
 }

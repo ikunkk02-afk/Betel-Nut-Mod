@@ -8,8 +8,10 @@ public final class ModComposting {
 	public static void registerCompostables() {
 		// Residue resources are reserved for the later Betel sky island loop:
 		// eating betel nuts creates residue, then composting and compression form early resource cycling.
-		CompostingChanceRegistry.INSTANCE.add(ModItems.BETEL_NUT_RESIDUE, 0.3F);
-		CompostingChanceRegistry.INSTANCE.add(ModBlocks.BETEL_NUT_RESIDUE_BLOCK.asItem(), 1.0F);
+		CompostingChanceRegistry.INSTANCE.add(ModItems.BETEL_NUT_RESIDUE,
+				(float) BetelNutMidnightConfig.residueCompostChance);
+		CompostingChanceRegistry.INSTANCE.add(ModBlocks.BETEL_NUT_RESIDUE_BLOCK.asItem(),
+				(float) BetelNutMidnightConfig.residueBlockCompostChance);
 	}
 
 	private ModComposting() {
