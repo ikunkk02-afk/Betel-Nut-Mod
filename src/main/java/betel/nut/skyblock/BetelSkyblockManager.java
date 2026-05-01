@@ -612,7 +612,7 @@ public final class BetelSkyblockManager {
 
 		int setBlockCalls = 0;
 		setBlockCalls += clearBuildArea(level, islandCenter);
-		setBlockCalls += buildVanillaIslandTerrain(level, islandCenter);
+		setBlockCalls += buildResidueIslandTerrain(level, islandCenter);
 		setBlockCalls += placeVanillaStarterContents(level, islandCenter);
 		setBlockCalls += placeOptionalBetelContents(level, islandCenter);
 
@@ -672,7 +672,8 @@ public final class BetelSkyblockManager {
 		return setBlockCalls;
 	}
 
-	private static int buildVanillaIslandTerrain(ServerLevel level, BlockPos center) {
+	private static int buildResidueIslandTerrain(ServerLevel level, BlockPos center) {
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Generating classic Betel Skyblock with residue block terrain.");
 		int setBlockCalls = 0;
 		for (int x = -4; x <= 4; x++) {
 			for (int z = -4; z <= 4; z++) {
@@ -681,18 +682,24 @@ public final class BetelSkyblockManager {
 				}
 
 				BlockPos topPos = center.offset(x, 0, z);
-				setBlockCalls += setBlockState(level, topPos, Blocks.GRASS_BLOCK.defaultBlockState());
-				setBlockCalls += setBlockState(level, topPos.below(), Blocks.DIRT.defaultBlockState());
+				setBlockCalls += setBlockState(level, topPos, residueTerrainState());
+				setBlockCalls += setBlockState(level, topPos.below(), residueTerrainState());
 
 				int depth = hangingDepth(x, z);
 				for (int y = 2; y <= depth; y++) {
-					BlockState state = y == depth || Math.abs(x) + Math.abs(z) <= 3
-							? Blocks.STONE.defaultBlockState()
-							: Blocks.DIRT.defaultBlockState();
-					setBlockCalls += setBlockState(level, topPos.below(y), state);
+					setBlockCalls += setBlockState(level, topPos.below(y), residueTerrainState());
 				}
 			}
 		}
+
+		BlockPos grassPos = classicGrassBlockPos(center);
+		BlockPos dirtPos = classicDirtBlockPos(center);
+		setBlockCalls += setBlockState(level, grassPos, Blocks.GRASS_BLOCK.defaultBlockState());
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Placed one grass block at x={}, y={}, z={}",
+				grassPos.getX(), grassPos.getY(), grassPos.getZ());
+		setBlockCalls += setBlockState(level, dirtPos, Blocks.DIRT.defaultBlockState());
+		BetelNutMod.LOGGER.info("[Betel Nut Mod] Placed one dirt block at x={}, y={}, z={}",
+				dirtPos.getX(), dirtPos.getY(), dirtPos.getZ());
 		return setBlockCalls;
 	}
 
@@ -717,16 +724,16 @@ public final class BetelSkyblockManager {
 	private static int placeOptionalBetelContents(ServerLevel level, BlockPos center) {
 		int setBlockCalls = 0;
 		try {
-			setBlockCalls += setBlockState(level, center.offset(0, 1, -2),
+			setBlockCalls += setBlockState(level, classicGrassBlockPos(center).above(),
 					ModBlocks.BETEL_PALM_SAPLING.defaultBlockState());
 			setBlockCalls += setBlockState(level, center.offset(-3, 0, 0),
-					ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState());
+					residueTerrainState());
 			setBlockCalls += setBlockState(level, center.offset(3, 0, -1),
-					ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState());
+					residueTerrainState());
 			setBlockCalls += setBlockState(level, center.offset(1, 0, 3),
-					ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState());
+					residueTerrainState());
 			setBlockCalls += setBlockState(level, center.offset(-1, 0, -3),
-					ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState());
+					residueTerrainState());
 		} catch (RuntimeException exception) {
 			BetelNutMod.LOGGER.warn(
 					"[Betel Nut Mod] Optional betel blocks failed to place; vanilla sky island generation remains intact.",
@@ -829,6 +836,18 @@ public final class BetelSkyblockManager {
 		return 2 + Math.floorMod(x * 13 + z * 7, 2);
 	}
 
+	private static BlockPos classicGrassBlockPos(BlockPos center) {
+		return center;
+	}
+
+	private static BlockPos classicDirtBlockPos(BlockPos center) {
+		return center.east();
+	}
+
+	private static BlockState residueTerrainState() {
+		return ModBlocks.BETEL_NUT_RESIDUE_BLOCK.defaultBlockState();
+	}
+
 	private static int setBlockState(ServerLevel level, BlockPos pos, BlockState state) {
 		if (!canWriteAt(level, pos)) {
 			BetelNutMod.LOGGER.warn("[Betel Nut Mod] Skipped skyblock block outside writable area: {}", pos);
@@ -872,10 +891,15 @@ public final class BetelSkyblockManager {
 	private static boolean isIslandCorePresent(ServerLevel level, BlockPos center) {
 		BlockState centerState = level.getBlockState(center);
 		BlockState belowState = level.getBlockState(center.below());
+		BlockState dirtState = level.getBlockState(classicDirtBlockPos(center));
 		BlockState composterState = level.getBlockState(center.offset(-2, 1, 0));
 		BlockState campfireState = level.getBlockState(center.offset(0, 1, 2));
-		return centerState.is(Blocks.GRASS_BLOCK)
-				&& (belowState.is(Blocks.DIRT) || belowState.is(Blocks.STONE))
+		boolean hasNewResidueCore = centerState.is(Blocks.GRASS_BLOCK)
+				&& belowState.is(ModBlocks.BETEL_NUT_RESIDUE_BLOCK)
+				&& dirtState.is(Blocks.DIRT);
+		boolean hasLegacyCore = centerState.is(Blocks.GRASS_BLOCK)
+				&& (belowState.is(Blocks.DIRT) || belowState.is(Blocks.STONE));
+		return (hasNewResidueCore || hasLegacyCore)
 				&& composterState.is(Blocks.COMPOSTER)
 				&& campfireState.is(Blocks.CAMPFIRE);
 	}

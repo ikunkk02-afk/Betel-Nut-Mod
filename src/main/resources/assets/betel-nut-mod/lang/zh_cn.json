@@ -125,5 +125,6 @@
   "betel-nut-mod.midnightconfig.hechengTianxiaNegativeDurationSeconds": "合成天下大果负面效果时间",
   "betel-nut-mod.midnightconfig.hechengTianxiaAllowRepeatBeforeAftermath": "允许后劲结束前重复食用合成天下大果",
   "message.betel-nut-mod.withdrawal.no_solid_food": "戒断反应让你无法吃下普通食物。",
+  "message.betel-nut-mod.betel_suppresses_withdrawal": "槟榔暂时压住了部分戒断反应。",
   "message.betel-nut-mod.end_frame_ritual.success": "水中的祭品被雷霆吞噬，末地传送门框架出现了。"
 }

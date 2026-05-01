@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 public final class BetelMessages {
+	public static final String BETEL_SUPPRESSES_WITHDRAWAL = "message.betel-nut-mod.betel_suppresses_withdrawal";
 	public static final String WITHDRAWAL_SUPPRESSED = "\u4e0d\u9002\u611f\u6682\u65f6\u6d88\u9000\u4e86\u2026\u2026";
 	public static final String MILK_RELIEF = "\u725b\u5976\u53ea\u80fd\u6682\u65f6\u7f13\u89e3\u4e0d\u9002\uff0c\u65e0\u6cd5\u771f\u6b63\u964d\u4f4e\u4f9d\u8d56\u3002";
 	public static final String GOLDEN_APPLE_RECOVERY = "\u4f60\u7684\u4f9d\u8d56\u611f\u51cf\u8f7b\u4e86\u4e00\u4e9b\u3002";
@@ -29,6 +30,23 @@ public final class BetelMessages {
 
 		if (config.showChatMessages) {
 			player.displayClientMessage(Component.literal(message), false);
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean sendTranslatable(ServerPlayer player, String translationKey) {
+		BetelNutConfig config = BetelNutConfig.get();
+		Component message = Component.translatable(translationKey);
+
+		if (config.showActionbarMessages) {
+			player.displayClientMessage(message, true);
+			return true;
+		}
+
+		if (config.showChatMessages) {
+			player.displayClientMessage(message, false);
 			return true;
 		}
 

@@ -125,5 +125,6 @@
   "betel-nut-mod.midnightconfig.hechengTianxiaNegativeDurationSeconds": "Craft the World big fruit aftermath duration",
   "betel-nut-mod.midnightconfig.hechengTianxiaAllowRepeatBeforeAftermath": "Allow repeated Craft the World big fruit before aftermath ends",
   "message.betel-nut-mod.withdrawal.no_solid_food": "Withdrawal prevents you from eating ordinary food.",
+  "message.betel-nut-mod.betel_suppresses_withdrawal": "The betel nut temporarily suppresses part of the withdrawal reaction.",
   "message.betel-nut-mod.end_frame_ritual.success": "The offerings in the water were consumed by lightning. End Portal Frames have appeared."
 }

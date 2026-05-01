@@ -13,6 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,13 +59,30 @@ public class BetelNutItem extends BetelNutFoodItem {
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
+			int suppressSlownessTicks = 0;
+			int suppressMiningFatigueTicks = 0;
+			int suppressWeaknessTicks = 0;
 			for (EffectSpec effect : this.effects) {
 				player.addEffect(new MobEffectInstance(effect.effect(), effect.durationTicks(), effect.amplifier()));
+				if (!isSyntheticWorldBetel) {
+					if (effect.effect().is(MobEffects.MOVEMENT_SPEED)) {
+						suppressSlownessTicks = Math.max(suppressSlownessTicks, effect.durationTicks());
+					} else if (effect.effect().is(MobEffects.DIG_SPEED)) {
+						suppressMiningFatigueTicks = Math.max(suppressMiningFatigueTicks, effect.durationTicks());
+					} else if (effect.effect().is(MobEffects.DAMAGE_BOOST)) {
+						suppressWeaknessTicks = Math.max(suppressWeaknessTicks, effect.durationTicks());
+					}
+				}
 			}
 
 			var addiction = BetelNutEntityComponents.ADDICTION.get(player);
+			boolean suppressedWithdrawalConflicts = false;
+			if (!isSyntheticWorldBetel) {
+				suppressedWithdrawalConflicts = addiction.suppressConflictingWithdrawalEffects(player,
+						suppressSlownessTicks, suppressMiningFatigueTicks, suppressWeaknessTicks);
+			}
 			if (isSyntheticWorldBetel) {
-				addiction.startHechengTianxiaAftermath(player,
+				suppressedWithdrawalConflicts = addiction.startHechengTianxiaAftermath(player,
 						BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath);
 				BetelQuestAdvancements.grantEatHechengTianxia(player);
 			}
@@ -74,6 +92,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 						Math.max(0, this.addictionIncreaseSupplier.getAsInt()),
 						level.getGameTime(),
 						WithdrawalEatingRestrictions.shouldClearWithdrawalEffectsOnEat(stack));
+				addiction.sendBetelSuppressionFeedbackIfNeeded(player, suppressedWithdrawalConflicts);
 			}
 			BetelSkyblockManager.onBetelNutEaten(player);
 

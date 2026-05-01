@@ -25,6 +25,7 @@ public final class BetelNutEvents {
 						BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
 						addiction.clearActiveWithdrawalPenalties(player);
 						addiction.tickHechengTianxiaAftereffects(player);
+						addiction.tickBetelWithdrawalSuppressions();
 						if (server.getTickCount() % 20 == 0) {
 							AddictionSyncPayload.send(player);
 						}
@@ -42,6 +43,7 @@ public final class BetelNutEvents {
 					addiction.handleRespawnWithdrawalCheck(player);
 					addiction.serverTick(player);
 					addiction.tickHechengTianxiaAftereffects(player);
+					addiction.tickBetelWithdrawalSuppressions();
 				}
 			}
 

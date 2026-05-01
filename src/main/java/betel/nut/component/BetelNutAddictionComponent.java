@@ -7,10 +7,12 @@ import betel.nut.addiction.AddictionStageUtil;
 import betel.nut.effect.HechengTianxiaEffects;
 import betel.nut.message.BetelMessages;
 import betel.nut.network.AddictionSyncPayload;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -29,6 +31,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	private static final String HECHENG_TIANXIA_POSITIVE_TICKS_KEY = "hechengTianxiaPositiveTicks";
 	private static final String HECHENG_TIANXIA_COMA_TICKS_KEY = "hechengTianxiaComaTicks";
 	private static final String HECHENG_TIANXIA_NEGATIVE_TICKS_KEY = "hechengTianxiaNegativeTicks";
+	private static final String BETEL_SUPPRESS_SLOWNESS_TICKS_KEY = "betelSuppressSlownessTicks";
+	private static final String BETEL_SUPPRESS_MINING_FATIGUE_TICKS_KEY = "betelSuppressMiningFatigueTicks";
+	private static final String BETEL_SUPPRESS_WEAKNESS_TICKS_KEY = "betelSuppressWeaknessTicks";
 	private static final int VISIBLE_WITHDRAWAL_THRESHOLD = 25;
 	private static final ResourceLocation WITHDRAWAL_MAX_HEALTH_PENALTY_ID = BetelNutMod
 			.id("withdrawal_max_health_penalty");
@@ -46,6 +51,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	private int hechengTianxiaPositiveTicks;
 	private int hechengTianxiaComaTicks;
 	private int hechengTianxiaNegativeTicks;
+	private int betelSuppressSlownessTicks;
+	private int betelSuppressMiningFatigueTicks;
+	private int betelSuppressWeaknessTicks;
 	private long nextHechengTianxiaMessageTime;
 
 	public BetelNutAddictionComponent(Player player) {
@@ -84,6 +92,47 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	public int getWithdrawalStage() {
 		return getWithdrawalSeverity();
+	}
+
+	public boolean suppressConflictingWithdrawalEffects(ServerPlayer player, int slownessTicks,
+			int miningFatigueTicks, int weaknessTicks) {
+		boolean suppressedAny = false;
+		if (slownessTicks > 0) {
+			this.betelSuppressSlownessTicks = Math.max(this.betelSuppressSlownessTicks, slownessTicks);
+			player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+			suppressedAny = true;
+		}
+		if (miningFatigueTicks > 0) {
+			this.betelSuppressMiningFatigueTicks = Math.max(this.betelSuppressMiningFatigueTicks,
+					miningFatigueTicks);
+			player.removeEffect(MobEffects.DIG_SLOWDOWN);
+			suppressedAny = true;
+		}
+		if (weaknessTicks > 0) {
+			this.betelSuppressWeaknessTicks = Math.max(this.betelSuppressWeaknessTicks, weaknessTicks);
+			player.removeEffect(MobEffects.WEAKNESS);
+			suppressedAny = true;
+		}
+		return suppressedAny;
+	}
+
+	public void tickBetelWithdrawalSuppressions() {
+		if (this.betelSuppressSlownessTicks > 0) {
+			this.betelSuppressSlownessTicks--;
+		}
+		if (this.betelSuppressMiningFatigueTicks > 0) {
+			this.betelSuppressMiningFatigueTicks--;
+		}
+		if (this.betelSuppressWeaknessTicks > 0) {
+			this.betelSuppressWeaknessTicks--;
+		}
+	}
+
+	public void sendBetelSuppressionFeedbackIfNeeded(ServerPlayer player, boolean suppressedAny) {
+		if (!suppressedAny || !BetelNutConfig.get().enableAddictionSystem || getWithdrawalSeverity() <= 0) {
+			return;
+		}
+		BetelMessages.sendTranslatable(player, BetelMessages.BETEL_SUPPRESSES_WITHDRAWAL);
 	}
 
 	public int getNextWithdrawalTicks(ServerPlayer player) {
@@ -165,10 +214,12 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			return false;
 		}
 
-		this.hechengTianxiaPositiveTicks = HechengTianxiaEffects.positiveDurationTicks();
+		int positiveTicks = HechengTianxiaEffects.positiveDurationTicks();
+		this.hechengTianxiaPositiveTicks = positiveTicks;
 		this.hechengTianxiaComaTicks = 0;
 		this.hechengTianxiaNegativeTicks = 0;
 		HechengTianxiaEffects.applyPositiveBurst(player);
+		suppressConflictingWithdrawalEffects(player, positiveTicks, positiveTicks, positiveTicks);
 		BetelNutMod.LOGGER.info(
 				"Started synthetic world betel aftereffect for {}: positiveTicks={}, comaTicks={}, negativeTicks={}",
 				player.getScoreboardName(), this.hechengTianxiaPositiveTicks,
@@ -679,47 +730,47 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 	}
 
-	private static void applyLightWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
+	private void applyLightWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
 		removeWithdrawalMaxHealthPenalty(player);
 		int stageOneAmplifier = config.stage1EffectAmplifierOffset;
-		player.addEffect(withdrawalEffect(config, MobEffects.MOVEMENT_SLOWDOWN, stageOneAmplifier));
-		player.addEffect(withdrawalEffect(config, MobEffects.DIG_SLOWDOWN, stageOneAmplifier));
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.MOVEMENT_SLOWDOWN, stageOneAmplifier);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.DIG_SLOWDOWN, stageOneAmplifier);
 		player.addEffect(withdrawalEffect(config, MobEffects.HUNGER, 0));
 	}
 
-	private static void applyMediumWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
+	private void applyMediumWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
 		applyWithdrawalMaxHealthPenalty(player, config, config.stage2MaxHealthPenalty);
-		player.addEffect(withdrawalEffect(config, MobEffects.MOVEMENT_SLOWDOWN, 1));
-		player.addEffect(withdrawalEffect(config, MobEffects.DIG_SLOWDOWN, 1));
-		player.addEffect(withdrawalEffect(config, MobEffects.WEAKNESS, 0));
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.MOVEMENT_SLOWDOWN, 1);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.DIG_SLOWDOWN, 1);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.WEAKNESS, 0);
 		player.addEffect(withdrawalEffect(config, MobEffects.HUNGER, 1));
 	}
 
-	private static void applyHeavyWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
+	private void applyHeavyWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
 		applyWithdrawalMaxHealthPenalty(player, config, config.stage3MaxHealthPenalty);
-		player.addEffect(withdrawalEffect(config, MobEffects.MOVEMENT_SLOWDOWN, 2));
-		player.addEffect(withdrawalEffect(config, MobEffects.DIG_SLOWDOWN, 2));
-		player.addEffect(withdrawalEffect(config, MobEffects.WEAKNESS, 1));
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.MOVEMENT_SLOWDOWN, 2);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.DIG_SLOWDOWN, 2);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.WEAKNESS, 1);
 		player.addEffect(withdrawalEffect(config, MobEffects.HUNGER, 1));
 		if (player.getRandom().nextFloat() < 0.35F) {
 			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, config.withdrawalNauseaDurationTicks, 0));
 		}
 	}
 
-	private static void applySevereWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
+	private void applySevereWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
 		applyWithdrawalMaxHealthPenalty(player, config, config.stage4MaxHealthPenalty);
-		player.addEffect(withdrawalEffect(config, MobEffects.MOVEMENT_SLOWDOWN, 2));
-		player.addEffect(withdrawalEffect(config, MobEffects.DIG_SLOWDOWN, 2));
-		player.addEffect(withdrawalEffect(config, MobEffects.WEAKNESS, 1));
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.MOVEMENT_SLOWDOWN, 2);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.DIG_SLOWDOWN, 2);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.WEAKNESS, 1);
 		player.addEffect(withdrawalEffect(config, MobEffects.HUNGER, 2));
 		player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, config.withdrawalNauseaDurationTicks, 0));
 	}
 
-	private static void applyExtremeWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
+	private void applyExtremeWithdrawalEffects(ServerPlayer player, BetelNutConfig config) {
 		applyWithdrawalMaxHealthPenalty(player, config, config.stage4MaxHealthPenalty);
-		player.addEffect(withdrawalEffect(config, MobEffects.MOVEMENT_SLOWDOWN, 3));
-		player.addEffect(withdrawalEffect(config, MobEffects.DIG_SLOWDOWN, 3));
-		player.addEffect(withdrawalEffect(config, MobEffects.WEAKNESS, 2));
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.MOVEMENT_SLOWDOWN, 3);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.DIG_SLOWDOWN, 3);
+		addWithdrawalEffectUnlessSuppressed(player, config, MobEffects.WEAKNESS, 2);
 		player.addEffect(withdrawalEffect(config, MobEffects.HUNGER, 2));
 		player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, config.withdrawalNauseaDurationTicks, 0));
 		if (config.enableStage4BlindnessOrDarkness) {
@@ -727,8 +778,22 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 	}
 
+	private void addWithdrawalEffectUnlessSuppressed(ServerPlayer player, BetelNutConfig config,
+			Holder<MobEffect> effect, int amplifier) {
+		if (effect.is(MobEffects.MOVEMENT_SLOWDOWN) && this.betelSuppressSlownessTicks > 0) {
+			return;
+		}
+		if (effect.is(MobEffects.DIG_SLOWDOWN) && this.betelSuppressMiningFatigueTicks > 0) {
+			return;
+		}
+		if (effect.is(MobEffects.WEAKNESS) && this.betelSuppressWeaknessTicks > 0) {
+			return;
+		}
+		player.addEffect(withdrawalEffect(config, effect, amplifier));
+	}
+
 	private static MobEffectInstance withdrawalEffect(BetelNutConfig config,
-			net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect,
+			Holder<MobEffect> effect,
 			int amplifier) {
 		return new MobEffectInstance(effect, config.withdrawalEffectDurationTicks, amplifier, false, true, true);
 	}
@@ -801,6 +866,10 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.hechengTianxiaPositiveTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_POSITIVE_TICKS_KEY));
 		this.hechengTianxiaComaTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_COMA_TICKS_KEY));
 		this.hechengTianxiaNegativeTicks = Math.max(0, tag.getInt(HECHENG_TIANXIA_NEGATIVE_TICKS_KEY));
+		this.betelSuppressSlownessTicks = Math.max(0, tag.getInt(BETEL_SUPPRESS_SLOWNESS_TICKS_KEY));
+		this.betelSuppressMiningFatigueTicks = Math.max(0,
+				tag.getInt(BETEL_SUPPRESS_MINING_FATIGUE_TICKS_KEY));
+		this.betelSuppressWeaknessTicks = Math.max(0, tag.getInt(BETEL_SUPPRESS_WEAKNESS_TICKS_KEY));
 	}
 
 	@Override
@@ -814,6 +883,9 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		tag.putInt(HECHENG_TIANXIA_POSITIVE_TICKS_KEY, this.hechengTianxiaPositiveTicks);
 		tag.putInt(HECHENG_TIANXIA_COMA_TICKS_KEY, this.hechengTianxiaComaTicks);
 		tag.putInt(HECHENG_TIANXIA_NEGATIVE_TICKS_KEY, this.hechengTianxiaNegativeTicks);
+		tag.putInt(BETEL_SUPPRESS_SLOWNESS_TICKS_KEY, this.betelSuppressSlownessTicks);
+		tag.putInt(BETEL_SUPPRESS_MINING_FATIGUE_TICKS_KEY, this.betelSuppressMiningFatigueTicks);
+		tag.putInt(BETEL_SUPPRESS_WEAKNESS_TICKS_KEY, this.betelSuppressWeaknessTicks);
 	}
 
 	@Override
@@ -828,6 +900,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 
 		copyHechengTianxiaFrom(other);
+		clearBetelWithdrawalSuppressions();
 
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!config.keepAddictionAfterDeath) {
@@ -859,12 +932,25 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.nextWithdrawalTime = other.nextWithdrawalTime;
 		this.notifiedWithdrawalStage = other.notifiedWithdrawalStage;
 		copyHechengTianxiaFrom(other);
+		copyBetelWithdrawalSuppressionsFrom(other);
 	}
 
 	private void copyHechengTianxiaFrom(BetelNutAddictionComponent other) {
 		this.hechengTianxiaPositiveTicks = other.hechengTianxiaPositiveTicks;
 		this.hechengTianxiaComaTicks = other.hechengTianxiaComaTicks;
 		this.hechengTianxiaNegativeTicks = other.hechengTianxiaNegativeTicks;
+	}
+
+	private void copyBetelWithdrawalSuppressionsFrom(BetelNutAddictionComponent other) {
+		this.betelSuppressSlownessTicks = other.betelSuppressSlownessTicks;
+		this.betelSuppressMiningFatigueTicks = other.betelSuppressMiningFatigueTicks;
+		this.betelSuppressWeaknessTicks = other.betelSuppressWeaknessTicks;
+	}
+
+	private void clearBetelWithdrawalSuppressions() {
+		this.betelSuppressSlownessTicks = 0;
+		this.betelSuppressMiningFatigueTicks = 0;
+		this.betelSuppressWeaknessTicks = 0;
 	}
 
 	private void clearStoredData() {
@@ -874,6 +960,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.cleanTime = 0;
 		this.nextWithdrawalTime = -1;
 		this.notifiedWithdrawalStage = 0;
+		clearBetelWithdrawalSuppressions();
 	}
 
 	private static int clamp(int value, int min, int max) {
