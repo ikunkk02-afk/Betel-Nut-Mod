@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public final class EnderBetelTeleportHandler {
-	private static final String TELEPORT_SUCCESS_MESSAGE = "\u672b\u5f71\u529b\u91cf\u626d\u66f2\u4e86\u4f60\u7684\u4f4d\u7f6e\u3002";
-	private static final String TELEPORT_FAILURE_MESSAGE = "\u672b\u5f71\u529b\u91cf\u6ca1\u6709\u627e\u5230\u5b89\u5168\u843d\u70b9\u3002";
+	private static final String TELEPORT_SUCCESS_MESSAGE = "message.betel-nut-mod.ender_betel.teleport_success";
+	private static final String TELEPORT_FAILURE_MESSAGE = "message.betel-nut-mod.ender_betel.teleport_failure";
 	private static final int PRIMARY_VERTICAL_SEARCH_RANGE = 8;
 	private static final int SECONDARY_VERTICAL_SEARCH_RANGE = 16;
 
@@ -191,7 +191,7 @@ public final class EnderBetelTeleportHandler {
 	}
 
 	private static void sendActionbar(ServerPlayer player, String message) {
-		player.displayClientMessage(Component.literal(message), true);
+		player.displayClientMessage(Component.translatable(message), true);
 	}
 
 	private EnderBetelTeleportHandler() {

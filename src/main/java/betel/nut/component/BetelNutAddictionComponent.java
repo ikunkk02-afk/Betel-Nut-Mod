@@ -780,13 +780,13 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	private void addWithdrawalEffectUnlessSuppressed(ServerPlayer player, BetelNutConfig config,
 			Holder<MobEffect> effect, int amplifier) {
-		if (effect.is(MobEffects.MOVEMENT_SLOWDOWN) && this.betelSuppressSlownessTicks > 0) {
+		if (effect.equals(MobEffects.MOVEMENT_SLOWDOWN) && this.betelSuppressSlownessTicks > 0) {
 			return;
 		}
-		if (effect.is(MobEffects.DIG_SLOWDOWN) && this.betelSuppressMiningFatigueTicks > 0) {
+		if (effect.equals(MobEffects.DIG_SLOWDOWN) && this.betelSuppressMiningFatigueTicks > 0) {
 			return;
 		}
-		if (effect.is(MobEffects.WEAKNESS) && this.betelSuppressWeaknessTicks > 0) {
+		if (effect.equals(MobEffects.WEAKNESS) && this.betelSuppressWeaknessTicks > 0) {
 			return;
 		}
 		player.addEffect(withdrawalEffect(config, effect, amplifier));

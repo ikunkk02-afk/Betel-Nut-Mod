@@ -12,6 +12,7 @@ import betel.nut.event.WithdrawalEatingRestrictions;
 import betel.nut.event.WithdrawalEatingRestrictions.EatingRestrictionCheck;
 import betel.nut.item.EnderBetelTeleportHandler;
 import betel.nut.skyblock.BetelSkyblockManager;
+import betel.nut.skyblock.BetelSkyblockManager.GenerationResult;
 import betel.nut.component.BetelNutWorldComponents;
 import betel.nut.component.BetelSkyblockWorldComponent;
 import betel.nut.worldgen.BetelPalmTreeGenerator;
@@ -64,7 +65,10 @@ public final class BetelCommands {
 					.then(literal("skyblock")
 							.then(literal("status").executes(BetelCommands::skyblockStatus))
 							.then(literal("generate").executes(BetelCommands::generateSkyblock))
+							.then(literal("force_generate").executes(BetelCommands::forceGenerateSkyblock))
 							.then(literal("generate_one_block").executes(BetelCommands::generateOneBlockSkyblock))
+							.then(literal("force_generate_one_block")
+									.executes(BetelCommands::forceGenerateOneBlockSkyblock))
 							.then(literal("reset").executes(BetelCommands::resetSkyblock))
 							.then(literal("reset_one_block").executes(BetelCommands::resetOneBlockSkyblock))
 							.then(literal("tp").executes(BetelCommands::teleportSkyblock))
@@ -80,7 +84,10 @@ public final class BetelCommands {
 					.requires(source -> source.hasPermission(2))
 					.then(literal("status").executes(BetelCommands::skyblockStatus))
 					.then(literal("generate").executes(BetelCommands::generateSkyblock))
+					.then(literal("force_generate").executes(BetelCommands::forceGenerateSkyblock))
 					.then(literal("generate_one_block").executes(BetelCommands::generateOneBlockSkyblock))
+					.then(literal("force_generate_one_block")
+							.executes(BetelCommands::forceGenerateOneBlockSkyblock))
 					.then(literal("reset").executes(BetelCommands::resetSkyblock))
 					.then(literal("reset_one_block").executes(BetelCommands::resetOneBlockSkyblock))
 					.then(literal("tp").executes(BetelCommands::teleportSkyblock))
@@ -92,6 +99,23 @@ public final class BetelCommands {
 		BetelNutMod.LOGGER.info("Betel nut debug commands registered successfully");
 	}
 
+	private static Component t(String translationKey, Object... args) {
+		return Component.translatable(translationKey, args);
+	}
+
+	private static void sendSuccess(CommandSourceStack source, String translationKey, boolean broadcast,
+			Object... args) {
+		source.sendSuccess(() -> t(translationKey, args), broadcast);
+	}
+
+	private static void sendFailure(CommandSourceStack source, String translationKey, Object... args) {
+		source.sendFailure(t(translationKey, args));
+	}
+
+	private static void sendOverworldNotLoaded(CommandSourceStack source) {
+		sendFailure(source, "command.betel-nut-mod.overworld_not_loaded");
+	}
+
 	private static int getAddiction(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
@@ -99,11 +123,11 @@ public final class BetelCommands {
 		long gameTime = player.level().getGameTime();
 		long lastEatTime = addiction.getLastEatTime();
 		long timeSinceLastEat = lastEatTime <= 0 ? 0 : Math.max(0, gameTime - lastEatTime);
-		String lastEatText = lastEatTime <= 0
-				? "\u65e0"
-				: lastEatTime + "\uff08\u8ddd\u4eca " + timeSinceLastEat + " tick\uff09";
+		Component lastEatText = lastEatTime <= 0
+				? t("command.betel-nut-mod.common.none")
+				: t("command.betel-nut-mod.addiction.last_eat", lastEatTime, timeSinceLastEat);
 		long cleanRemainingTicks = Math.max(0, addiction.getCleanTime() - gameTime);
-		String withdrawalStartRemaining = withdrawalStartRemainingText(player, addiction, config);
+		Component withdrawalStartRemaining = withdrawalStartRemainingText(player, addiction, config);
 		double maxHealthPenalty = addiction.getCurrentMaxHealthPenalty(player);
 		boolean hasMaxHealthPenalty = addiction.hasWithdrawalMaxHealthPenalty(player);
 		ItemStack mainHandStack = player.getMainHandItem();
@@ -111,27 +135,12 @@ public final class BetelCommands {
 		boolean eatingRestrictionEnabled = WithdrawalEatingRestrictions.isFeatureEnabled(config);
 		String mainHandName = mainHandStack.isEmpty() ? "empty" : mainHandStack.getHoverName().getString();
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u69df\u6994\u6210\u763e\u72b6\u6001\uff1a\u6210\u763e\u503c " + addiction.getAddictionValue()
-						+ "\uff0c\u6210\u763e\u9636\u6bb5 " + addiction.getAddictionStage()
-						+ "\uff0c\u6212\u65ad\u503c " + addiction.getWithdrawalValue()
-						+ "\uff0c\u5f53\u524d\u6212\u65ad\u60e9\u7f5a\u5f3a\u5ea6 " + addiction.getWithdrawalSeverity()
-						+ "\uff0c\u5df2\u63d0\u793a\u6212\u65ad\u9636\u6bb5 " + addiction.getNotifiedWithdrawalStage()
-						+ "\uff0c\u751f\u547d\u4e0a\u9650\u60e9\u7f5a " + maxHealthPenalty
-						+ "\uff0c\u6b63\u5728\u53d7\u751f\u547d\u4e0a\u9650\u60e9\u7f5a " + hasMaxHealthPenalty
-						+ "\uff0c\u4e0a\u6b21\u98df\u7528\u65f6\u95f4 " + lastEatText
-						+ "\uff0ctimeSinceLastEat " + timeSinceLastEat + " tick"
-						+ "\uff0cwithdrawalStartRemaining " + withdrawalStartRemaining
-						+ "\uff0c\u6e05\u9192\u4fdd\u62a4\u5269\u4f59 " + cleanRemainingTicks + " tick"
-						+ "\uff0c\u8fdb\u98df\u9650\u5236\u542f\u7528 " + eatingRestrictionEnabled
-						+ "\uff0c\u5f53\u524d\u8fdb\u98df\u9650\u5236\u7b49\u7ea7 "
-						+ eatingCheck.restrictionLevel().label()
-						+ "\uff0c\u4e3b\u624b\u7269\u54c1 " + mainHandName
-						+ "\uff0c\u662f\u5426\u98df\u7269 " + eatingCheck.food()
-						+ "\uff0c\u662f\u5426\u53ef\u98df\u7528 " + eatingCheck.allowed()
-						+ "\uff0c\u547d\u4e2d\u5141\u8bb8\u6807\u7b7e " + eatingCheck.matchedAllowedTags()
-						+ "\uff0c\u5224\u5b9a\u539f\u56e0 " + eatingCheck.reason() + "\u3002"),
-				false);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.addiction.status", false,
+				addiction.getAddictionValue(), addiction.getAddictionStage(), addiction.getWithdrawalValue(),
+				addiction.getWithdrawalSeverity(), addiction.getNotifiedWithdrawalStage(), maxHealthPenalty,
+				hasMaxHealthPenalty, lastEatText, timeSinceLastEat, withdrawalStartRemaining, cleanRemainingTicks,
+				eatingRestrictionEnabled, eatingCheck.restrictionLevel().label(), mainHandName, eatingCheck.food(),
+				eatingCheck.allowed(), eatingCheck.matchedAllowedTags(), eatingCheck.reason());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -142,11 +151,8 @@ public final class BetelCommands {
 		addiction.setAddictionValue(value);
 		addiction.refreshWithdrawalEffects(player);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u5df2\u5c06\u4f60\u7684\u69df\u6994\u6210\u763e\u503c\u8bbe\u7f6e\u4e3a "
-						+ addiction.getAddictionValue() + "\uff0c\u6210\u763e\u9636\u6bb5 "
-						+ addiction.getAddictionStage() + "\u3002"),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.addiction.set.success", true,
+				addiction.getAddictionValue(), addiction.getAddictionStage());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -157,11 +163,8 @@ public final class BetelCommands {
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
 		addiction.setAddictionValueAndResetLastEatTime(player, value);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Set betel addiction to " + addiction.getAddictionValue()
-						+ " (stage " + addiction.getAddictionStage() + ")"
-						+ " and reset lastEatTime to the current game time."),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.addiction.set_reset_timer.success", true,
+				addiction.getAddictionValue(), addiction.getAddictionStage());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -172,11 +175,8 @@ public final class BetelCommands {
 		addiction.addAddictionValue(value);
 		addiction.refreshWithdrawalEffects(player);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u5df2\u589e\u52a0\u69df\u6994\u6210\u763e\u503c " + value
-						+ "\uff0c\u5f53\u524d\u6210\u763e\u503c\u4e3a " + addiction.getAddictionValue()
-						+ "\uff0c\u6210\u763e\u9636\u6bb5 " + addiction.getAddictionStage() + "\u3002"),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.addiction.add.success", true, value,
+				addiction.getAddictionValue(), addiction.getAddictionStage());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -184,9 +184,7 @@ public final class BetelCommands {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		BetelNutEntityComponents.ADDICTION.get(player).clearAddiction(player);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u5df2\u6e05\u7a7a\u4f60\u7684\u69df\u6994\u6210\u763e\u503c\u548c\u6212\u65ad\u503c\u3002"),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.addiction.clear.success", true);
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -196,11 +194,8 @@ public final class BetelCommands {
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
 		addiction.setWithdrawalValue(player, value);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u5df2\u5c06\u4f60\u7684\u69df\u6994\u6212\u65ad\u503c\u8bbe\u7f6e\u4e3a "
-						+ addiction.getWithdrawalValue() + "\uff0c\u60e9\u7f5a\u5f3a\u5ea6 "
-						+ addiction.getWithdrawalSeverity() + "\u3002"),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.withdrawal.set.success", true,
+				addiction.getWithdrawalValue(), addiction.getWithdrawalSeverity());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -209,12 +204,9 @@ public final class BetelCommands {
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
 		addiction.triggerWithdrawalTest(player);
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Triggered betel withdrawal test. addiction=" + addiction.getAddictionValue()
-						+ ", stage=" + addiction.getAddictionStage()
-						+ ", withdrawal=" + addiction.getWithdrawalValue()
-						+ ", severity=" + addiction.getWithdrawalSeverity() + "."),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.withdrawal.trigger.success", true,
+				addiction.getAddictionValue(), addiction.getAddictionStage(), addiction.getWithdrawalValue(),
+				addiction.getWithdrawalSeverity());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -223,36 +215,35 @@ public final class BetelCommands {
 		boolean teleported = EnderBetelTeleportHandler.tryTeleport(player, true);
 
 		if (teleported) {
-			context.getSource().sendSuccess(() -> Component.literal(
-					"\u5df2\u6d4b\u8bd5\u672b\u5f71\u69df\u6994\u968f\u673a\u77ac\u79fb\u3002"), true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.ender_teleport.success", true);
 			return Command.SINGLE_SUCCESS;
 		}
 
-		context.getSource().sendFailure(Component.literal(
-				"\u672b\u5f71\u69df\u6994\u77ac\u79fb\u6d4b\u8bd5\u5931\u8d25\uff1a\u6ca1\u6709\u627e\u5230\u5b89\u5168\u843d\u70b9\u3002"));
+		sendFailure(context.getSource(), "command.betel-nut-mod.ender_teleport.failure");
 		return 0;
 	}
 
-	private static String withdrawalStartRemainingText(ServerPlayer player, BetelNutAddictionComponent addiction,
+	private static Component withdrawalStartRemainingText(ServerPlayer player, BetelNutAddictionComponent addiction,
 			BetelNutConfig config) {
 		if (!config.enableAddictionSystem) {
-			return "disabled";
+			return t("command.betel-nut-mod.withdrawal_start.disabled");
 		}
 		if (addiction.getAddictionValue() <= 0) {
-			return "no addiction";
+			return t("command.betel-nut-mod.withdrawal_start.no_addiction");
 		}
 		if (addiction.getAddictionValue() < config.minimumAddictionForWithdrawal) {
-			return "not eligible, needs addiction >= " + config.minimumAddictionForWithdrawal;
+			return t("command.betel-nut-mod.withdrawal_start.not_eligible",
+					config.minimumAddictionForWithdrawal);
 		}
 		if (addiction.getLastEatTime() <= 0) {
-			return "timer not started";
+			return t("command.betel-nut-mod.withdrawal_start.timer_not_started");
 		}
 
 		int remaining = addiction.getNextWithdrawalTicks(player);
 		if (remaining < 0) {
-			return "no scheduled withdrawal";
+			return t("command.betel-nut-mod.withdrawal_start.no_scheduled");
 		}
-		return remaining + " tick";
+		return t("command.betel-nut-mod.withdrawal_start.remaining", remaining);
 	}
 
 	private static int reloadConfig(CommandContext<CommandSourceStack> context) {
@@ -260,11 +251,9 @@ public final class BetelCommands {
 		BetelNutMidnightConfig.reload();
 
 		if (loaded) {
-			context.getSource().sendSuccess(() -> Component.literal(
-					"\u69df\u6994\u914d\u7f6e\u548c MidnightLib \u914d\u7f6e\u5df2\u91cd\u65b0\u52a0\u8f7d\u3002"), true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.reload.success", true);
 		} else {
-			context.getSource().sendFailure(Component.literal(
-					"\u69df\u6994\u914d\u7f6e\u8bfb\u53d6\u5931\u8d25\uff0c\u5df2\u56de\u9000\u5230\u9ed8\u8ba4\u914d\u7f6e\u3002\u8bf7\u67e5\u770b\u65e5\u5fd7\u3002"));
+			sendFailure(context.getSource(), "command.betel-nut-mod.reload.failure");
 		}
 
 		return Command.SINGLE_SUCCESS;
@@ -274,138 +263,180 @@ public final class BetelCommands {
 		BetelNutConfig config = BetelNutConfig.get();
 		String status = config.enableFarmerTrades ? "enabled" : "disabled";
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Farmer betel trades are " + status + ". "
-						+ "Novice: 1 emerald -> " + config.farmerTradeRawBetelBuyCount
-						+ " raw betel nut; " + config.farmerTradeRawBetelSellCount + " raw betel nut -> 1 emerald. "
-						+ "Apprentice: 1 emerald -> " + config.farmerTradeLeafBuyCount + " betel leaf. "
-						+ "Journeyman: 2 emeralds -> " + config.farmerTradeRoastedBetelBuyCount
-						+ " roasted betel nut. "
-						+ "Expert: " + config.farmerTradeFlavorEmeraldCost
-						+ " emeralds -> 1 flavored betel nut. "
-						+ "Master: " + config.farmerTradeSyntheticWorldEmeraldCost
-						+ " emeralds + 1 roasted betel nut -> 1 synthetic world betel."),
-				false);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.trades.info", false, status,
+				config.farmerTradeRawBetelBuyCount, config.farmerTradeRawBetelSellCount,
+				config.farmerTradeLeafBuyCount, config.farmerTradeRoastedBetelBuyCount,
+				config.farmerTradeFlavorEmeraldCost, config.farmerTradeSyntheticWorldEmeraldCost);
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int skyblockStatus(CommandContext<CommandSourceStack> context) {
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
 		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Betel Skyblock: enabled=" + BetelSkyblockManager.isEnabled(overworld)
-						+ ", isBetelSkyblockPreset=" + BetelSkyblockManager.isBetelSkyblockPreset(overworld)
-						+ ", isBetelOneBlockSkyblockPreset="
-						+ BetelSkyblockManager.isBetelOneBlockSkyblockPreset(overworld)
-						+ ", classicConfigEnabled=" + BetelNutMidnightConfig.enableClassicSkyblock
-						+ ", oneBlockConfigEnabled=" + BetelNutMidnightConfig.enableOneBlockSkyblock
-						+ ", legacyConfigFallback=" + BetelSkyblockManager.isConfigEnabled()
-						+ ", hasGeneratedBetelSkyIsland=" + skyblock.hasGeneratedBetelSkyIsland()
-						+ ", islandCenter=" + skyblock.getIslandCenter()
-						+ ", fixedIslandCenter=" + BetelSkyblockManager.getIslandCenter()
-						+ ", skyblockSpawn=" + BetelSkyblockManager.getSkyblockSpawn(overworld)
-						+ ", hasSetSkyblockSpawn=" + skyblock.hasSetSkyblockSpawn()
-						+ ", hasGeneratedBetelOneBlockIsland="
-						+ skyblock.hasGeneratedBetelOneBlockIsland()
-						+ ", oneBlockCenter=" + skyblock.getOneBlockCenter()
-						+ ", fixedOneBlockCenter=" + BetelSkyblockManager.getOneBlockCenter()
-						+ ", oneBlockSpawn=" + BetelSkyblockManager.getOneBlockSpawn(overworld)
-						+ ", hasSetBetelOneBlockSpawn=" + skyblock.hasSetBetelOneBlockSpawn()
-						+ "."),
-				false);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.skyblock.status", false,
+				BetelSkyblockManager.isEnabled(overworld), BetelSkyblockManager.isBetelSkyblockPreset(overworld),
+				BetelSkyblockManager.isBetelOneBlockSkyblockPreset(overworld),
+				BetelNutMidnightConfig.enableClassicSkyblock, BetelNutMidnightConfig.enableOneBlockSkyblock,
+				BetelSkyblockManager.isConfigEnabled(), skyblock.hasGeneratedBetelSkyIsland(),
+				skyblock.isBetelSkyIslandResetPending(), skyblock.getIslandCenter(),
+				BetelSkyblockManager.getIslandCenter(), BetelSkyblockManager.getSkyblockSpawn(overworld),
+				skyblock.hasSetSkyblockSpawn(), skyblock.hasGeneratedBetelOneBlockIsland(),
+				skyblock.isBetelOneBlockIslandResetPending(), skyblock.getOneBlockCenter(),
+				BetelSkyblockManager.getOneBlockCenter(), BetelSkyblockManager.getOneBlockSpawn(overworld),
+				skyblock.hasSetBetelOneBlockSpawn());
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int generateSkyblock(CommandContext<CommandSourceStack> context) {
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
-		boolean generated = BetelSkyblockManager.generateForCommand(overworld);
-		if (generated) {
+		GenerationResult result = BetelSkyblockManager.generateForCommand(overworld);
+		if (result == GenerationResult.GENERATED) {
 			boolean teleported = teleportSourcePlayerToSkyblockSpawn(context, overworld);
-			context.getSource().sendSuccess(() -> Component.literal(
-					"Generated Betel Skyblock island at " + BetelSkyblockManager.getIslandCenter()
-							+ ", set spawn to " + BetelSkyblockManager.getSkyblockSpawn(overworld)
-							+ ", teleportedCommandPlayer=" + teleported + "."),
-					true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.skyblock.generate.success", true,
+					BetelSkyblockManager.getIslandCenter(), BetelSkyblockManager.getSkyblockSpawn(overworld),
+					teleported);
 			return Command.SINGLE_SUCCESS;
 		}
 
-		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
-		context.getSource().sendFailure(Component.literal(
-				"Betel Skyblock island was not generated. Generated="
-						+ skyblock.hasGeneratedBetelSkyIsland()
-						+ ", center=" + skyblock.getIslandCenter() + "."));
+		sendClassicGenerationFailure(context, overworld, result);
+		return 0;
+	}
+
+	private static int forceGenerateSkyblock(CommandContext<CommandSourceStack> context) {
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			sendOverworldNotLoaded(context.getSource());
+			return 0;
+		}
+
+		GenerationResult result = BetelSkyblockManager.forceGenerateForCommand(overworld);
+		if (result == GenerationResult.GENERATED) {
+			boolean teleported = teleportSourcePlayerToSkyblockSpawn(context, overworld);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.skyblock.force_generate.success", true,
+					BetelSkyblockManager.getIslandCenter(), teleported);
+			return Command.SINGLE_SUCCESS;
+		}
+
+		sendClassicGenerationFailure(context, overworld, result);
 		return 0;
 	}
 
 	private static int generateOneBlockSkyblock(CommandContext<CommandSourceStack> context) {
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
-		boolean generated = BetelSkyblockManager.generateOneBlockForCommand(overworld);
-		if (generated) {
+		GenerationResult result = BetelSkyblockManager.generateOneBlockForCommand(overworld);
+		if (result == GenerationResult.GENERATED) {
 			boolean teleported = teleportSourcePlayerToOneBlockSpawn(context, overworld);
-			context.getSource().sendSuccess(() -> Component.literal(
-					"Generated Betel One Block Skyblock block at " + BetelSkyblockManager.getOneBlockCenter()
-							+ ", set spawn to " + BetelSkyblockManager.getOneBlockSpawn(overworld)
-							+ ", teleportedCommandPlayer=" + teleported + "."),
-					true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.one_block.generate.success", true,
+					BetelSkyblockManager.getOneBlockCenter(), BetelSkyblockManager.getOneBlockSpawn(overworld),
+					teleported);
 			return Command.SINGLE_SUCCESS;
 		}
 
-		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
-		context.getSource().sendFailure(Component.literal(
-				"Betel One Block Skyblock block was not generated. Generated="
-						+ skyblock.hasGeneratedBetelOneBlockIsland()
-						+ ", center=" + skyblock.getOneBlockCenter() + "."));
+		sendOneBlockGenerationFailure(context, overworld, result);
 		return 0;
+	}
+
+	private static int forceGenerateOneBlockSkyblock(CommandContext<CommandSourceStack> context) {
+		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
+		if (overworld == null) {
+			sendOverworldNotLoaded(context.getSource());
+			return 0;
+		}
+
+		GenerationResult result = BetelSkyblockManager.forceGenerateOneBlockForCommand(overworld);
+		if (result == GenerationResult.GENERATED) {
+			boolean teleported = teleportSourcePlayerToOneBlockSpawn(context, overworld);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.one_block.force_generate.success", true,
+					BetelSkyblockManager.getOneBlockCenter(), teleported);
+			return Command.SINGLE_SUCCESS;
+		}
+
+		sendOneBlockGenerationFailure(context, overworld, result);
+		return 0;
+	}
+
+	private static void sendClassicGenerationFailure(CommandContext<CommandSourceStack> context,
+			ServerLevel overworld, GenerationResult result) {
+		if (result == GenerationResult.ALREADY_GENERATED) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.generate.already_generated");
+			return;
+		}
+		if (result == GenerationResult.TARGET_OCCUPIED) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.generate.target_occupied");
+			return;
+		}
+		if (result == GenerationResult.NOT_OVERWORLD) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.generate.not_overworld");
+			return;
+		}
+
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.generate.failed",
+				skyblock.hasGeneratedBetelSkyIsland(), skyblock.getIslandCenter());
+	}
+
+	private static void sendOneBlockGenerationFailure(CommandContext<CommandSourceStack> context,
+			ServerLevel overworld, GenerationResult result) {
+		if (result == GenerationResult.ALREADY_GENERATED) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.one_block.generate.already_generated");
+			return;
+		}
+		if (result == GenerationResult.TARGET_OCCUPIED) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.one_block.generate.target_occupied");
+			return;
+		}
+		if (result == GenerationResult.NOT_OVERWORLD) {
+			sendFailure(context.getSource(), "command.betel-nut-mod.one_block.generate.not_overworld");
+			return;
+		}
+
+		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
+		sendFailure(context.getSource(), "command.betel-nut-mod.one_block.generate.failed",
+				skyblock.hasGeneratedBetelOneBlockIsland(), skyblock.getOneBlockCenter());
 	}
 
 	private static int resetSkyblock(CommandContext<CommandSourceStack> context) {
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
 		BetelSkyblockManager.resetGenerationState(overworld);
 		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Reset Betel Skyblock generation state. hasGeneratedBetelSkyIsland="
-						+ skyblock.hasGeneratedBetelSkyIsland()
-						+ ", islandCenter=" + skyblock.getIslandCenter()
-						+ ", hasSetSkyblockSpawn=" + skyblock.hasSetSkyblockSpawn() + "."),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.skyblock.reset.success", true,
+				skyblock.hasGeneratedBetelSkyIsland(), skyblock.getIslandCenter(),
+				skyblock.hasSetSkyblockSpawn());
 		return Command.SINGLE_SUCCESS;
 	}
 
 	private static int resetOneBlockSkyblock(CommandContext<CommandSourceStack> context) {
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
 		BetelSkyblockManager.resetOneBlockGenerationState(overworld);
 		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
-		context.getSource().sendSuccess(() -> Component.literal(
-				"Reset Betel One Block Skyblock generation state. hasGeneratedBetelOneBlockIsland="
-						+ skyblock.hasGeneratedBetelOneBlockIsland()
-						+ ", oneBlockCenter=" + skyblock.getOneBlockCenter()
-						+ ", hasSetBetelOneBlockSpawn=" + skyblock.hasSetBetelOneBlockSpawn() + "."),
-				true);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.one_block.reset.success", true,
+				skyblock.hasGeneratedBetelOneBlockIsland(), skyblock.getOneBlockCenter(),
+				skyblock.hasSetBetelOneBlockSpawn());
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -413,25 +444,23 @@ public final class BetelCommands {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
 		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
 		if (!skyblock.hasGeneratedBetelSkyIsland()) {
-			context.getSource().sendFailure(Component.literal(
-					"\u5f53\u524d\u4e16\u754c\u8fd8\u6ca1\u6709\u8bb0\u5f55\u69df\u6994\u7a7a\u5c9b\u5750\u6807\u3002"));
+			sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.tp.missing");
 			return 0;
 		}
 
 		boolean teleported = BetelSkyblockManager.teleportPlayerToSkyblockSpawn(player, overworld);
 		if (teleported) {
-			context.getSource().sendSuccess(() -> Component.literal(
-					"\u5df2\u4f20\u9001\u5230\u69df\u6994\u7a7a\u5c9b\u51fa\u751f\u70b9\u3002"), true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.skyblock.tp.success", true);
 			return Command.SINGLE_SUCCESS;
 		}
 
-		context.getSource().sendFailure(Component.literal("Failed to teleport to Betel Skyblock spawn."));
+		sendFailure(context.getSource(), "command.betel-nut-mod.skyblock.tp.failed");
 		return 0;
 	}
 
@@ -440,32 +469,29 @@ public final class BetelCommands {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		ServerLevel overworld = context.getSource().getServer().getLevel(Level.OVERWORLD);
 		if (overworld == null) {
-			context.getSource().sendFailure(Component.literal("Overworld is not loaded."));
+			sendOverworldNotLoaded(context.getSource());
 			return 0;
 		}
 
 		BetelSkyblockWorldComponent skyblock = BetelNutWorldComponents.SKYBLOCK_WORLD.get(overworld);
 		if (!skyblock.hasGeneratedBetelOneBlockIsland()) {
-			context.getSource().sendFailure(Component.literal(
-					"\u5f53\u524d\u4e16\u754c\u8fd8\u6ca1\u6709\u8bb0\u5f55\u69df\u6994\u4e00\u65b9\u5757\u7a7a\u5c9b\u5750\u6807\u3002"));
+			sendFailure(context.getSource(), "command.betel-nut-mod.one_block.tp.missing");
 			return 0;
 		}
 
 		boolean teleported = BetelSkyblockManager.teleportPlayerToOneBlockSpawn(player, overworld);
 		if (teleported) {
-			context.getSource().sendSuccess(() -> Component.literal(
-					"\u5df2\u4f20\u9001\u5230\u69df\u6994\u4e00\u65b9\u5757\u7a7a\u5c9b\u51fa\u751f\u70b9\u3002"), true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.one_block.tp.success", true);
 			return Command.SINGLE_SUCCESS;
 		}
 
-		context.getSource().sendFailure(Component.literal("Failed to teleport to Betel One Block Skyblock spawn."));
+		sendFailure(context.getSource(), "command.betel-nut-mod.one_block.tp.failed");
 		return 0;
 	}
 
 	private static int generateEndPortal(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		if (!BetelNutMidnightConfig.allowEndPortalCommand) {
-			context.getSource().sendFailure(Component.literal(
-					"\u672b\u5730\u4f20\u9001\u95e8\u751f\u6210\u6307\u4ee4\u5df2\u88ab\u914d\u7f6e\u5173\u95ed\u3002"));
+			sendFailure(context.getSource(), "command.betel-nut-mod.end_portal.disabled");
 			return 0;
 		}
 
@@ -478,13 +504,10 @@ public final class BetelCommands {
 
 		boolean skyblockPreset = BetelSkyblockManager.isBetelSkyblockPreset(level)
 				|| BetelSkyblockManager.isBetelOneBlockSkyblockPreset(level);
-		String skyblockHint = skyblockPreset ? ""
-				: "\u8be5\u6307\u4ee4\u4e3b\u8981\u7528\u4e8e\u69df\u6994\u7a7a\u5c9b\u4e16\u754c\u3002";
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u5df2\u751f\u6210\u5b8c\u6574\u672b\u5730\u4f20\u9001\u95e8\u3002\u4e2d\u5fc3\u5750\u6807\uff1a"
-						+ center.getX() + ", " + center.getY() + ", " + center.getZ() + "\u3002"
-						+ skyblockHint),
-				true);
+		String translationKey = skyblockPreset
+				? "command.betel-nut-mod.end_portal.success"
+				: "command.betel-nut-mod.end_portal.success_with_hint";
+		sendSuccess(context.getSource(), translationKey, true, center.getX(), center.getY(), center.getZ());
 		BetelNutMod.LOGGER.info(
 				"[Betel Nut Mod] Generated complete End Portal for player {} at x={}, y={}, z={} in {}.",
 				player.getScoreboardName(), center.getX(), center.getY(), center.getZ(),
@@ -551,27 +574,18 @@ public final class BetelCommands {
 		ItemStack stack = player.getMainHandItem();
 		EatingRestrictionCheck check = WithdrawalEatingRestrictions.evaluate(player, addiction, stack);
 		String itemName = stack.isEmpty() ? "empty" : stack.getHoverName().getString();
-		String result = check.allowed() ? "\u53ef\u4ee5" : "\u4e0d\u80fd";
-		String scope = check.checkedItem()
-				? "\u4f1a\u8fdb\u5165\u8fdb\u98df\u9650\u5236\u68c0\u67e5"
-				: "\u4e0d\u662f\u98df\u7269\u6216\u6cbb\u7597\u996e\u54c1\uff0c\u4e0d\u4f1a\u88ab\u8fdb\u98df\u9650\u5236\u62e6\u622a";
+		Component result = t(check.allowed()
+				? "command.betel-nut-mod.eatingtest.result.allowed"
+				: "command.betel-nut-mod.eatingtest.result.blocked");
+		Component scope = t(check.checkedItem()
+				? "command.betel-nut-mod.eatingtest.scope.checked"
+				: "command.betel-nut-mod.eatingtest.scope.ignored");
 
-		context.getSource().sendSuccess(() -> Component.literal(
-				"\u8fdb\u98df\u6d4b\u8bd5\uff1a\u5f53\u524d\u624b\u6301\u7269\u54c1 " + itemName
-						+ "\uff0c\u6210\u763e\u503c " + addiction.getAddictionValue()
-						+ "\uff0c\u6210\u763e\u9636\u6bb5 " + addiction.getAddictionStage()
-						+ "\uff0c\u6212\u65ad\u503c " + addiction.getWithdrawalValue()
-						+ "\uff0c\u6212\u65ad\u60e9\u7f5a\u5f3a\u5ea6 " + addiction.getWithdrawalSeverity()
-						+ "\uff0c\u8fdb\u98df\u9650\u5236\u542f\u7528 "
-						+ WithdrawalEatingRestrictions.isFeatureEnabled(BetelNutConfig.get())
-						+ "\uff0c\u8fdb\u98df\u9650\u5236\u7b49\u7ea7 "
-						+ check.restrictionLevel().label()
-						+ "\uff0c\u662f\u5426\u98df\u7269 " + check.food()
-						+ "\uff0c" + scope
-						+ "\uff0c\u547d\u4e2d\u5141\u8bb8\u6807\u7b7e " + check.matchedAllowedTags()
-						+ "\uff0c\u5224\u5b9a\u539f\u56e0 " + check.reason()
-						+ "\uff0c\u5f53\u524d\u9636\u6bb5" + result + "\u4f7f\u7528\u3002"),
-				false);
+		sendSuccess(context.getSource(), "command.betel-nut-mod.eatingtest.status", false, itemName,
+				addiction.getAddictionValue(), addiction.getAddictionStage(), addiction.getWithdrawalValue(),
+				addiction.getWithdrawalSeverity(), WithdrawalEatingRestrictions.isFeatureEnabled(BetelNutConfig.get()),
+				check.restrictionLevel().label(), check.food(), scope, check.matchedAllowedTags(), check.reason(),
+				result);
 		return Command.SINGLE_SUCCESS;
 	}
 
@@ -582,11 +596,9 @@ public final class BetelCommands {
 				config.betelPalmMinHeight, config.betelPalmMaxHeight);
 
 		if (generated) {
-			context.getSource().sendSuccess(() -> Component.literal(
-					"\u5df2\u751f\u6210\u4e00\u68f5\u69df\u6994\u6811\u3002"), true);
+			sendSuccess(context.getSource(), "command.betel-nut-mod.tree.generate.success", true);
 		} else {
-			context.getSource().sendFailure(Component.literal(
-					"\u5f53\u524d\u4f4d\u7f6e\u4e0d\u9002\u5408\u751f\u6210\u69df\u6994\u6811\u3002"));
+			sendFailure(context.getSource(), "command.betel-nut-mod.tree.generate.failure");
 		}
 
 		return Command.SINGLE_SUCCESS;

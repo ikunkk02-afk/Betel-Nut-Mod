@@ -1,13 +1,13 @@
 # Betel Nut Mod
 
-Betel Nut Mod 是一个面向 Fabric 的 Minecraft 生存扩展模组，围绕槟榔树、槟榔采集、营火烘烤、口味加工、村民交易、Farmer's Delight Refabricated 厨具联动，以及成瘾与戒断机制展开。
+Betel Nut Mod 是一个面向 Fabric 的 Minecraft 生存扩展模组，围绕槟榔树、槟榔采集、营火烘烤、口味加工、村民交易、Farmer's Delight Refabricated 厨具联动、成瘾与戒断机制，以及槟榔空岛玩法展开。
 
 本模组中的槟榔相关内容仅作为游戏机制与玩法创作使用，不代表现实健康建议，也不鼓励现实中食用槟榔。
 
 ## 支持版本
 
 - Minecraft: `1.21.1`
-- 当前模组版本: `3.0.0`
+- 当前模组版本: `4.0.0`
 - Mod Loader: Fabric Loader `>=0.16.0`
 - Java: `21` 或更高版本
 - Mod ID: `betel-nut-mod`
@@ -21,8 +21,10 @@ Betel Nut Mod 是一个面向 Fabric 的 Minecraft 生存扩展模组，围绕�
 - Cardinal Components API `6.x`
   - `cardinal-components-base`
   - `cardinal-components-entity`
+  - `cardinal-components-world`
+- MidnightLib `1.9.2+1.21.1-fabric`
 
-Cardinal Components API 用于保存玩家的槟榔成瘾值、戒断值、上次食用时间等数据。
+Cardinal Components API 用于保存玩家的槟榔成瘾值、戒断值、上次食用时间，以及空岛生成状态和坐标等数据。
 
 ## 可选联动
 
@@ -36,10 +38,50 @@ Farmer's Delight Refabricated 不是强制依赖。未安装时，本模组会�
 - 使用营火将生槟榔烘烤为熟槟榔。
 - 将熟槟榔与纸、不同材料组合，加工为多种口味槟榔。
 - 食用不同槟榔获得短时增益，同时积累成瘾值。
+- 食用槟榔后获得槟榔渣，并通过槟榔渣、槟榔渣块和堆肥建立资源循环。
 - 长时间停止食用后，玩家会逐步进入戒断状态，并受到负面效果、生命上限惩罚和进食限制等影响。
 - 通过成瘾 HUD 查看当前依赖阶段、成瘾进度和戒断倒计时。
+- 创建普通槟榔空岛或槟榔一方块空岛世界，在虚空环境中围绕槟榔资源发展。
+- 在空岛模式中通过水中召雷仪式或管理员指令补足进入末地的路线。
 - 与农民村民交易，获取槟榔相关物品。
-- 可通过配置文件调整世界生成、成瘾、戒断、交易、末影槟榔传送等行为。
+- 可通过配置文件调整世界生成、空岛、成瘾、戒断、交易、末影槟榔传送等行为。
+
+## 槟榔渣与空岛玩法
+
+从 `4.0.0` 开始，槟榔渣不只是食用后的副产物，也是空岛玩法的基础资源。玩家可以将槟榔渣放入堆肥桶获取骨粉，也可以用 9 个槟榔渣合成 1 个槟榔渣块；槟榔渣块可以拆回 9 个槟榔渣，并可作为扩建平台的基础方块。
+
+模组提供两种空岛世界预设：
+
+- 普通槟榔空岛：生成一座小型虚空岛屿，包含有限开局资源、功能方块、开局箱子和指南书，适合普通空岛生存流程。
+- 槟榔一方块空岛：开局只生成 1 个槟榔渣块，并在玩家第一次进入时发放极少量初始物品，后续发展完全依赖玩家建立槟榔资源循环。
+
+空岛只会在选择对应世界预设时启用。普通世界不会自动生成空岛、不会启用空岛虚空保护，也不会触发空岛专属的末地路线。
+
+## 空岛指令与持久化
+
+空岛生成状态通过 Cardinal Components API 的世界组件保存。普通空岛和一方块空岛分别记录生成状态与坐标，玩家对方块的破坏、放置和箱子物品变化由 Minecraft 存档正常保存，退出重进后不会重新覆盖为初始状态。
+
+常用管理指令：
+
+- `/betelskyblock generate`：生成普通槟榔空岛；如果已有生成记录，会提示先执行 reset。
+- `/betelskyblock generate_one_block`：生成槟榔一方块空岛；如果已有生成记录，会提示先执行 reset_one_block。
+- `/betelskyblock reset`、`/betelskyblock reset_one_block`：只重置生成状态，不会立即覆盖方块。
+- `/betelskyblock force_generate`、`/betelskyblock force_generate_one_block`：强制覆盖生成，仅建议管理员在确认目标区域可覆盖时使用。
+- `/betelskyblock tp`、`/betelskyblock tp_one_block`：传送到已记录的空岛出生点。
+- `/betelskyblock generate_end_portal`：在管理员位置附近生成完整末地传送门结构，受配置项控制。
+
+空岛模式还提供虚空保护。玩家在普通槟榔空岛或槟榔一方块空岛中掉入虚空时，会根据当前模式返回对应出生点；该逻辑不会影响普通世界。
+
+## 配置与数据保存
+
+MidnightLib 配置项用于控制普通空岛、一方块空岛、初始物品、虚空保护、槟榔渣堆肥概率和末地路线等行为。部分配置项会在世界创建或首次生成时生效，修改后可能需要重启游戏或重新创建世界才能完全体现。
+
+Cardinal Components API 当前用于保存：
+
+- 玩家成瘾值、戒断值、上次食用时间、死亡后保留状态和一方块初始物品领取状态。
+- 世界空岛生成状态、空岛坐标、一方块坐标和出生点状态。
+
+这些数据用于防止重复生成空岛、重复刷新开局箱子和重复发放一方块初始物品。
 
 ## 槟榔树系统
 
@@ -161,6 +203,7 @@ HUD 会根据依赖程度显示不同的阶段状态，例如轻度依赖、中�
 
 ```bash
 ./gradlew build
+./gradlew checkSkyblockPersistence
 ./gradlew runClient
 ```
 
@@ -168,8 +211,11 @@ HUD 会根据依赖程度显示不同的阶段状态，例如轻度依赖、中�
 
 ```powershell
 .\gradlew.bat build
+.\gradlew.bat checkSkyblockPersistence
 .\gradlew.bat runClient
 ```
+
+`checkSkyblockPersistence` 是脚本化资源检查任务，用于确认空岛 CCA 保存字段、reset/generate 行为和开局箱子不重复刷新的关键约束仍然存在。
 
 ## 许可证
 

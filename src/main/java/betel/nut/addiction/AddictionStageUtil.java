@@ -110,6 +110,26 @@ public final class AddictionStageUtil {
 		return clamp(stage, 0, STAGE_COUNT);
 	}
 
+	public static float getBetelRewardDurationMultiplier(int stage) {
+		return switch (clamp(stage, 0, STAGE_COUNT)) {
+			case 1 -> 0.80F;
+			case 2 -> 0.65F;
+			case 3 -> 0.50F;
+			case 4 -> 0.35F;
+			case 5 -> 0.25F;
+			default -> 1.00F;
+		};
+	}
+
+	public static int getBetelRewardAmplifierPenalty(int stage) {
+		return switch (clamp(stage, 0, STAGE_COUNT)) {
+			case 1, 2 -> 1;
+			case 3, 4 -> 2;
+			case 5 -> 3;
+			default -> 0;
+		};
+	}
+
 	public static String getWarningTitleKey(int stage) {
 		return switch (clamp(stage, 1, STAGE_COUNT)) {
 			case 1 -> "betel_nut_mod.warning.light.title";

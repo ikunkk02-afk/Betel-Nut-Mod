@@ -1,0 +1,233 @@
+import java.util.regex.Pattern
+
+def readProjectFile = { String relativePath ->
+	project.layout.projectDirectory.file(relativePath).asFile.getText("UTF-8")
+}
+
+def methodBlock = { String source, String signature ->
+	int start = source.indexOf(signature)
+	if (start < 0) {
+		return null
+	}
+	int openingBrace = source.indexOf("{", start)
+	if (openingBrace < 0) {
+		return null
+	}
+	int depth = 0
+	for (int index = openingBrace; index < source.length(); index++) {
+		char current = source.charAt(index)
+		if (current == '{' as char) {
+			depth++
+		} else if (current == '}' as char) {
+			depth--
+			if (depth == 0) {
+				return source.substring(start, index + 1)
+			}
+		}
+	}
+	return null
+}
+
+def occurrences = { String source, String needle ->
+	int count = 0
+	int start = 0
+	while (true) {
+		int next = source.indexOf(needle, start)
+		if (next < 0) {
+			return count
+		}
+		count++
+		start = next + needle.length()
+	}
+}
+
+def skyblockPersistenceCheck = tasks.register("checkSkyblockPersistence") {
+	group = "verification"
+	description = "Checks skyblock CCA persistence and generation overwrite guards."
+
+	def componentFile = layout.projectDirectory.file("src/main/java/betel/nut/component/BetelSkyblockWorldComponent.java")
+	def managerFile = layout.projectDirectory.file("src/main/java/betel/nut/skyblock/BetelSkyblockManager.java")
+	def commandFile = layout.projectDirectory.file("src/main/java/betel/nut/command/BetelCommands.java")
+	inputs.files(componentFile, managerFile, commandFile)
+
+	doLast {
+		def failures = []
+		def requireContains = { String source, String needle, String message ->
+			if (!source.contains(needle)) {
+				failures << message
+			}
+		}
+		def requireRegex = { String source, Pattern pattern, String message ->
+			if (!pattern.matcher(source).find()) {
+				failures << message
+			}
+		}
+		def requireMethod = { String source, String signature ->
+			def block = methodBlock(source, signature)
+			if (block == null) {
+				failures << "Missing method: ${signature}"
+			}
+			return block
+		}
+
+		def component = readProjectFile("src/main/java/betel/nut/component/BetelSkyblockWorldComponent.java")
+		def manager = readProjectFile("src/main/java/betel/nut/skyblock/BetelSkyblockManager.java")
+		def commands = readProjectFile("src/main/java/betel/nut/command/BetelCommands.java")
+
+		def persistedFields = [
+			[key: "HAS_GENERATED_BETEL_SKY_ISLAND_KEY", field: "hasGeneratedBetelSkyIsland", writer: "putBoolean", reader: "getBoolean"],
+			[key: "ISLAND_X_KEY", field: "islandX", writer: "putInt", reader: "getInt"],
+			[key: "ISLAND_Y_KEY", field: "islandY", writer: "putInt", reader: "getInt"],
+			[key: "ISLAND_Z_KEY", field: "islandZ", writer: "putInt", reader: "getInt"],
+			[key: "HAS_GENERATED_BETEL_ONE_BLOCK_ISLAND_KEY", field: "hasGeneratedBetelOneBlockIsland", writer: "putBoolean", reader: "getBoolean"],
+			[key: "ONE_BLOCK_X_KEY", field: "oneBlockX", writer: "putInt", reader: "getInt"],
+			[key: "ONE_BLOCK_Y_KEY", field: "oneBlockY", writer: "putInt", reader: "getInt"],
+			[key: "ONE_BLOCK_Z_KEY", field: "oneBlockZ", writer: "putInt", reader: "getInt"],
+			[key: "BETEL_SKY_ISLAND_RESET_PENDING_KEY", field: "betelSkyIslandResetPending", writer: "putBoolean", reader: "getBoolean"],
+			[key: "BETEL_ONE_BLOCK_ISLAND_RESET_PENDING_KEY", field: "betelOneBlockIslandResetPending", writer: "putBoolean", reader: "getBoolean"],
+		]
+		persistedFields.each { entry ->
+			requireRegex(component,
+					Pattern.compile("tag\\.${entry.writer}\\(${entry.key},\\s*this\\.${entry.field}\\)"),
+					"CCA writeToNbt does not persist ${entry.field} with ${entry.key}.")
+			requireRegex(component,
+					Pattern.compile("this\\.${entry.field}\\s*=\\s*[^;]*tag\\.${entry.reader}\\(${entry.key}\\)"),
+					"CCA readFromNbt does not read ${entry.field} with ${entry.key}.")
+		}
+		requireContains(component, "[Betel Nut Mod] Loading skyblock world component...",
+				"Missing skyblock component load diagnostic log.")
+		requireContains(component, "[Betel Nut Mod] Saving skyblock world component...",
+				"Missing skyblock component save diagnostic log.")
+		requireContains(component, "[Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = {}",
+				"Missing classic skyblock saved-state diagnostic log.")
+		requireContains(component, "[Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = {}",
+				"Missing one-block skyblock saved-state diagnostic log.")
+
+		def markGenerated = requireMethod(component, "public void markGenerated")
+		if (markGenerated != null) {
+			requireContains(markGenerated, "this.hasGeneratedBetelSkyIsland = true;",
+					"markGenerated must set hasGeneratedBetelSkyIsland true.")
+			requireContains(markGenerated, "this.betelSkyIslandResetPending = false;",
+					"markGenerated must clear classic reset-pending state.")
+		}
+		def markOneBlockGenerated = requireMethod(component, "public void markOneBlockGenerated")
+		if (markOneBlockGenerated != null) {
+			requireContains(markOneBlockGenerated, "this.hasGeneratedBetelOneBlockIsland = true;",
+					"markOneBlockGenerated must set hasGeneratedBetelOneBlockIsland true.")
+			requireContains(markOneBlockGenerated, "this.betelOneBlockIslandResetPending = false;",
+					"markOneBlockGenerated must clear one-block reset-pending state.")
+		}
+		def resetClassicComponent = requireMethod(component, "public void resetBetelSkyIslandGeneration")
+		if (resetClassicComponent != null) {
+			requireContains(resetClassicComponent, "this.hasGeneratedBetelSkyIsland = false;",
+					"classic reset must clear hasGeneratedBetelSkyIsland.")
+			requireContains(resetClassicComponent, "this.betelSkyIslandResetPending = true;",
+					"classic reset must pause automatic generation until a command runs.")
+		}
+		def resetOneBlockComponent = requireMethod(component, "public void resetBetelOneBlockIslandGeneration")
+		if (resetOneBlockComponent != null) {
+			requireContains(resetOneBlockComponent, "this.hasGeneratedBetelOneBlockIsland = false;",
+					"one-block reset must clear hasGeneratedBetelOneBlockIsland.")
+			requireContains(resetOneBlockComponent, "this.betelOneBlockIslandResetPending = true;",
+					"one-block reset must pause automatic generation until a command runs.")
+		}
+
+		requireRegex(manager,
+				Pattern.compile("public static GenerationResult generateForCommand[\\s\\S]*?worldData\\.hasGeneratedBetelSkyIsland\\(\\)[\\s\\S]*?GenerationResult\\.ALREADY_GENERATED"),
+				"/betelskyblock generate must refuse when classic island is already generated.")
+		requireRegex(manager,
+				Pattern.compile("public static GenerationResult generateForCommand[\\s\\S]*?isClassicTargetAreaOccupied[\\s\\S]*?GenerationResult\\.TARGET_OCCUPIED"),
+				"/betelskyblock generate must refuse occupied classic target areas.")
+		requireRegex(manager,
+				Pattern.compile("public static GenerationResult generateOneBlockForCommand[\\s\\S]*?worldData\\.hasGeneratedBetelOneBlockIsland\\(\\)[\\s\\S]*?GenerationResult\\.ALREADY_GENERATED"),
+				"/betelskyblock generate_one_block must refuse when one-block island is already generated.")
+		requireRegex(manager,
+				Pattern.compile("public static GenerationResult generateOneBlockForCommand[\\s\\S]*?isOneBlockTargetAreaOccupied[\\s\\S]*?GenerationResult\\.TARGET_OCCUPIED"),
+				"/betelskyblock generate_one_block must refuse occupied one-block target areas.")
+
+		def resetClassicManager = requireMethod(manager, "public static void resetGenerationState")
+		if (resetClassicManager != null) {
+			requireContains(resetClassicManager, "worldData.resetBetelSkyIslandGeneration();",
+					"resetGenerationState must reset only CCA state.")
+			if (resetClassicManager.contains("generateInitialIsland") || resetClassicManager.contains("setBlockState")
+					|| resetClassicManager.contains("clearBuildArea")) {
+				failures << "resetGenerationState must not generate or overwrite blocks."
+			}
+		}
+		def resetOneBlockManager = requireMethod(manager, "public static void resetOneBlockGenerationState")
+		if (resetOneBlockManager != null) {
+			requireContains(resetOneBlockManager, "worldData.resetBetelOneBlockIslandGeneration();",
+					"resetOneBlockGenerationState must reset only CCA state.")
+			if (resetOneBlockManager.contains("generateOneBlockIsland") || resetOneBlockManager.contains("setBlockState")
+					|| resetOneBlockManager.contains("clearBuildArea")) {
+				failures << "resetOneBlockGenerationState must not generate or overwrite blocks."
+			}
+		}
+
+		def classicAuto = requireMethod(manager, "private static void generateInitialIslandIfNeeded")
+		if (classicAuto != null) {
+			requireContains(classicAuto, "if (worldData.hasGeneratedBetelSkyIsland())",
+					"classic auto generation must check hasGeneratedBetelSkyIsland.")
+			requireContains(classicAuto, "Classic Betel Skyblock already generated, skipping generation.",
+					"classic auto generation must log skip when already generated.")
+			requireContains(classicAuto, "worldData.isBetelSkyIslandResetPending()",
+					"classic auto generation must respect reset-pending state.")
+			requireContains(classicAuto, "isClassicTargetAreaOccupied",
+					"classic auto generation must check for occupied target area.")
+		}
+		def oneBlockAuto = requireMethod(manager, "private static void generateOneBlockIslandIfNeeded")
+		if (oneBlockAuto != null) {
+			requireContains(oneBlockAuto, "if (worldData.hasGeneratedBetelOneBlockIsland())",
+					"one-block auto generation must check hasGeneratedBetelOneBlockIsland.")
+			requireContains(oneBlockAuto, "Betel One Block Skyblock already generated, skipping generation.",
+					"one-block auto generation must log skip when already generated.")
+			requireContains(oneBlockAuto, "worldData.isBetelOneBlockIslandResetPending()",
+					"one-block auto generation must respect reset-pending state.")
+			requireContains(oneBlockAuto, "isOneBlockTargetAreaOccupied",
+					"one-block auto generation must check for occupied target area.")
+		}
+		def setSpawn = requireMethod(manager, "private static int setSkyblockSpawn")
+		if (setSpawn != null) {
+			requireContains(setSpawn, "clearSpawnBlocks ? clearSpawnSpace(level, spawnPos) : 0",
+					"setSkyblockSpawn must clear spawn blocks only when explicitly requested.")
+		}
+		def setOneBlockSpawn = requireMethod(manager, "private static int setBetelOneBlockSpawn")
+		if (setOneBlockSpawn != null) {
+			requireContains(setOneBlockSpawn, "clearSpawnBlocks ? clearSpawnSpace(level, spawnPos) : 0",
+					"setBetelOneBlockSpawn must clear spawn blocks only when explicitly requested.")
+		}
+
+		if (occurrences(manager, "fillStarterChest(") != 2) {
+			failures << "Starter chest filling must only have one call site plus its method definition."
+		}
+		def vanillaStarter = requireMethod(manager, "private static int placeVanillaStarterContents")
+		if (vanillaStarter != null) {
+			requireContains(vanillaStarter, "fillStarterChest(level, chestPos);",
+					"starter chest must be filled only during initial island content placement.")
+		}
+		def firstJoin = requireMethod(manager, "private static void handleFirstSkyblockJoin")
+		if (firstJoin != null && firstJoin.contains("fillStarterChest")) {
+			failures << "First-join handling must not refill the starter chest."
+		}
+
+		requireContains(commands, ".then(literal(\"generate\").executes(BetelCommands::generateSkyblock))",
+				"Missing /betelskyblock generate command registration.")
+		requireContains(commands, ".then(literal(\"force_generate\").executes(BetelCommands::forceGenerateSkyblock))",
+				"Missing /betelskyblock force_generate command registration.")
+		requireContains(commands, ".then(literal(\"reset\").executes(BetelCommands::resetSkyblock))",
+				"Missing /betelskyblock reset command registration.")
+		requireContains(commands, "GenerationResult.ALREADY_GENERATED",
+				"Command layer must report already-generated islands instead of overwriting.")
+		requireContains(commands, "GenerationResult.TARGET_OCCUPIED",
+				"Command layer must report occupied target areas instead of overwriting.")
+
+		if (!failures.isEmpty()) {
+			throw new GradleException("Skyblock persistence check failed:\n - " + failures.join("\n - "))
+		}
+		logger.lifecycle("Skyblock persistence scripted checks passed.")
+	}
+}
+
+tasks.named("check") {
+	dependsOn skyblockPersistenceCheck
+}

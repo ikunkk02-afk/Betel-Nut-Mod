@@ -6,12 +6,14 @@ import java.util.function.IntSupplier;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMidnightConfig;
 import betel.nut.advancement.BetelQuestAdvancements;
+import betel.nut.addiction.AddictionStageUtil;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.event.WithdrawalEatingRestrictions;
 import betel.nut.skyblock.BetelSkyblockManager;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionHand;
@@ -59,23 +61,27 @@ public class BetelNutItem extends BetelNutFoodItem {
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
+			var addiction = BetelNutEntityComponents.ADDICTION.get(player);
+			BetelNutConfig config = BetelNutConfig.get();
+			int rewardStage = config.enableAddictionSystem ? addiction.getAddictionStage() : 0;
 			int suppressSlownessTicks = 0;
 			int suppressMiningFatigueTicks = 0;
 			int suppressWeaknessTicks = 0;
 			for (EffectSpec effect : this.effects) {
-				player.addEffect(new MobEffectInstance(effect.effect(), effect.durationTicks(), effect.amplifier()));
+				int durationTicks = getScaledRewardDurationTicks(effect, rewardStage);
+				int amplifier = getScaledRewardAmplifier(effect, rewardStage);
+				player.addEffect(new MobEffectInstance(effect.effect(), durationTicks, amplifier));
 				if (!isSyntheticWorldBetel) {
-					if (effect.effect().is(MobEffects.MOVEMENT_SPEED)) {
-						suppressSlownessTicks = Math.max(suppressSlownessTicks, effect.durationTicks());
-					} else if (effect.effect().is(MobEffects.DIG_SPEED)) {
-						suppressMiningFatigueTicks = Math.max(suppressMiningFatigueTicks, effect.durationTicks());
-					} else if (effect.effect().is(MobEffects.DAMAGE_BOOST)) {
-						suppressWeaknessTicks = Math.max(suppressWeaknessTicks, effect.durationTicks());
+					if (effect.effect().equals(MobEffects.MOVEMENT_SPEED)) {
+						suppressSlownessTicks = Math.max(suppressSlownessTicks, durationTicks);
+					} else if (effect.effect().equals(MobEffects.DIG_SPEED)) {
+						suppressMiningFatigueTicks = Math.max(suppressMiningFatigueTicks, durationTicks);
+					} else if (effect.effect().equals(MobEffects.DAMAGE_BOOST)) {
+						suppressWeaknessTicks = Math.max(suppressWeaknessTicks, durationTicks);
 					}
 				}
 			}
 
-			var addiction = BetelNutEntityComponents.ADDICTION.get(player);
 			boolean suppressedWithdrawalConflicts = false;
 			if (!isSyntheticWorldBetel) {
 				suppressedWithdrawalConflicts = addiction.suppressConflictingWithdrawalEffects(player,
@@ -87,7 +93,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 				BetelQuestAdvancements.grantEatHechengTianxia(player);
 			}
 
-			if (BetelNutConfig.get().enableAddictionSystem) {
+			if (config.enableAddictionSystem) {
 				addiction.eatBetelNut(player,
 						Math.max(0, this.addictionIncreaseSupplier.getAsInt()),
 						level.getGameTime(),
@@ -106,6 +112,28 @@ public class BetelNutItem extends BetelNutFoodItem {
 
 	public int getAddictionIncrease() {
 		return Math.max(0, this.addictionIncreaseSupplier.getAsInt());
+	}
+
+	private static int getScaledRewardDurationTicks(EffectSpec effect, int addictionStage) {
+		int durationTicks = Math.max(1, effect.durationTicks());
+		if (!isBeneficialReward(effect)) {
+			return durationTicks;
+		}
+		float multiplier = AddictionStageUtil.getBetelRewardDurationMultiplier(addictionStage);
+		return Math.max(1, Math.round(durationTicks * multiplier));
+	}
+
+	private static int getScaledRewardAmplifier(EffectSpec effect, int addictionStage) {
+		int amplifier = Math.max(0, effect.amplifier());
+		if (!isBeneficialReward(effect)) {
+			return amplifier;
+		}
+		int penalty = AddictionStageUtil.getBetelRewardAmplifierPenalty(addictionStage);
+		return Math.max(0, amplifier - penalty);
+	}
+
+	private static boolean isBeneficialReward(EffectSpec effect) {
+		return effect.effect().value().getCategory() == MobEffectCategory.BENEFICIAL;
 	}
 
 	public record EffectSpec(Holder<MobEffect> effect, int durationTicks, int amplifier) {

@@ -1,5 +1,35 @@
 # Changelog
 
+## [4.0.0] - 槟榔空岛与持久化修复
+
+### 新增
+
+- 新增普通槟榔空岛世界预设。
+- 新增槟榔一方块空岛世界预设。
+- 新增槟榔渣与槟榔渣块，支持合成、拆分和堆肥循环。
+- 新增空岛虚空保护、出生点记录、开局箱子、指南书和一方块初始物品逻辑。
+- 新增空岛专属水中召雷仪式和管理员生成末地传送门指令。
+- 新增 `/betelskyblock generate`、`reset`、`tp`、`generate_one_block`、`reset_one_block`、`tp_one_block`、`force_generate`、`force_generate_one_block` 和 `generate_end_portal` 等管理指令。
+- 新增脚本化资源检查任务 `checkSkyblockPersistence`，覆盖 CCA 保存、reset/generate 行为和箱子不刷新防护。
+
+### 调整
+
+- 空岛自动生成改为严格依赖 CCA 世界组件中的一次性生成状态。
+- `/betelskyblock generate` 默认不再覆盖已有空岛或玩家建筑；需要覆盖时使用 OP 权限的 `force_generate` 系列指令。
+- `/betelskyblock reset` 只重置生成状态，不立即覆盖方块。
+- 奖励衰减同时根据成瘾阶段和戒断强度降低。
+- MidnightLib 增加空岛、一方块空岛、堆肥和末地路线相关配置项。
+- 玩家可见的戒断、空岛、末影槟榔和管理指令文本补充到 `zh_cn` 与 `en_us` 本地化文件。
+- README 与 4.0.0 更新说明补齐空岛玩法、持久化修复、脚本检查和维护清理说明。
+
+### 修复
+
+- 修复退出重进后空岛可能重复生成并覆盖玩家改造区域的问题。
+- 修复 CCA 世界组件未完整记录空岛生成状态和坐标时导致的持久化风险。
+- 修复开局箱子和初始物品可能被重复刷新的风险。
+- 移除 Fabric 模板残留的示例 mixin 配置与类。
+- 清理 Gradle jar 任务和 Java 编译中的 deprecated API 警告来源。
+
 ## [3.0.0] - 成瘾 HUD 可视化系统
 
 ### 新增
