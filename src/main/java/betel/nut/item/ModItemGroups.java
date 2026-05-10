@@ -52,6 +52,7 @@ public final class ModItemGroups {
 						output.accept(ModBlocks.BETEL_PALM_FENCE_GATE_ITEM);
 						output.accept(ModBlocks.BETEL_PALM_BUTTON_ITEM);
 						output.accept(ModBlocks.BETEL_PALM_PRESSURE_PLATE_ITEM);
+						output.accept(ModBlocks.BETEL_PALM_TRAPDOOR_ITEM);
 						output.accept(ModBlocks.BETEL_PALM_LEAVES_ITEM);
 						output.accept(ModBlocks.BETEL_PALM_SAPLING_ITEM);
 					})

@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -46,6 +47,8 @@ public final class ModBlocks {
 	public static final Block BETEL_PALM_PRESSURE_PLATE = registerBlock("betel_palm_pressure_plate",
 			new PressurePlateBlock(BlockSetType.OAK,
 					BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_PRESSURE_PLATE)));
+	public static final Block BETEL_PALM_TRAPDOOR = registerBlock("betel_palm_trapdoor",
+			new TrapDoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_TRAPDOOR)));
 	public static final Block BETEL_PALM_LEAVES = registerBlock("betel_palm_leaves",
 			new LeavesBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LEAVES)));
 	public static final Block BETEL_PALM_SAPLING = registerBlock("betel_palm_sapling",
@@ -63,6 +66,8 @@ public final class ModBlocks {
 	public static final Item BETEL_PALM_BUTTON_ITEM = registerBlockItem("betel_palm_button", BETEL_PALM_BUTTON);
 	public static final Item BETEL_PALM_PRESSURE_PLATE_ITEM = registerBlockItem("betel_palm_pressure_plate",
 			BETEL_PALM_PRESSURE_PLATE);
+	public static final Item BETEL_PALM_TRAPDOOR_ITEM = registerBlockItem("betel_palm_trapdoor",
+			BETEL_PALM_TRAPDOOR);
 	public static final Item BETEL_PALM_LEAVES_ITEM = registerBlockItem("betel_palm_leaves", BETEL_PALM_LEAVES);
 	public static final Item BETEL_PALM_SAPLING_ITEM = registerBlockItem("betel_palm_sapling", BETEL_PALM_SAPLING);
 	public static final Item BETEL_NUT_RESIDUE_BLOCK_ITEM = registerBlockItem("betel_nut_residue_block",
@@ -89,6 +94,7 @@ public final class ModBlocks {
 		flammableBlocks.add(BETEL_PALM_FENCE_GATE, 5, 20);
 		flammableBlocks.add(BETEL_PALM_BUTTON, 5, 20);
 		flammableBlocks.add(BETEL_PALM_PRESSURE_PLATE, 5, 20);
+		flammableBlocks.add(BETEL_PALM_TRAPDOOR, 5, 20);
 
 		FuelRegistry.INSTANCE.add(BETEL_PALM_LOG_ITEM, 300);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_PLANKS_ITEM, 300);
@@ -98,6 +104,7 @@ public final class ModBlocks {
 		FuelRegistry.INSTANCE.add(BETEL_PALM_FENCE_GATE_ITEM, 300);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_BUTTON_ITEM, 100);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_PRESSURE_PLATE_ITEM, 300);
+		FuelRegistry.INSTANCE.add(BETEL_PALM_TRAPDOOR_ITEM, 300);
 	}
 
 	private ModBlocks() {
