@@ -17,15 +17,18 @@ public record AddictionSyncPayload(
 		int addictionStage,
 		int withdrawalSeverity,
 		int nextWithdrawalTicks,
-		int maxAddictionValue) implements CustomPacketPayload {
+		int maxAddictionValue,
+		int soberDays, boolean ateToday, int oralCancerStage, int mouthRestrictionLevel) implements CustomPacketPayload {
 	public static final Type<AddictionSyncPayload> TYPE = new Type<>(BetelNutMod.id("addiction_sync"));
-	public static final StreamCodec<RegistryFriendlyByteBuf, AddictionSyncPayload> CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT, AddictionSyncPayload::addictionValue,
-			ByteBufCodecs.VAR_INT, AddictionSyncPayload::addictionStage,
-			ByteBufCodecs.VAR_INT, AddictionSyncPayload::withdrawalSeverity,
-			ByteBufCodecs.VAR_INT, AddictionSyncPayload::nextWithdrawalTicks,
-			ByteBufCodecs.VAR_INT, AddictionSyncPayload::maxAddictionValue,
-			AddictionSyncPayload::new);
+	public static final StreamCodec<RegistryFriendlyByteBuf, AddictionSyncPayload> CODEC = StreamCodec.of(
+			(buf, p) -> {
+				buf.writeVarInt(p.addictionValue()); buf.writeVarInt(p.addictionStage());
+				buf.writeVarInt(p.withdrawalSeverity()); buf.writeVarInt(p.nextWithdrawalTicks());
+				buf.writeVarInt(p.maxAddictionValue()); buf.writeVarInt(p.soberDays());
+				buf.writeBoolean(p.ateToday()); buf.writeVarInt(p.oralCancerStage());
+				buf.writeVarInt(p.mouthRestrictionLevel());
+			}, buf -> new AddictionSyncPayload(buf.readVarInt(), buf.readVarInt(), buf.readVarInt(),
+					buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readBoolean(), buf.readVarInt(), buf.readVarInt()));
 
 	public static void register() {
 		PayloadTypeRegistry.playS2C().register(TYPE, CODEC);
@@ -47,7 +50,7 @@ public record AddictionSyncPayload(
 	public static AddictionSyncPayload fromPlayer(ServerPlayer player) {
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!config.enableAddictionSystem) {
-			return new AddictionSyncPayload(0, 0, 0, -1, Math.max(1, config.maxAddictionValue));
+			return new AddictionSyncPayload(0, 0, 0, -1, Math.max(1, config.maxAddictionValue), 0, false, 0, 0);
 		}
 
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
@@ -57,7 +60,12 @@ public record AddictionSyncPayload(
 		int withdrawalSeverity = addiction.getWithdrawalSeverity();
 		int nextWithdrawalTicks = addiction.getNextWithdrawalTicks(player);
 		return new AddictionSyncPayload(addictionValue, addictionStage, withdrawalSeverity, nextWithdrawalTicks,
-				maxAddictionValue);
+				maxAddictionValue, addiction.getSoberDays(), addiction.hasEatenToday(), addiction.getOralCancerStage(),
+				switch (betel.nut.event.WithdrawalEatingRestrictions.getRestrictionLevel(player, addiction)) {
+					case NONE -> 0;
+					case SOFT_FOODS -> 1;
+					default -> 2;
+				});
 	}
 
 	@Override

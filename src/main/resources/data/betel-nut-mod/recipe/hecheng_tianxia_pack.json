@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel-nut-mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:honey_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:quartz_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:amethyst_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:lapis_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:phantom_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:empty_pack"
+    },
+    {
+      "item": "betel-nut-mod:brand_seal"
+    }
+  ],
+  "result": {
+    "id": "betel-nut-mod:hecheng_tianxia_pack",
+    "count": 1
+  }
+}

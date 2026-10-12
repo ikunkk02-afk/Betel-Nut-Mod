@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel-nut-mod:shell"
+    }
+  ],
+  "result": {
+    "id": "betel-nut-mod:shell_powder",
+    "count": 4
+  }
+}

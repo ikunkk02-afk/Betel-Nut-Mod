@@ -17,6 +17,8 @@
     "betel-nut-mod:amethyst_betel_nut",
     "betel-nut-mod:synthetic_world_betel",
     "betel-nut-mod:rich_world_betel",
-    "betel-nut-mod:underground_betel"
+    "betel-nut-mod:underground_betel",
+    "betel-nut-mod:wrapped_raw_betel",
+    "betel-nut-mod:echo_betel"
   ]
 }

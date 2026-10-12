@@ -1,7 +1,388 @@
 {
   "variants": {
-    "": {
-      "model": "betel-nut-mod:block/betel_palm_leaves"
+    "facing=north,segment=0,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_leaves",
+      "y": 0
+    },
+    "facing=north,segment=1,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1",
+      "y": 0
+    },
+    "facing=north,segment=2,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2",
+      "y": 0
+    },
+    "facing=north,segment=3,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3",
+      "y": 0
+    },
+    "facing=north,segment=4,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1",
+      "y": 0
+    },
+    "facing=north,segment=5,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2",
+      "y": 0
+    },
+    "facing=north,segment=0,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_1",
+      "y": 0
+    },
+    "facing=north,segment=1,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_1",
+      "y": 0
+    },
+    "facing=north,segment=2,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_1",
+      "y": 0
+    },
+    "facing=north,segment=3,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_1",
+      "y": 0
+    },
+    "facing=north,segment=4,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_1",
+      "y": 0
+    },
+    "facing=north,segment=5,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_1",
+      "y": 0
+    },
+    "facing=north,segment=0,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_2",
+      "y": 0
+    },
+    "facing=north,segment=1,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_2",
+      "y": 0
+    },
+    "facing=north,segment=2,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_2",
+      "y": 0
+    },
+    "facing=north,segment=3,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_2",
+      "y": 0
+    },
+    "facing=north,segment=4,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_2",
+      "y": 0
+    },
+    "facing=north,segment=5,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_2",
+      "y": 0
+    },
+    "facing=north,segment=0,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_3",
+      "y": 0
+    },
+    "facing=north,segment=1,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_3",
+      "y": 0
+    },
+    "facing=north,segment=2,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_3",
+      "y": 0
+    },
+    "facing=north,segment=3,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_3",
+      "y": 0
+    },
+    "facing=north,segment=4,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_3",
+      "y": 0
+    },
+    "facing=north,segment=5,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_3",
+      "y": 0
+    },
+    "facing=east,segment=0,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_leaves",
+      "y": 90
+    },
+    "facing=east,segment=1,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1",
+      "y": 90
+    },
+    "facing=east,segment=2,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2",
+      "y": 90
+    },
+    "facing=east,segment=3,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3",
+      "y": 90
+    },
+    "facing=east,segment=4,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1",
+      "y": 90
+    },
+    "facing=east,segment=5,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2",
+      "y": 90
+    },
+    "facing=east,segment=0,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_1",
+      "y": 90
+    },
+    "facing=east,segment=1,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_1",
+      "y": 90
+    },
+    "facing=east,segment=2,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_1",
+      "y": 90
+    },
+    "facing=east,segment=3,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_1",
+      "y": 90
+    },
+    "facing=east,segment=4,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_1",
+      "y": 90
+    },
+    "facing=east,segment=5,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_1",
+      "y": 90
+    },
+    "facing=east,segment=0,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_2",
+      "y": 90
+    },
+    "facing=east,segment=1,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_2",
+      "y": 90
+    },
+    "facing=east,segment=2,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_2",
+      "y": 90
+    },
+    "facing=east,segment=3,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_2",
+      "y": 90
+    },
+    "facing=east,segment=4,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_2",
+      "y": 90
+    },
+    "facing=east,segment=5,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_2",
+      "y": 90
+    },
+    "facing=east,segment=0,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_3",
+      "y": 90
+    },
+    "facing=east,segment=1,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_3",
+      "y": 90
+    },
+    "facing=east,segment=2,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_3",
+      "y": 90
+    },
+    "facing=east,segment=3,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_3",
+      "y": 90
+    },
+    "facing=east,segment=4,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_3",
+      "y": 90
+    },
+    "facing=east,segment=5,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_3",
+      "y": 90
+    },
+    "facing=south,segment=0,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_leaves",
+      "y": 180
+    },
+    "facing=south,segment=1,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1",
+      "y": 180
+    },
+    "facing=south,segment=2,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2",
+      "y": 180
+    },
+    "facing=south,segment=3,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3",
+      "y": 180
+    },
+    "facing=south,segment=4,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1",
+      "y": 180
+    },
+    "facing=south,segment=5,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2",
+      "y": 180
+    },
+    "facing=south,segment=0,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_1",
+      "y": 180
+    },
+    "facing=south,segment=1,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_1",
+      "y": 180
+    },
+    "facing=south,segment=2,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_1",
+      "y": 180
+    },
+    "facing=south,segment=3,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_1",
+      "y": 180
+    },
+    "facing=south,segment=4,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_1",
+      "y": 180
+    },
+    "facing=south,segment=5,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_1",
+      "y": 180
+    },
+    "facing=south,segment=0,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_2",
+      "y": 180
+    },
+    "facing=south,segment=1,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_2",
+      "y": 180
+    },
+    "facing=south,segment=2,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_2",
+      "y": 180
+    },
+    "facing=south,segment=3,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_2",
+      "y": 180
+    },
+    "facing=south,segment=4,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_2",
+      "y": 180
+    },
+    "facing=south,segment=5,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_2",
+      "y": 180
+    },
+    "facing=south,segment=0,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_3",
+      "y": 180
+    },
+    "facing=south,segment=1,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_3",
+      "y": 180
+    },
+    "facing=south,segment=2,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_3",
+      "y": 180
+    },
+    "facing=south,segment=3,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_3",
+      "y": 180
+    },
+    "facing=south,segment=4,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_3",
+      "y": 180
+    },
+    "facing=south,segment=5,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_3",
+      "y": 180
+    },
+    "facing=west,segment=0,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_leaves",
+      "y": 270
+    },
+    "facing=west,segment=1,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1",
+      "y": 270
+    },
+    "facing=west,segment=2,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2",
+      "y": 270
+    },
+    "facing=west,segment=3,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3",
+      "y": 270
+    },
+    "facing=west,segment=4,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1",
+      "y": 270
+    },
+    "facing=west,segment=5,style=0": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2",
+      "y": 270
+    },
+    "facing=west,segment=0,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_1",
+      "y": 270
+    },
+    "facing=west,segment=1,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_1",
+      "y": 270
+    },
+    "facing=west,segment=2,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_1",
+      "y": 270
+    },
+    "facing=west,segment=3,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_1",
+      "y": 270
+    },
+    "facing=west,segment=4,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_1",
+      "y": 270
+    },
+    "facing=west,segment=5,style=1": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_1",
+      "y": 270
+    },
+    "facing=west,segment=0,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_2",
+      "y": 270
+    },
+    "facing=west,segment=1,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_2",
+      "y": 270
+    },
+    "facing=west,segment=2,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_2",
+      "y": 270
+    },
+    "facing=west,segment=3,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_2",
+      "y": 270
+    },
+    "facing=west,segment=4,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_2",
+      "y": 270
+    },
+    "facing=west,segment=5,style=2": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_2",
+      "y": 270
+    },
+    "facing=west,segment=0,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_leaves_style_3",
+      "y": 270
+    },
+    "facing=west,segment=1,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_1_style_3",
+      "y": 270
+    },
+    "facing=west,segment=2,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_2_style_3",
+      "y": 270
+    },
+    "facing=west,segment=3,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_3_style_3",
+      "y": 270
+    },
+    "facing=west,segment=4,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_1_style_3",
+      "y": 270
+    },
+    "facing=west,segment=5,style=3": {
+      "model": "betel-nut-mod:block/betel_palm_frond_diagonal_2_style_3",
+      "y": 270
     }
   }
 }

@@ -34,6 +34,8 @@ public final class AddictionTooltipAppender {
 			return;
 		}
 
+		lines.add(Component.translatable(ClientAddictionData.hasEatenToday()
+				? "tooltip.betel-nut-mod.counted_today" : "tooltip.betel-nut-mod.counts_today").withStyle(ChatFormatting.AQUA));
 		int stage = ClientAddictionData.getAddictionStage();
 		lines.add(Component.translatable("betel_nut_mod.tooltip.addiction.current",
 				Component.translatable(AddictionStageUtil.getStageTranslationKey(stage)))

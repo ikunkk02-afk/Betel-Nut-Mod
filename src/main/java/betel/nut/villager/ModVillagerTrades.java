@@ -35,6 +35,16 @@ public final class ModVillagerTrades {
 			return;
 		}
 
+		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FISHERMAN, 1, factories ->
+				factories.add(itemForEmeralds(ModItems.SHELL, 1, 4, 16, 2)));
+		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 2, factories ->
+				factories.add(itemForEmeralds(ModItems.BRAND_SEAL, 4, 1, 8, 5)));
+		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 3, factories ->
+				factories.add(itemForEmeralds(ModItems.KOUWEIWANG_PACK, 12, 1, 4, 10)));
+		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 4, factories ->
+				factories.add(itemForEmeralds(ModItems.XIANGTAN_PUZI_PACK, 14, 1, 4, 15)));
+		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 5, factories ->
+				factories.add(itemForEmeralds(ModItems.HECHENG_TIANXIA_PACK, 20, 1, 3, 30)));
 		TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 1, factories -> {
 			factories.add(itemForEmeralds(ModItems.RAW_BETEL_NUT, 1, config.farmerTradeRawBetelBuyCount, 16, 2));
 			factories.add(emeraldForItems(ModItems.RAW_BETEL_NUT, config.farmerTradeRawBetelSellCount, 12, 2));

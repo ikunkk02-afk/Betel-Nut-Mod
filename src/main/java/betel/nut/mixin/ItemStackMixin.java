@@ -4,6 +4,8 @@ import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.event.BetelNutEvents;
 import betel.nut.event.WithdrawalEatingRestrictions;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -34,22 +36,25 @@ public class ItemStackMixin {
 		}
 	}
 
-	@Inject(method = "finishUsingItem", at = @At("HEAD"), cancellable = true)
-	private void betelNutMod$handleFinishedUsingItem(Level level, LivingEntity entity,
-			CallbackInfoReturnable<ItemStack> cir) {
+	@WrapMethod(method = "finishUsingItem")
+	private ItemStack betelNutMod$handleFinishedUsingItem(Level level, LivingEntity entity,
+			Operation<ItemStack> original) {
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
 			ItemStack stack = (ItemStack) (Object) this;
 			BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
 			if (addiction.blockHechengTianxiaActionIfComatose(player, true)) {
-				cir.setReturnValue(stack);
-				return;
+				return stack;
 			}
 			if (WithdrawalEatingRestrictions.shouldBlockUse(player, stack, true)) {
-				cir.setReturnValue(stack);
-				return;
+				return stack;
 			}
-
-			BetelNutEvents.handleFinishedUsingItem(player, stack, level.getGameTime());
+			// Keep the consumed identity even when the last item becomes empty or a bucket.
+			ItemStack consumed = stack.copyWithCount(1);
+			ItemStack result = original.call(level, entity);
+			// Milk must finish clearing vanilla effects before persistent symptoms are restored.
+			BetelNutEvents.handleFinishedUsingItem(player, consumed, level.getGameTime());
+			return result;
 		}
+		return original.call(level, entity);
 	}
 }

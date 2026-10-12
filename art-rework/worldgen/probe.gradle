@@ -1,0 +1,21 @@
+// Development-only natural-world probe. Never included in the release or sources JAR.
+sourceSets {
+    worldgenProbe {
+        java.srcDir 'art-rework/worldgen/probe/java'
+        resources.srcDir 'art-rework/worldgen/probe/resources'
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+loom {
+    mods { betel_worldgen_probe { sourceSet sourceSets.worldgenProbe } }
+    runs {
+        worldgenProbeServer {
+            server()
+            source sourceSets.worldgenProbe
+            runDir 'art-rework/worldgen/probe-run'
+            programArgs 'nogui'
+            vmArgs '-Xmx2G'
+        }
+    }
+}

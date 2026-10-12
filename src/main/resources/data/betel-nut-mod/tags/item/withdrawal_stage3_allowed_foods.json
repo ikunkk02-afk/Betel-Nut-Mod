@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "minecraft:enchanted_golden_apple"
+    "betel-nut-mod:golden_apple_paste",
+    "betel-nut-mod:enchanted_golden_apple_paste",
+    "betel-nut-mod:relief_potion"
   ]
 }

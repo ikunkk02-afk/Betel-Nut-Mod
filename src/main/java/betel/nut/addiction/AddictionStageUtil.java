@@ -4,6 +4,7 @@ import betel.nut.BetelNutConfig;
 import net.minecraft.ChatFormatting;
 
 public final class AddictionStageUtil {
+	public static final int DEFAULT_MAX_DAYS = 7;
 	private static final int STAGE_COUNT = 5;
 	private static final int TICKS_PER_SECOND = 20;
 
@@ -36,10 +37,18 @@ public final class AddictionStageUtil {
 		if (clampedStage <= 0) {
 			return 0;
 		}
-		if (clampedStage == 1) {
-			return 1;
-		}
-		return (int) Math.ceil(maxValue * ((clampedStage - 1) / (double) STAGE_COUNT));
+		return 1 + (maxValue - 1) * clampedStage / STAGE_COUNT;
+	}
+
+	/** Old saves stored a weighted score, not a recoverable eating-day history. */
+	public static int migrateLegacyScore(int score, int oldMaximum) {
+		return migrateLegacyScore(score, oldMaximum, DEFAULT_MAX_DAYS);
+	}
+
+	public static int migrateLegacyScore(int score, int oldMaximum, int newMaximum) {
+		if (score <= 0) return 0;
+		int oldStage = Math.min(5, 1 + (int) ((long) score * 5 / Math.max(1, oldMaximum)));
+		return getStageStartThreshold(oldStage, newMaximum);
 	}
 
 	public static int getNextStageThreshold(int addictionValue, int maxAddictionValue) {
@@ -58,6 +67,7 @@ public final class AddictionStageUtil {
 		int maxValue = Math.max(1, maxAddictionValue);
 		int value = clamp(addictionValue, 0, maxValue);
 		int stage = getStage(value, maxValue);
+		if (stage >= STAGE_COUNT) return 1.0F;
 
 		int start = getStageStartThreshold(stage, maxValue);
 		int next = stage >= STAGE_COUNT ? maxValue : getStageStartThreshold(stage + 1, maxValue);

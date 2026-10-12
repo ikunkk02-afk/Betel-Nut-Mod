@@ -4,6 +4,8 @@ import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.advancement.BetelQuestAdvancements;
 import betel.nut.addiction.AddictionStageUtil;
+import betel.nut.addiction.DailyUseTracker;
+import betel.nut.effect.ModEffects;
 import betel.nut.effect.HechengTianxiaEffects;
 import betel.nut.message.BetelMessages;
 import betel.nut.network.AddictionSyncPayload;
@@ -39,8 +41,14 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			.id("withdrawal_max_health_penalty");
 
 	private int addictionValue;
+	private final DailyUseTracker calendar = new DailyUseTracker();
+	private int oralExposureDays;
+	private int withdrawalSeverityFloor;
+	private int echoAftermathTicks;
+	private boolean needsLegacyCalendarAnchor;
 	private int withdrawalValue;
 	private long lastEatTime;
+    private long lastReliefDay = Long.MIN_VALUE;
 	private long cleanTime;
 	private long nextWithdrawalTime = -1;
 	private int notifiedWithdrawalStage;
@@ -84,10 +92,88 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	public int getWithdrawalSeverity() {
-		if (this.withdrawalValue < visibleWithdrawalThreshold(BetelNutConfig.get())) {
+		BetelNutConfig config = BetelNutConfig.get();
+		if (!config.enableAddictionSystem || this.addictionValue < config.minimumAddictionForWithdrawal
+				|| this.withdrawalValue < visibleWithdrawalThreshold(config)) {
 			return 0;
 		}
-		return AddictionStageUtil.getWithdrawalSeverity(getAddictionStage());
+		return Math.min(getAddictionStage(), Math.max(this.withdrawalSeverityFloor, Math.max(1, this.calendar.soberDays())));
+	}
+
+	public int getSoberDays() { return this.calendar.soberDays(); }
+	public boolean hasEatenToday() { return this.calendar.usedToday(); }
+	public int getOralExposureDays() { return this.oralExposureDays; }
+	public int getOralCancerStage() {
+		BetelNutConfig config = BetelNutConfig.get();
+		if (!config.enableOralDisease || !config.enableAddictionSystem) return 0;
+		if (this.oralExposureDays >= config.oralCancerStage3Days) return 3;
+		if (this.oralExposureDays >= config.oralCancerStage2Days) return 2;
+		return this.oralExposureDays >= config.oralCancerStage1Days ? 1 : 0;
+	}
+	public static long calendarDay(ServerPlayer player) {
+		return Math.floorDiv(player.server.overworld().getDayTime(), 24000L);
+	}
+	public void beginCalendarSession(ServerPlayer player) {
+		this.calendar.beginSession(calendarDay(player));
+		if (this.needsLegacyCalendarAnchor) {
+			this.calendar.eat(calendarDay(player));
+			this.needsLegacyCalendarAnchor = false;
+		}
+	}
+	private void advanceCalendar(ServerPlayer player) {
+		if (this.needsLegacyCalendarAnchor) beginCalendarSession(player);
+		if (this.calendar.advance(calendarDay(player))) {
+			if (this.calendar.soberDays() >= 3) this.addictionValue = Math.max(0, this.addictionValue - 1);
+			BetelNutConfig config = BetelNutConfig.get();
+			this.withdrawalValue = !canScheduleWithdrawal(config) ? 0
+					: Math.min(config.maxWithdrawalValue, visibleWithdrawalThreshold(config) * this.calendar.soberDays());
+			this.notifiedWithdrawalStage = 0;
+		}
+	}
+	public void setOralExposureDays(int days) {
+		this.oralExposureDays = clamp(days, 0, BetelNutConfig.get().oralCancerStage3Days);
+	}
+
+	public void maintainDependenceEffects(ServerPlayer player) {
+		int stage = BetelNutConfig.get().enableAddictionSystem && !player.isCreative() && !player.isSpectator()
+				? getAddictionStage() : 0;
+		MobEffectInstance present = player.getEffect(ModEffects.BETEL_DEPENDENCE);
+		if (stage == 0) {
+			player.removeEffect(ModEffects.BETEL_DEPENDENCE);
+		} else if (present == null || present.getAmplifier() != stage - 1 || present.getDuration() < 40) {
+			// Remove first: vanilla keeps the stronger amplifier when merely adding a weaker effect.
+			player.removeEffect(ModEffects.BETEL_DEPENDENCE);
+			player.addEffect(new MobEffectInstance(ModEffects.BETEL_DEPENDENCE, 220, stage - 1, false, false, true));
+		}
+	}
+	public void startEchoAftermath(int ticks) { this.echoAftermathTicks = Math.max(this.echoAftermathTicks, ticks); }
+	public void maintainOralEffects(ServerPlayer player) {
+		int stage = getOralCancerStage();
+		MobEffectInstance present = player.getEffect(ModEffects.ORAL_CANCER);
+		if (stage == 0) player.removeEffect(ModEffects.ORAL_CANCER);
+		else if (present == null || present.getAmplifier() != stage - 1 || present.getDuration() < 40) {
+			player.removeEffect(ModEffects.ORAL_CANCER);
+			player.addEffect(new MobEffectInstance(ModEffects.ORAL_CANCER, 220, stage - 1, false, false, true));
+		}
+		boolean locked = stage >= 3 || (BetelNutConfig.get().enableAddictionSystem && BetelNutConfig.get().enableWithdrawalEatingRestriction
+				&& getWithdrawalSeverity() >= 3 && this.cleanTime <= player.level().getGameTime());
+		if (locked) {
+			MobEffectInstance mouth = player.getEffect(ModEffects.MOUTH_LOCKED);
+			if (mouth == null || mouth.getDuration() < 40)
+				player.addEffect(new MobEffectInstance(ModEffects.MOUTH_LOCKED, 220, 0, false, false, true));
+		} else player.removeEffect(ModEffects.MOUTH_LOCKED);
+		// A newly applied disease modifier must not push an existing withdrawal penalty below its floor.
+		if (hasWithdrawalMaxHealthPenalty(player)) {
+			BetelNutConfig config = BetelNutConfig.get();
+			double requested = switch (getWithdrawalSeverity()) {
+				case 2 -> config.stage2MaxHealthPenalty;
+				case 3 -> config.stage3MaxHealthPenalty;
+				case 4, 5 -> config.stage4MaxHealthPenalty;
+				default -> 0.0D;
+			};
+			applyWithdrawalMaxHealthPenalty(player, config, requested);
+		}
+		if (player.getHealth() > player.getMaxHealth()) player.setHealth(player.getMaxHealth());
 	}
 
 	public int getWithdrawalStage() {
@@ -136,10 +222,12 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	public int getNextWithdrawalTicks(ServerPlayer player) {
-		BetelNutConfig config = BetelNutConfig.get();
 		long gameTime = player.level().getGameTime();
-		ensureWithdrawalTimer(config, gameTime);
-		return AddictionStageUtil.getNextWithdrawalTicks(this.nextWithdrawalTime, gameTime);
+		if (!canScheduleWithdrawal(BetelNutConfig.get())) return -1;
+		if (this.cleanTime > gameTime) return (int) Math.min(Integer.MAX_VALUE, this.cleanTime - gameTime);
+		if (this.withdrawalValue >= visibleWithdrawalThreshold(BetelNutConfig.get())) return 0;
+		long untilDawn = 24000L - Math.floorMod(player.server.overworld().getDayTime(), 24000L);
+		return (int) (untilDawn + (this.calendar.canSettleToday() ? 0 : 24000));
 	}
 
 	public double getCurrentMaxHealthPenalty(ServerPlayer player) {
@@ -167,9 +255,16 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		int previousWithdrawal = this.withdrawalValue;
 		boolean preserveActiveWithdrawal = !clearWithdrawalEffectsOnEat
 				&& previousWithdrawal >= visibleWithdrawalThreshold(config);
-		this.addictionValue = clamp(this.addictionValue + addictionIncrease, 0, config.maxAddictionValue);
+		advanceCalendar(player);
+		if (this.calendar.eat(calendarDay(player))) {
+			this.addictionValue = clamp(this.addictionValue + 1, 0, config.maxAddictionValue);
+			this.oralExposureDays = Math.min(config.oralCancerStage3Days, this.oralExposureDays + 1);
+		}
+		// Relief is temporary; more nuts on the same calendar date never add another day.
+		this.cleanTime = Math.max(this.cleanTime, gameTime + config.milkReliefDurationTicks);
 		if (clearWithdrawalEffectsOnEat) {
 			this.withdrawalValue = 0;
+			this.withdrawalSeverityFloor = 0;
 			this.notifiedWithdrawalStage = 0;
 		}
 		this.lastEatTime = gameTime;
@@ -195,6 +290,8 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		if (previousStage < 1 && getAddictionStage() >= 1) {
 			BetelQuestAdvancements.grantAddictionStarted(player);
 		}
+		maintainDependenceEffects(player);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -265,6 +362,32 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		sendHechengTianxiaMessage(player, BetelMessages.HECHENG_TIANXIA_REPEAT_BLOCKED);
 	}
 
+    public boolean hasTakenReliefToday(ServerPlayer player) {
+        return calendarDay(player) <= this.lastReliefDay;
+    }
+
+    public boolean canTakeReliefPotion(ServerPlayer player) {
+        return BetelNutConfig.get().enableAddictionSystem && hasAddictionData() && !hasTakenReliefToday(player);
+    }
+
+    public void applyReliefPotion(ServerPlayer player, long gameTime) {
+        if (!canTakeReliefPotion(player)) return;
+        this.lastReliefDay = calendarDay(player);
+        this.addictionValue = Math.max(0, this.addictionValue - 1);
+        this.oralExposureDays = Math.max(0, this.oralExposureDays - 1);
+        this.withdrawalValue = 0;
+        this.withdrawalSeverityFloor = 0;
+        this.notifiedWithdrawalStage = 0;
+        this.cleanTime = Math.max(this.cleanTime, gameTime + 2400);
+        scheduleNextWithdrawal(BetelNutConfig.get(), gameTime);
+        boolean removed = clearWithdrawalPenalties(player);
+        maintainDependenceEffects(player);
+        maintainOralEffects(player);
+        sendFeedback(player, gameTime, "message.betel-nut-mod.relief_potion");
+        sendRecoveryFeedbackIfNeeded(player, removed);
+        AddictionSyncPayload.send(player);
+    }
+
 	public void applyMilkRelief(ServerPlayer player, long gameTime) {
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!config.enableAddictionSystem || !hasAddictionData()) {
@@ -274,8 +397,10 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.cleanTime = Math.max(this.cleanTime, gameTime + config.milkReliefDurationTicks);
 		scheduleNextWithdrawal(config, gameTime);
 		boolean removedMaxHealthPenalty = clearWithdrawalPenalties(player);
+		maintainDependenceEffects(player);
 		sendFeedback(player, gameTime, BetelMessages.MILK_RELIEF);
 		sendRecoveryFeedbackIfNeeded(player, removedMaxHealthPenalty);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -300,9 +425,11 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 		scheduleNextWithdrawal(config, gameTime);
 
+		maintainDependenceEffects(player);
 		sendFeedback(player, gameTime, BetelMessages.GOLDEN_APPLE_RECOVERY);
 		sendRecoveryFeedbackIfNeeded(player,
 				removedMaxHealthPenalty || (hadMaxHealthPenalty && !hasWithdrawalMaxHealthPenalty(player)));
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -315,64 +442,47 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.addictionValue = clamp(this.addictionValue - config.enchantedGoldenAppleAddictionReduction, 0,
 				config.maxAddictionValue);
 		this.withdrawalValue = 0;
+		this.withdrawalSeverityFloor = 0;
 		this.notifiedWithdrawalStage = 0;
+		this.oralExposureDays = Math.max(0, this.oralExposureDays - 10);
 		this.cleanTime = Math.max(this.cleanTime, gameTime + config.enchantedGoldenAppleCleanTimeTicks);
 		scheduleNextWithdrawal(config, gameTime);
 		boolean removedMaxHealthPenalty = clearWithdrawalPenalties(player);
+		maintainDependenceEffects(player);
 		sendFeedback(player, gameTime, BetelMessages.ENCHANTED_GOLDEN_APPLE_RECOVERY);
 		sendRecoveryFeedbackIfNeeded(player, removedMaxHealthPenalty);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
 	public void serverTick(ServerPlayer player) {
 		BetelNutConfig config = BetelNutConfig.get();
+		if (this.echoAftermathTicks > 0 && --this.echoAftermathTicks == 0)
+			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160, 0));
 		if (!config.enableAddictionSystem) {
-			this.nextWithdrawalTime = -1;
 			clearWithdrawalPenalties(player);
+			maintainDependenceEffects(player);
+			maintainOralEffects(player);
 			return;
 		}
-
-		long gameTime = player.level().getGameTime();
-
-		if (this.addictionValue <= 0) {
+		advanceCalendar(player);
+		maintainDependenceEffects(player);
+		maintainOralEffects(player);
+		if (player.server.getTickCount() % 20 != 0) return;
+		if (getAddictionStage() == 0) {
+			if (this.withdrawalValue > 0 || this.notifiedWithdrawalStage > 0 || hasWithdrawalMaxHealthPenalty(player))
+				clearWithdrawalPenalties(player);
 			this.withdrawalValue = 0;
+			this.withdrawalSeverityFloor = 0;
 			this.notifiedWithdrawalStage = 0;
-			this.nextWithdrawalTime = -1;
+		} else if (this.cleanTime > player.level().getGameTime()) {
 			clearWithdrawalPenalties(player);
-			return;
-		}
-
-		if (this.lastEatTime <= 0 || gameTime < this.lastEatTime) {
-			this.lastEatTime = gameTime;
-			scheduleNextWithdrawal(config, gameTime);
-		}
-
-		ensureWithdrawalTimer(config, gameTime);
-		int addictionStage = getAddictionStage();
-		int withdrawalTicks = AddictionStageUtil.getNextWithdrawalTicks(this.nextWithdrawalTime, gameTime);
-		if (player.server.getTickCount() % 20 == 0) {
-			BetelNutMod.LOGGER.debug(
-					"[BetelNut Debug] Server tick: player={}, addictionValue={}, stage={}, withdrawalTicks={}",
-					player.getScoreboardName(), this.addictionValue, addictionStage, withdrawalTicks);
-		}
-
-		if (this.cleanTime > gameTime) {
+		} else if (this.withdrawalValue >= visibleWithdrawalThreshold(config)) {
+			applyWithdrawalEffects(player, config);
+		} else if (hasWithdrawalMaxHealthPenalty(player)) {
 			clearWithdrawalPenalties(player);
-			return;
 		}
-
-		if (withdrawalTicks < 0) {
-			return;
-		}
-
-		if (withdrawalTicks > 0) {
-			return;
-		}
-
-		BetelNutMod.LOGGER.debug(
-				"[BetelNut Debug] Withdrawal should trigger: player={}, stage={}, withdrawalTicks={}",
-				player.getScoreboardName(), addictionStage, withdrawalTicks);
-		triggerWithdrawal(player, config, gameTime);
+		maintainOralEffects(player);
 	}
 
 	public void setAddictionValue(int value) {
@@ -380,6 +490,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		this.addictionValue = clamp(value, 0, config.maxAddictionValue);
 		if (this.addictionValue <= 0) {
 			this.withdrawalValue = 0;
+			this.withdrawalSeverityFloor = 0;
 			this.notifiedWithdrawalStage = 0;
 			this.nextWithdrawalTime = -1;
 		}
@@ -399,15 +510,18 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		long gameTime = player.level().getGameTime();
 		this.lastEatTime = gameTime;
 		this.withdrawalValue = 0;
+		this.withdrawalSeverityFloor = 0;
 		this.notifiedWithdrawalStage = 0;
 		scheduleNextWithdrawal(config, gameTime);
 		clearWithdrawalPenalties(player);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
 	public void setWithdrawalValue(ServerPlayer player, int value) {
 		BetelNutConfig config = BetelNutConfig.get();
 		this.withdrawalValue = clamp(value, 0, config.maxWithdrawalValue);
+		this.withdrawalSeverityFloor = this.withdrawalValue >= visibleWithdrawalThreshold(config) ? getAddictionStage() : 0;
 		syncNotifiedWithdrawalStageAfterDecrease();
 		long gameTime = player.level().getGameTime();
 
@@ -417,12 +531,14 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			applyWithdrawalEffects(player, config);
 		}
 		scheduleNextWithdrawal(config, gameTime);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
 	public void refreshWithdrawalEffects(ServerPlayer player) {
 		BetelNutConfig config = BetelNutConfig.get();
 		syncNotifiedWithdrawalStageAfterDecrease();
+		maintainDependenceEffects(player);
 
 		long gameTime = player.level().getGameTime();
 		if (!config.enableAddictionSystem || this.addictionValue <= 0
@@ -433,6 +549,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			applyWithdrawalEffects(player, config);
 		}
 		scheduleNextWithdrawal(config, gameTime);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -481,6 +598,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		if (shouldShowMessage) {
 			BetelMessages.send(player, BetelMessages.WITHDRAWAL_CONTINUES_AFTER_DEATH);
 		}
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -497,6 +615,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 
 		this.cleanTime = 0;
+		this.withdrawalSeverityFloor = getAddictionStage();
 		this.nextWithdrawalTime = gameTime;
 		if (this.lastEatTime <= 0 || gameTime < this.lastEatTime) {
 			this.lastEatTime = gameTime;
@@ -513,12 +632,20 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	public void clearAddiction(ServerPlayer player) {
 		this.addictionValue = 0;
+		this.calendar.clear();
+		this.oralExposureDays = 0;
+		this.withdrawalSeverityFloor = 0;
+		this.echoAftermathTicks = 0;
+		this.needsLegacyCalendarAnchor = false;
 		this.withdrawalValue = 0;
+		this.withdrawalSeverityFloor = 0;
 		this.lastEatTime = 0;
 		this.cleanTime = 0;
 		this.notifiedWithdrawalStage = 0;
 		this.nextWithdrawalTime = -1;
 		clearWithdrawalPenalties(player);
+		maintainDependenceEffects(player);
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -596,6 +723,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 		applyWithdrawalEffects(player, config);
 		this.nextWithdrawalTime = gameTime + config.withdrawalCheckIntervalTicks;
+		maintainOralEffects(player);
 		AddictionSyncPayload.send(player);
 	}
 
@@ -619,7 +747,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		int addictionStage = getAddictionStage();
 		int severity = this.withdrawalValue < visibleWithdrawalThreshold(config)
 				? 0
-				: AddictionStageUtil.getWithdrawalSeverity(addictionStage);
+				: getWithdrawalSeverity();
 		if (severity <= 0) {
 			this.notifiedWithdrawalStage = 0;
 			clearWithdrawalPenalties(player);
@@ -663,7 +791,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	private boolean hasAddictionData() {
-		return this.addictionValue > 0 || this.withdrawalValue > 0;
+		return this.addictionValue > 0 || this.withdrawalValue > 0 || this.oralExposureDays > 0;
 	}
 
 	private void ensureWithdrawalTimer(BetelNutConfig config, long gameTime) {
@@ -855,9 +983,19 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	@Override
 	public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
 		BetelNutConfig config = BetelNutConfig.get();
-		this.addictionValue = clamp(tag.getInt(ADDICTION_VALUE_KEY), 0, config.maxAddictionValue);
+		boolean legacy = !tag.contains("dailySchema");
+		this.addictionValue = clamp(legacy
+				? AddictionStageUtil.migrateLegacyScore(tag.getInt(ADDICTION_VALUE_KEY), config.legacyMaxAddictionValue, config.maxAddictionValue)
+				: tag.getInt(ADDICTION_VALUE_KEY), 0, config.maxAddictionValue);
+		this.needsLegacyCalendarAnchor = legacy && this.addictionValue > 0;
+		this.calendar.read(tag);
+		this.oralExposureDays = clamp(tag.getInt("oralExposureDays"), 0, config.oralCancerStage3Days);
+		this.echoAftermathTicks = Math.max(0, tag.getInt("echoAftermathTicks"));
 		this.withdrawalValue = clamp(tag.getInt(WITHDRAWAL_VALUE_KEY), 0, config.maxWithdrawalValue);
+		this.withdrawalSeverityFloor = legacy && this.withdrawalValue >= visibleWithdrawalThreshold(config)
+				? getAddictionStage() : clamp(tag.getInt("withdrawalSeverityFloor"), 0, 5);
 		this.lastEatTime = tag.getLong(LAST_EAT_TIME_KEY);
+        this.lastReliefDay = tag.contains("lastReliefDay") ? tag.getLong("lastReliefDay") : Long.MIN_VALUE;
 		this.cleanTime = tag.getLong(CLEAN_TIME_KEY);
 		this.nextWithdrawalTime = tag.contains(NEXT_WITHDRAWAL_TIME_KEY)
 				? tag.getLong(NEXT_WITHDRAWAL_TIME_KEY)
@@ -874,9 +1012,15 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	@Override
 	public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+		tag.putInt("dailySchema", 2);
+		this.calendar.write(tag);
+		tag.putInt("withdrawalSeverityFloor", this.withdrawalSeverityFloor);
+		tag.putInt("oralExposureDays", this.oralExposureDays);
+		tag.putInt("echoAftermathTicks", this.echoAftermathTicks);
 		tag.putInt(ADDICTION_VALUE_KEY, this.addictionValue);
 		tag.putInt(WITHDRAWAL_VALUE_KEY, this.withdrawalValue);
 		tag.putLong(LAST_EAT_TIME_KEY, this.lastEatTime);
+        tag.putLong("lastReliefDay", this.lastReliefDay);
 		tag.putLong(CLEAN_TIME_KEY, this.cleanTime);
 		tag.putLong(NEXT_WITHDRAWAL_TIME_KEY, this.nextWithdrawalTime);
 		tag.putInt(NOTIFIED_WITHDRAWAL_STAGE_KEY, this.notifiedWithdrawalStage);
@@ -894,6 +1038,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	public void copyForRespawn(BetelNutAddictionComponent other, boolean lossless) {
+        this.lastReliefDay = other.lastReliefDay;
 		if (lossless) {
 			copyAllFrom(other);
 			return;
@@ -909,6 +1054,11 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		}
 
 		this.addictionValue = other.addictionValue;
+		this.calendar.copyFrom(other.calendar);
+		this.oralExposureDays = other.oralExposureDays;
+		this.withdrawalSeverityFloor = other.withdrawalSeverityFloor;
+		this.echoAftermathTicks = other.echoAftermathTicks;
+		this.needsLegacyCalendarAnchor = other.needsLegacyCalendarAnchor;
 		this.cleanTime = other.cleanTime;
 
 		if (config.keepWithdrawalAfterDeath) {
@@ -918,6 +1068,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			this.notifiedWithdrawalStage = other.notifiedWithdrawalStage;
 		} else {
 			this.withdrawalValue = 0;
+			this.withdrawalSeverityFloor = 0;
 			this.lastEatTime = 0;
 			this.nextWithdrawalTime = -1;
 			this.notifiedWithdrawalStage = 0;
@@ -925,7 +1076,13 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	}
 
 	private void copyAllFrom(BetelNutAddictionComponent other) {
+        this.lastReliefDay = other.lastReliefDay;
 		this.addictionValue = other.addictionValue;
+		this.calendar.copyFrom(other.calendar);
+		this.oralExposureDays = other.oralExposureDays;
+		this.withdrawalSeverityFloor = other.withdrawalSeverityFloor;
+		this.echoAftermathTicks = other.echoAftermathTicks;
+		this.needsLegacyCalendarAnchor = other.needsLegacyCalendarAnchor;
 		this.withdrawalValue = other.withdrawalValue;
 		this.lastEatTime = other.lastEatTime;
 		this.cleanTime = other.cleanTime;
@@ -955,7 +1112,13 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	private void clearStoredData() {
 		this.addictionValue = 0;
+		this.calendar.clear();
+		this.oralExposureDays = 0;
+		this.withdrawalSeverityFloor = 0;
+		this.echoAftermathTicks = 0;
+		this.needsLegacyCalendarAnchor = false;
 		this.withdrawalValue = 0;
+		this.withdrawalSeverityFloor = 0;
 		this.lastEatTime = 0;
 		this.cleanTime = 0;
 		this.nextWithdrawalTime = -1;

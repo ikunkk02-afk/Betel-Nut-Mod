@@ -7,9 +7,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectionContext;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
 
 public final class ModWorldGeneration {
@@ -41,24 +38,7 @@ public final class ModWorldGeneration {
 			return false;
 		}
 
-		BetelNutConfig config = BetelNutConfig.get();
-		ResourceKey<Biome> biomeKey = context.getBiomeKey();
-
-		if (config.betelPalmGenerateInJungle && isJungleBiome(biomeKey)) {
-			return true;
-		}
-
-		if (config.betelPalmGenerateInBeach && biomeKey.equals(Biomes.BEACH)) {
-			return true;
-		}
-
-		return config.betelPalmGenerateInMangroveSwamp && biomeKey.equals(Biomes.MANGROVE_SWAMP);
-	}
-
-	private static boolean isJungleBiome(ResourceKey<Biome> biomeKey) {
-		return biomeKey.equals(Biomes.JUNGLE)
-				|| biomeKey.equals(Biomes.SPARSE_JUNGLE)
-				|| biomeKey.equals(Biomes.BAMBOO_JUNGLE);
+		return BetelPalmGroveGenerator.habitatFor(context.getBiomeKey(), BetelNutConfig.get()) != null;
 	}
 
 	private ModWorldGeneration() {

@@ -11,14 +11,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import betel.nut.item.BetelNutClusterItem;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 @SuppressWarnings("deprecation")
 public final class ModBlocks {
 	public static final Block BETEL_PALM_LOG = registerBlock("betel_palm_log",
-			new RotatedPillarBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LOG)));
+			new BetelPalmLogBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LOG).noOcclusion().randomTicks()));
 	public static final Block BETEL_PALM_PLANKS = registerBlock("betel_palm_planks",
 			new Block(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_PLANKS)));
 	public static final Block BETEL_PALM_STAIRS = registerBlock("betel_palm_stairs",
@@ -49,10 +49,14 @@ public final class ModBlocks {
 					BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_PRESSURE_PLATE)));
 	public static final Block BETEL_PALM_TRAPDOOR = registerBlock("betel_palm_trapdoor",
 			new TrapDoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_TRAPDOOR)));
+	public static final Block BETEL_PALM_DOOR = registerBlock("betel_palm_door",
+			new DoorBlock(BlockSetType.OAK, BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_DOOR)));
 	public static final Block BETEL_PALM_LEAVES = registerBlock("betel_palm_leaves",
-			new LeavesBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LEAVES)));
+			new BetelPalmLeavesBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_LEAVES).noOcclusion()));
 	public static final Block BETEL_PALM_SAPLING = registerBlock("betel_palm_sapling",
 			new BetelPalmSaplingBlock(BlockBehaviour.Properties.ofLegacyCopy(Blocks.OAK_SAPLING)));
+	public static final Block BETEL_NUT_CLUSTER = registerBlock("betel_nut_cluster",
+			new BetelNutClusterBlock(BlockBehaviour.Properties.of().strength(0.3F).noOcclusion().randomTicks().sound(SoundType.CROP)));
 	public static final Block BETEL_NUT_RESIDUE_BLOCK = registerBlock("betel_nut_residue_block",
 			new Block(BlockBehaviour.Properties.of().strength(0.6F).sound(SoundType.MUD)));
 
@@ -68,8 +72,12 @@ public final class ModBlocks {
 			BETEL_PALM_PRESSURE_PLATE);
 	public static final Item BETEL_PALM_TRAPDOOR_ITEM = registerBlockItem("betel_palm_trapdoor",
 			BETEL_PALM_TRAPDOOR);
+	public static final Item BETEL_PALM_DOOR_ITEM = registerBlockItem("betel_palm_door", BETEL_PALM_DOOR);
 	public static final Item BETEL_PALM_LEAVES_ITEM = registerBlockItem("betel_palm_leaves", BETEL_PALM_LEAVES);
 	public static final Item BETEL_PALM_SAPLING_ITEM = registerBlockItem("betel_palm_sapling", BETEL_PALM_SAPLING);
+	// Keep the existing ripe item ID; a distinct green item prevents inventory maturity ambiguity.
+	public static final Item UNRIPE_BETEL_NUT_CLUSTER_ITEM = registerClusterItem("unripe_betel_nut_cluster", 1);
+	public static final Item BETEL_NUT_CLUSTER_ITEM = registerClusterItem("betel_nut_cluster", 2);
 	public static final Item BETEL_NUT_RESIDUE_BLOCK_ITEM = registerBlockItem("betel_nut_residue_block",
 			BETEL_NUT_RESIDUE_BLOCK);
 
@@ -81,6 +89,11 @@ public final class ModBlocks {
 		ResourceLocation id = BetelNutMod.id(path);
 		BlockItem blockItem = new BlockItem(block, new Item.Properties());
 		return Items.registerItem(ResourceKey.create(Registries.ITEM, id), blockItem);
+	}
+
+	private static Item registerClusterItem(String path, int age) {
+		return Items.registerItem(ResourceKey.create(Registries.ITEM, BetelNutMod.id(path)),
+				new BetelNutClusterItem(BETEL_NUT_CLUSTER, age));
 	}
 
 	public static void register() {
@@ -95,6 +108,7 @@ public final class ModBlocks {
 		flammableBlocks.add(BETEL_PALM_BUTTON, 5, 20);
 		flammableBlocks.add(BETEL_PALM_PRESSURE_PLATE, 5, 20);
 		flammableBlocks.add(BETEL_PALM_TRAPDOOR, 5, 20);
+		flammableBlocks.add(BETEL_PALM_DOOR, 5, 20);
 
 		FuelRegistry.INSTANCE.add(BETEL_PALM_LOG_ITEM, 300);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_PLANKS_ITEM, 300);
@@ -105,6 +119,7 @@ public final class ModBlocks {
 		FuelRegistry.INSTANCE.add(BETEL_PALM_BUTTON_ITEM, 100);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_PRESSURE_PLATE_ITEM, 300);
 		FuelRegistry.INSTANCE.add(BETEL_PALM_TRAPDOOR_ITEM, 300);
+		FuelRegistry.INSTANCE.add(BETEL_PALM_DOOR_ITEM, 200);
 	}
 
 	private ModBlocks() {

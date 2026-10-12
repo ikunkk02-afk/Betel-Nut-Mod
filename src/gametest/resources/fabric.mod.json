@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "betel_art_tests",
+  "version": "1.0.0",
+  "name": "Betel Palm Art and Growth Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "betel.nut.test.BetelPalmGameTests",
+      "betel.nut.test.BetelFruitGameTests",
+      "betel.nut.test.BetelWoodGameTests",
+      "betel.nut.test.BetelGroveGameTests",
+      "betel.nut.test.BetelGameplayGameTests",
+      "betel.nut.test.BetelRecipeGameTests",
+      "betel.nut.test.BetelRecoveryGameTests"
+    ]
+  },
+  "depends": {
+    "betel-nut-mod": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

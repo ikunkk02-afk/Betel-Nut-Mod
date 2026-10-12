@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1, "id": "betel_oral_effects_preview", "version": "1.0.0",
+  "name": "Oral Effects Verification", "environment": "client",
+  "entrypoints": { "client": ["betel.nut.preview.OralEffectsPreviewClient"] },
+  "depends": { "betel-nut-mod": "*" }
+}

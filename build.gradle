@@ -40,6 +40,41 @@ fabricApi {
 	configureDataGeneration {
 		client = true
 	}
+	configureTests {
+		createSourceSet = true
+		modId = "betel_art_tests"
+		enableGameTests = true
+		eula = true
+	}
+}
+
+if (project.hasProperty('artPreview')) {
+	apply from: "art-rework/preview-client.gradle"
+}
+if (project.hasProperty('worldgenProbe')) {
+	apply from: "art-rework/worldgen/probe.gradle"
+}
+if (project.hasProperty('featuresPreview')) {
+	apply from: "art-rework/features-v5/preview.gradle"
+}
+if (project.hasProperty('compactHudPreview')) {
+	apply from: "art-rework/compact-hud-v5.0.1/preview.gradle"
+}
+if (project.hasProperty('dailyPenaltiesPreview')) {
+	apply from: "art-rework/daily-penalties-v5.0.2/preview.gradle"
+}
+if (project.hasProperty('oralEffectsPreview')) {
+	apply from: "art-rework/oral-effects-v5.0.3/preview.gradle"
+}
+if (project.hasProperty('recipeCompatTests')) {
+	apply from: "art-rework/recipes-v5.1.0/compat-tests.gradle"
+	sourceSets.gametest.java.srcDir 'art-rework/fruit-v5.3.0/compat-test/java'
+}
+if (project.hasProperty('recoveryPreview')) {
+	apply from: "art-rework/recovery-v5.2.0/preview.gradle"
+}
+if (project.hasProperty('fruitPreview')) {
+	apply from: "art-rework/fruit-v5.3.0/preview.gradle"
 }
 
 dependencies {

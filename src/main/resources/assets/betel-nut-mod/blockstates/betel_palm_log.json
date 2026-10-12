@@ -1,15 +1,27 @@
 {
   "variants": {
-    "axis=x": {
-      "model": "betel-nut-mod:block/betel_palm_log_horizontal",
+    "axis=x,crownshaft=false": {
+      "model": "betel-nut-mod:block/betel_palm_log",
       "x": 90,
       "y": 90
     },
-    "axis=y": {
+    "axis=y,crownshaft=false": {
       "model": "betel-nut-mod:block/betel_palm_log"
     },
-    "axis=z": {
-      "model": "betel-nut-mod:block/betel_palm_log_horizontal",
+    "axis=z,crownshaft=false": {
+      "model": "betel-nut-mod:block/betel_palm_log",
+      "x": 90
+    },
+    "axis=x,crownshaft=true": {
+      "model": "betel-nut-mod:block/betel_palm_crownshaft",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y,crownshaft=true": {
+      "model": "betel-nut-mod:block/betel_palm_crownshaft"
+    },
+    "axis=z,crownshaft=true": {
+      "model": "betel-nut-mod:block/betel_palm_crownshaft",
       "x": 90
     }
   }

@@ -17,14 +17,20 @@
       "item": "betel-nut-mod:roasted_betel_nut"
     },
     {
-      "item": "minecraft:paper"
+      "item": "betel-nut-mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel-nut-mod:betel_leaf"
     },
     {
       "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:sugar"
     }
   ],
   "result": {
-    "count": 1,
-    "id": "betel-nut-mod:quartz_betel_nut"
+    "id": "betel-nut-mod:quartz_betel_nut",
+    "count": 2
   }
 }

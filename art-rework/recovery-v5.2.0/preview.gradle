@@ -1,0 +1,20 @@
+// Isolated client verification; never included in release jars.
+sourceSets {
+    recoveryPreview {
+        java.srcDir 'art-rework/recovery-v5.2.0/dev/java'
+        resources.srcDir 'art-rework/recovery-v5.2.0/dev/resources'
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output + sourceSets.client.compileClasspath + sourceSets.client.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.client.runtimeClasspath
+    }
+}
+loom {
+    mods { betel_recovery_preview { sourceSet sourceSets.recoveryPreview } }
+    runs {
+        recoveryPreviewClient {
+            client()
+            source sourceSets.recoveryPreview
+            runDir 'art-rework/recovery-v5.2.0/client-run'
+            programArgs '--quickPlaySingleplayer', 'RecoveryPreview', '--width', '1600', '--height', '1000'
+        }
+    }
+}

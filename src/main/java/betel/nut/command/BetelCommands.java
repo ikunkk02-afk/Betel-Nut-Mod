@@ -53,6 +53,18 @@ public final class BetelCommands {
 							.then(literal("add")
 									.then(argument("value", IntegerArgumentType.integer(0))
 											.executes(BetelCommands::addAddiction))))
+					.then(literal("oral")
+							.then(literal("set").then(argument("days", IntegerArgumentType.integer(0, 367))
+									.executes(context -> {
+										ServerPlayer player = context.getSource().getPlayerOrException();
+										var state = BetelNutEntityComponents.ADDICTION.get(player);
+										state.setOralExposureDays(IntegerArgumentType.getInteger(context, "days"));
+										state.maintainOralEffects(player);
+										betel.nut.network.AddictionSyncPayload.send(player);
+										sendSuccess(context.getSource(), "command.betel-nut-mod.oral.set", false,
+												state.getOralExposureDays(), state.getOralCancerStage());
+										return 1;
+									}))))
 					.then(literal("withdrawal")
 							.then(literal("set")
 									.then(argument("value", IntegerArgumentType.integer(0))

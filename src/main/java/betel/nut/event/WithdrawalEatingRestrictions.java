@@ -5,6 +5,8 @@ import betel.nut.BetelNutMod;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.item.ModItemTags;
+import betel.nut.item.RecoveryDrinkItem;
+import betel.nut.effect.ModEffects;
 import betel.nut.message.BetelMessages;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.Level;
 public final class WithdrawalEatingRestrictions {
 	public enum RestrictionLevel {
 		NONE("none", ""),
+		MOUTH_LOCKED("mouth_locked", "message.betel-nut-mod.mouth_locked"),
 		SOFT_FOODS("soft_food_only", BetelMessages.EATING_RESTRICTION_STAGE2),
 		ENCHANTED_GOLDEN_APPLE_ONLY("enchanted_golden_apple_only",
 				BetelMessages.EATING_RESTRICTION_STAGE3),
@@ -70,25 +73,17 @@ public final class WithdrawalEatingRestrictions {
 	public static RestrictionLevel getRestrictionLevel(ServerPlayer player,
 			BetelNutAddictionComponent addiction) {
 		BetelNutConfig config = BetelNutConfig.get();
-		if (!isFeatureEnabled(config) || player.isCreative() || player.isSpectator()) {
+		if (player.isCreative() || player.isSpectator()) {
 			return RestrictionLevel.NONE;
 		}
-
-		long gameTime = player.level().getGameTime();
-		if (addiction.getCleanTime() > gameTime) {
-			return RestrictionLevel.NONE;
-		}
-
-		int severity = addiction.getWithdrawalSeverity();
-		if (severity >= 4) {
-			return RestrictionLevel.BODY_REJECTS_FOOD;
-		}
-		if (severity >= 3) {
-			return RestrictionLevel.ENCHANTED_GOLDEN_APPLE_ONLY;
-		}
-		if (severity >= 2) {
-			return RestrictionLevel.SOFT_FOODS;
-		}
+        int disease = addiction.getOralCancerStage();
+        if (player.hasEffect(ModEffects.ORAL_CANCER))
+            disease = Math.max(disease, player.getEffect(ModEffects.ORAL_CANCER).getAmplifier() + 1);
+        int severity = isFeatureEnabled(config) && addiction.getCleanTime() <= player.level().getGameTime()
+                ? addiction.getWithdrawalSeverity() : 0;
+        if (player.hasEffect(ModEffects.MOUTH_LOCKED) || disease >= 3 || severity >= 3)
+            return RestrictionLevel.MOUTH_LOCKED;
+        if (disease >= 2 || severity >= 2) return RestrictionLevel.SOFT_FOODS;
 		return RestrictionLevel.NONE;
 	}
 
@@ -96,12 +91,13 @@ public final class WithdrawalEatingRestrictions {
 		return !stack.isEmpty()
 				&& (isFoodItem(stack)
 						|| stack.is(Items.MILK_BUCKET)
+						|| stack.is(Items.POTION)
 						|| stack.is(ModItemTags.WITHDRAWAL_STAGE2_ALLOWED_FOODS)
 						|| stack.is(ModItemTags.WITHDRAWAL_STAGE3_ALLOWED_FOODS));
 	}
 
 	public static boolean isFoodItem(ItemStack stack) {
-		return !stack.isEmpty() && stack.has(DataComponents.FOOD);
+		return !stack.isEmpty() && (stack.has(DataComponents.FOOD) || stack.is(Items.CAKE));
 	}
 
 	public static boolean isBetelNut(ItemStack stack) {
@@ -120,8 +116,7 @@ public final class WithdrawalEatingRestrictions {
 			BetelNutAddictionComponent addiction, ItemStack stack) {
 		RestrictionLevel level = getRestrictionLevel(player, addiction);
 		boolean checkedItem = isCheckedItem(stack);
-		boolean allowed = canEatDuringWithdrawal(stack)
-				|| level == RestrictionLevel.NONE
+		boolean allowed = level == RestrictionLevel.NONE
 				|| !checkedItem
 				|| isAllowedAtLevel(stack, level, BetelNutConfig.get());
 		return new EatingRestrictionCheck(level, isFoodItem(stack), checkedItem, allowed,
@@ -168,32 +163,23 @@ public final class WithdrawalEatingRestrictions {
 				: InteractionResultHolder.pass(stack);
 	}
 
-	private static boolean isAllowedAtLevel(ItemStack stack, RestrictionLevel level, BetelNutConfig config) {
-		return switch (level) {
-			case NONE -> true;
-			case SOFT_FOODS -> isAllowedAsSoftFood(stack, config);
-			case ENCHANTED_GOLDEN_APPLE_ONLY -> isAllowedAsStrongRecoveryFood(stack);
-			case BODY_REJECTS_FOOD -> stack.is(Items.ENCHANTED_GOLDEN_APPLE);
-		};
-	}
+    private static boolean isAllowedAtLevel(ItemStack stack, RestrictionLevel level, BetelNutConfig config) {
+        if (stack.getItem() instanceof RecoveryDrinkItem) return true;
+        return switch (level) {
+            case NONE -> true;
+            case SOFT_FOODS -> isAllowedAsSoftFood(stack, config);
+            case MOUTH_LOCKED, ENCHANTED_GOLDEN_APPLE_ONLY, BODY_REJECTS_FOOD ->
+                    !isFoodItem(stack) && (stack.is(Items.POTION) || stack.is(Items.MILK_BUCKET));
+        };
+    }
 
-	private static boolean isAllowedAsSoftFood(ItemStack stack, BetelNutConfig config) {
-		if (stack.is(Items.MILK_BUCKET)) {
-			return config.allowMilkInStage2;
-		}
-		if (stack.is(Items.GOLDEN_APPLE) && !config.allowGoldenAppleInStage2) {
-			return false;
-		}
-		return stack.is(ModItemTags.WITHDRAWAL_STAGE2_ALLOWED_FOODS);
-	}
-
-	private static boolean isAllowedAsStrongRecoveryFood(ItemStack stack) {
-		if (stack.is(Items.GOLDEN_APPLE)) {
-			return false;
-		}
-		return stack.is(Items.ENCHANTED_GOLDEN_APPLE)
-				|| stack.is(ModItemTags.WITHDRAWAL_STAGE3_ALLOWED_FOODS);
-	}
+    private static boolean isAllowedAsSoftFood(ItemStack stack, BetelNutConfig config) {
+        // Hard solids cannot become soft through an old config or a broad liquid-food tag.
+        if (isBetelNut(stack) || stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) return false;
+        if (stack.is(Items.MILK_BUCKET)) return config.allowMilkInStage2;
+        return stack.is(Items.POTION) || stack.is(ModItemTags.LIQUID_FOODS)
+                || stack.is(ModItemTags.WITHDRAWAL_STAGE2_ALLOWED_FOODS);
+    }
 
 	private static String matchedAllowedTags(ItemStack stack) {
 		boolean betelNut = stack.is(ModItemTags.BETEL_NUTS);
@@ -229,13 +215,11 @@ public final class WithdrawalEatingRestrictions {
 		if (stack.isEmpty()) {
 			return "empty_hand";
 		}
-		if (!isFeatureEnabled(config)) {
-			return "feature_disabled";
-		}
+		if (!isFeatureEnabled(config) && level == RestrictionLevel.NONE) return "feature_disabled";
 		if (player.isCreative() || player.isSpectator()) {
 			return "creative_or_spectator";
 		}
-		if (addiction.getCleanTime() > player.level().getGameTime()) {
+		if (level == RestrictionLevel.NONE && addiction.getCleanTime() > player.level().getGameTime()) {
 			return "clean_time_protection";
 		}
 		if (!checkedItem) {
@@ -257,6 +241,7 @@ public final class WithdrawalEatingRestrictions {
 			return "allowed_by_" + matchedAllowedTags(stack);
 		}
 		return switch (level) {
+			case MOUTH_LOCKED -> "blocked_mouth_locked";
 			case SOFT_FOODS -> "blocked_soft_food_only";
 			case ENCHANTED_GOLDEN_APPLE_ONLY -> "blocked_enchanted_golden_apple_only";
 			case BODY_REJECTS_FOOD -> "blocked_body_rejects_food";

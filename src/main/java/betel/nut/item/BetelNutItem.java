@@ -56,12 +56,14 @@ public class BetelNutItem extends BetelNutFoodItem {
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+		boolean isEchoBetel = stack.is(ModItems.ECHO_BETEL);
 		boolean isEnderBetelNut = stack.is(ModItems.ENDER_BETEL_NUT);
 		boolean isSyntheticWorldBetel = stack.is(ModItems.SYNTHETIC_WORLD_BETEL);
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
 			var addiction = BetelNutEntityComponents.ADDICTION.get(player);
+			if (isEchoBetel) addiction.startEchoAftermath(getScaledRewardDurationTicks(this.effects.getFirst(), addiction.getAddictionStage()));
 			BetelNutConfig config = BetelNutConfig.get();
 			int rewardStage = config.enableAddictionSystem ? addiction.getAddictionStage() : 0;
 			int suppressSlownessTicks = 0;
@@ -111,7 +113,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 	}
 
 	public int getAddictionIncrease() {
-		return Math.max(0, this.addictionIncreaseSupplier.getAsInt());
+		return 1;
 	}
 
 	private static int getScaledRewardDurationTicks(EffectSpec effect, int addictionStage) {

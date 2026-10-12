@@ -8,6 +8,8 @@
     "betel-nut-mod:betel_palm_fence",
     "betel-nut-mod:betel_palm_fence_gate",
     "betel-nut-mod:betel_palm_button",
-    "betel-nut-mod:betel_palm_pressure_plate"
+    "betel-nut-mod:betel_palm_pressure_plate",
+    "betel-nut-mod:betel_palm_door",
+    "betel-nut-mod:betel_palm_trapdoor"
   ]
 }

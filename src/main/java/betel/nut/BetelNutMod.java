@@ -33,6 +33,7 @@ public class BetelNutMod implements ModInitializer {
 		BetelNutConfig.load();
 		BetelNutMidnightConfig.load();
 		AddictionSyncPayload.register();
+		betel.nut.effect.ModEffects.register();
 		ModBlocks.register();
 		ModItems.register();
 		ModComposting.registerCompostables();
@@ -42,6 +43,7 @@ public class BetelNutMod implements ModInitializer {
 		ModWorldGeneration.register();
 		BetelSkyblockManager.register();
 		ModVillagerTrades.register();
+		betel.nut.loot.ModLoot.register();
 		BetelCommands.register();
 
 		LOGGER.info("Betel Nut Mod initialized");

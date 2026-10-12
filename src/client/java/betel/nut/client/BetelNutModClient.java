@@ -26,9 +26,12 @@ public class BetelNutModClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		BetelPalmMeshModels.register();
 		BetelNutClientConfig.load();
 		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BETEL_PALM_LEAVES, RenderType.cutoutMipped());
 		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BETEL_PALM_SAPLING, RenderType.cutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BETEL_PALM_TRAPDOOR, RenderType.cutout());
+		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.BETEL_PALM_DOOR, RenderType.cutout());
 		ClientPlayConnectionEvents.INIT.register((handler, client) -> ClientAddictionData.reset());
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientAddictionData.reset());
 		ClientPlayNetworking.registerGlobalReceiver(AddictionSyncPayload.TYPE, (payload, context) -> {
@@ -40,6 +43,7 @@ public class BetelNutModClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(AddictionHudRenderer::render);
 		registerHudEditKey();
 		AddictionTooltipAppender.register();
+		BetelPalmTooltipAppender.register();
 	}
 
 	private static void registerHudEditKey() {

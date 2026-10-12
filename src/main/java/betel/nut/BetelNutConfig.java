@@ -10,13 +10,14 @@ import java.nio.file.Path;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 
 import net.fabricmc.loader.api.FabricLoader;
 
 public final class BetelNutConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String CONFIG_FILE_NAME = "betel_nut.json";
-	private static final int CONFIG_VERSION = 9;
+	private static final int CONFIG_VERSION = 14;
 	private static BetelNutConfig INSTANCE = new BetelNutConfig();
 
 	public static final int ROASTED_ADDICTION = 5;
@@ -37,16 +38,21 @@ public final class BetelNutConfig {
 	public static final int RICH_WORLD_ADDICTION = 35;
 	public static final int UNDERGROUND_ADDICTION = 30;
 
-	public int configVersion = 0;
+	public int configVersion = CONFIG_VERSION;
 	public boolean enableAddictionSystem = true;
-	public int maxAddictionValue = 100;
+	public int maxAddictionValue = 7;
+	public int legacyMaxAddictionValue = 100;
+	public boolean enableOralDisease = true;
+	public int oralCancerStage1Days = 3;
+	public int oralCancerStage2Days = 5;
+	public int oralCancerStage3Days = 7;
 	public int maxWithdrawalValue = 100;
 	public int withdrawalCheckIntervalTicks = 200;
 	public int timeBeforeWithdrawalTicks = 1200;
 	public int baseWithdrawalIncrease = 4;
 	public int milkReliefDurationTicks = 1200;
-	public int goldenAppleAddictionReduction = 10;
-	public int enchantedGoldenAppleAddictionReduction = 40;
+	public int goldenAppleAddictionReduction = 1;
+	public int enchantedGoldenAppleAddictionReduction = 5;
 	public int enchantedGoldenAppleCleanTimeTicks = 6000;
 	public boolean showActionbarMessages = true;
 	public boolean showChatMessages = false;
@@ -59,7 +65,7 @@ public final class BetelNutConfig {
 	public int magmaBetelAddictionIncrease = MAGMA_ADDICTION;
 	public int amethystBetelAddictionIncrease = AMETHYST_ADDICTION;
 
-	public int minimumAddictionForWithdrawal = 1;
+	public int minimumAddictionForWithdrawal = 2;
 	public int goldenAppleWithdrawalReduction = 30;
 	public int withdrawalEffectDurationTicks = 260;
 	public int withdrawalNauseaDurationTicks = 100;
@@ -78,19 +84,23 @@ public final class BetelNutConfig {
 	public boolean enableWithdrawalEatingRestriction = true;
 	public int stage2EatingRestrictionWithdrawalValue = 50;
 	public int stage3EatingRestrictionWithdrawalValue = 75;
-	public boolean allowGoldenAppleInStage2 = true;
+	// Legacy field retained for saved-config compatibility; hard apples are always blocked at stage II.
+	public boolean allowGoldenAppleInStage2 = false;
 	public boolean allowMilkInStage2 = true;
 	public boolean showEatingRestrictionMessage = true;
 	public int eatingRestrictionMessageCooldownTicks = 60;
 
 	public boolean enableBetelPalmWorldGeneration = true;
 	public boolean betelPalmGenerateInJungle = true;
-	public boolean betelPalmGenerateInBeach = true;
+	public boolean betelPalmGenerateInSparseJungle = true;
+	public boolean betelPalmGenerateInBambooJungle = true;
+	public boolean betelPalmGenerateNearJungleRivers = true;
+	public boolean betelPalmGenerateInBeach = false;
 	public boolean betelPalmGenerateInMangroveSwamp = false;
 	public double betelPalmSpawnChance = 0.08D;
 	public int betelPalmTreesPerChunk = 1;
-	public int betelPalmMinHeight = 5;
-	public int betelPalmMaxHeight = 8;
+	public int betelPalmMinHeight = 9;
+	public int betelPalmMaxHeight = 14;
 
 	public boolean enableEnderBetelTeleport = true;
 	public int enderBetelTeleportRadiusMin = 8;
@@ -132,10 +142,13 @@ public final class BetelNutConfig {
 		}
 
 		try (Reader reader = Files.newBufferedReader(configPath, StandardCharsets.UTF_8)) {
-			BetelNutConfig loaded = GSON.fromJson(reader, BetelNutConfig.class);
-			if (loaded == null) {
-				throw new JsonParseException("Config file is empty.");
-			}
+			var document = JsonParser.parseReader(reader);
+			if (!document.isJsonObject()) throw new JsonParseException("Config must be an object.");
+			var json = document.getAsJsonObject();
+			// Files predating versioned configs use the old 100-point score scale.
+			if (!json.has("configVersion")) json.addProperty("configVersion", 0);
+			BetelNutConfig loaded = GSON.fromJson(json, BetelNutConfig.class);
+			if (loaded.configVersion < 12 && !json.has("maxAddictionValue")) loaded.maxAddictionValue = 100;
 
 			INSTANCE = loaded.validated();
 			save();
@@ -173,7 +186,10 @@ public final class BetelNutConfig {
 	private BetelNutConfig validated() {
 		migrateOldDefaults();
 
-		this.maxAddictionValue = atLeast(this.maxAddictionValue, 1);
+		this.maxAddictionValue = clamp(this.maxAddictionValue, 5, 8);
+		this.oralCancerStage1Days = clamp(this.oralCancerStage1Days, 3, 365);
+		this.oralCancerStage2Days = clamp(this.oralCancerStage2Days, this.oralCancerStage1Days + 1, 366);
+		this.oralCancerStage3Days = clamp(this.oralCancerStage3Days, this.oralCancerStage2Days + 1, 367);
 		this.maxWithdrawalValue = atLeast(this.maxWithdrawalValue, 1);
 		this.withdrawalCheckIntervalTicks = atLeast(this.withdrawalCheckIntervalTicks, 1);
 		this.timeBeforeWithdrawalTicks = atLeast(this.timeBeforeWithdrawalTicks, 0);
@@ -213,9 +229,9 @@ public final class BetelNutConfig {
 				this.stage2EatingRestrictionWithdrawalValue, this.maxWithdrawalValue);
 		this.eatingRestrictionMessageCooldownTicks = atLeast(this.eatingRestrictionMessageCooldownTicks, 0);
 		this.betelPalmSpawnChance = clamp(this.betelPalmSpawnChance, 0.0D, 1.0D);
-		this.betelPalmTreesPerChunk = clamp(this.betelPalmTreesPerChunk, 1, 8);
-		this.betelPalmMinHeight = atLeast(this.betelPalmMinHeight, 1);
-		this.betelPalmMaxHeight = atLeast(this.betelPalmMaxHeight, this.betelPalmMinHeight);
+		this.betelPalmTreesPerChunk = clamp(this.betelPalmTreesPerChunk, 0, 8);
+		this.betelPalmMinHeight = clamp(this.betelPalmMinHeight, 5, 32);
+		this.betelPalmMaxHeight = clamp(this.betelPalmMaxHeight, this.betelPalmMinHeight, 32);
 		this.enderBetelTeleportRadiusMin = atLeast(this.enderBetelTeleportRadiusMin, 1);
 		this.enderBetelTeleportRadiusMax = atLeast(this.enderBetelTeleportRadiusMax,
 				this.enderBetelTeleportRadiusMin);
@@ -238,20 +254,22 @@ public final class BetelNutConfig {
 			return;
 		}
 
-		if (this.minimumAddictionForWithdrawal == 25) {
-			this.minimumAddictionForWithdrawal = 1;
-		}
-		if (this.timeBeforeWithdrawalTicks == 6000) {
-			this.timeBeforeWithdrawalTicks = 1200;
-		}
-		if (this.baseWithdrawalIncrease == 1) {
-			this.baseWithdrawalIncrease = 4;
+		if (this.configVersion < 9) {
+			if (this.minimumAddictionForWithdrawal == 25) {
+				this.minimumAddictionForWithdrawal = 1;
+			}
+			if (this.timeBeforeWithdrawalTicks == 6000) {
+				this.timeBeforeWithdrawalTicks = 1200;
+			}
+			if (this.baseWithdrawalIncrease == 1) {
+				this.baseWithdrawalIncrease = 4;
+			}
 		}
 		if (this.configVersion < 5) {
 			this.enableWithdrawalEatingRestriction = true;
 			this.stage2EatingRestrictionWithdrawalValue = 50;
 			this.stage3EatingRestrictionWithdrawalValue = 75;
-			this.allowGoldenAppleInStage2 = true;
+			this.allowGoldenAppleInStage2 = false;
 			this.allowMilkInStage2 = true;
 			this.showEatingRestrictionMessage = true;
 			this.eatingRestrictionMessageCooldownTicks = 60;
@@ -288,6 +306,35 @@ public final class BetelNutConfig {
 		}
 		if (this.configVersion < 9) {
 			this.betelSkyblockEnabled = false;
+		}
+		if (this.configVersion < 10) {
+			// Upgrade the old default silhouette; preserve custom height ranges and biome switches.
+			if (this.betelPalmMinHeight == 5 && this.betelPalmMaxHeight == 8) {
+				this.betelPalmMinHeight = 9;
+				this.betelPalmMaxHeight = 14;
+			}
+		}
+		if (this.configVersion < 12) {
+			this.legacyMaxAddictionValue = Math.max(1, this.maxAddictionValue);
+			this.maxAddictionValue = 7;
+			this.minimumAddictionForWithdrawal = this.minimumAddictionForWithdrawal <= 1 ? 2
+					: betel.nut.addiction.AddictionStageUtil.migrateLegacyScore(this.minimumAddictionForWithdrawal, this.legacyMaxAddictionValue);
+			this.goldenAppleAddictionReduction = this.goldenAppleAddictionReduction == 10 || this.goldenAppleAddictionReduction == 1 ? 1
+					: Math.max(0, Math.round(this.goldenAppleAddictionReduction * 7F / this.legacyMaxAddictionValue));
+			this.enchantedGoldenAppleAddictionReduction = this.enchantedGoldenAppleAddictionReduction == 40 || this.enchantedGoldenAppleAddictionReduction == 5 ? 5
+					: Math.max(0, Math.round(this.enchantedGoldenAppleAddictionReduction * 7F / this.legacyMaxAddictionValue));
+		} else if (this.configVersion < 13) {
+			// Version 12 already stores real eating days; only replace its old timing defaults.
+			this.maxAddictionValue = this.maxAddictionValue >= 5 && this.maxAddictionValue <= 8
+					? this.maxAddictionValue : 7;
+			if (this.minimumAddictionForWithdrawal == 3) this.minimumAddictionForWithdrawal = 2;
+		}
+		if (this.configVersion < 14 && this.oralCancerStage1Days == 12
+				&& this.oralCancerStage2Days == 21 && this.oralCancerStage3Days == 30) {
+			// Replace the complete old default set; preserve custom disease schedules and switches.
+			this.oralCancerStage1Days = 3;
+			this.oralCancerStage2Days = 5;
+			this.oralCancerStage3Days = 7;
 		}
 	}
 

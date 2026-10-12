@@ -11,8 +11,10 @@ public final class ClientAddictionData {
 	private static int addictionStage;
 	private static int withdrawalSeverity;
 	private static int nextWithdrawalTicks = -1;
-	private static int maxAddictionValue = 100;
+	private static int maxAddictionValue = AddictionStageUtil.DEFAULT_MAX_DAYS;
 	private static long receivedAtGameTime;
+	private static int soberDays, oralCancerStage, mouthRestrictionLevel;
+	private static boolean ateToday;
 
 	public static boolean update(AddictionSyncPayload payload) {
 		int previousStage = addictionStage;
@@ -23,6 +25,10 @@ public final class ClientAddictionData {
 		withdrawalSeverity = AddictionStageUtil.getWithdrawalSeverity(payload.withdrawalSeverity());
 		nextWithdrawalTicks = payload.nextWithdrawalTicks();
 		maxAddictionValue = Math.max(1, payload.maxAddictionValue());
+		soberDays = Math.max(0, payload.soberDays());
+		oralCancerStage = Math.max(0, Math.min(3, payload.oralCancerStage()));
+		mouthRestrictionLevel = Math.max(0, Math.min(2, payload.mouthRestrictionLevel()));
+		ateToday = payload.ateToday();
 		receivedAtGameTime = currentGameTime();
 		initialized = true;
 
@@ -39,8 +45,10 @@ public final class ClientAddictionData {
 		addictionStage = 0;
 		withdrawalSeverity = 0;
 		nextWithdrawalTicks = -1;
-		maxAddictionValue = 100;
+		maxAddictionValue = AddictionStageUtil.DEFAULT_MAX_DAYS;
 		receivedAtGameTime = 0L;
+		soberDays = oralCancerStage = mouthRestrictionLevel = 0;
+		ateToday = false;
 	}
 
 	public static boolean hasSyncedData() {
@@ -48,8 +56,13 @@ public final class ClientAddictionData {
 	}
 
 	public static boolean shouldRenderHud() {
-		return initialized && (addictionValue > 0 || addictionStage > 0);
+		return initialized && (addictionValue > 0 || oralCancerStage > 0 || mouthRestrictionLevel > 0);
 	}
+
+	public static int getSoberDays() { return soberDays; }
+	public static int getOralCancerStage() { return oralCancerStage; }
+	public static int getMouthRestrictionLevel() { return mouthRestrictionLevel; }
+	public static boolean hasEatenToday() { return ateToday; }
 
 	public static int getAddictionValue() {
 		return addictionValue;
@@ -72,7 +85,7 @@ public final class ClientAddictionData {
 	}
 
 	public static boolean wouldReachNextStage(int addictionIncrease) {
-		return AddictionStageUtil.wouldReachNextStage(addictionValue, addictionIncrease, maxAddictionValue);
+		return !ateToday && AddictionStageUtil.wouldReachNextStage(addictionValue, 1, maxAddictionValue);
 	}
 
 	public static int getRemainingWithdrawalTicks() {

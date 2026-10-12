@@ -38,3 +38,23 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Local art/release archives, generated files and game worlds.
+# Keep the optional client harnesses and Farmer's Delight test sources.
+/art-rework/**
+!/art-rework/**/
+!/art-rework/*.gradle
+!/art-rework/*/preview.gradle
+!/art-rework/*/probe.gradle
+!/art-rework/*/compat-tests.gradle
+!/art-rework/client-preview/**/*.java
+!/art-rework/client-preview/**/fabric.mod.json
+!/art-rework/*/dev/**/*.java
+!/art-rework/*/dev/**/fabric.mod.json
+!/art-rework/*/compat-test/**/*.java
+!/art-rework/worldgen/probe/**/*.java
+!/art-rework/worldgen/probe/**/fabric.mod.json

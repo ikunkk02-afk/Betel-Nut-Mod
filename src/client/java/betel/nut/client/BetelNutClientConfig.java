@@ -17,17 +17,17 @@ import net.fabricmc.loader.api.FabricLoader;
 public final class BetelNutClientConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String CONFIG_FILE_NAME = "betel_nut_mod_client.json";
-	private static final int CONFIG_VERSION = 2;
+	private static final int CONFIG_VERSION = 3;
 	private static BetelNutClientConfig INSTANCE = new BetelNutClientConfig();
 
 	public int configVersion = 0;
 	public boolean hudEnabled = true;
-	public HudAnchor hudAnchor = HudAnchor.TOP_LEFT;
-	public int hudOffsetX = 10;
-	public int hudOffsetY = 30;
-	public int hudX = 10;
-	public int hudY = 30;
-	public boolean hudUseCustomPosition = true;
+	public HudAnchor hudAnchor = HudAnchor.BOTTOM_LEFT;
+	public int hudOffsetX = 8;
+	public int hudOffsetY = 8;
+	public int hudX = 8;
+	public int hudY = 8;
+	public boolean hudUseCustomPosition = false;
 	public double hudScale = 1.0D;
 
 	public static BetelNutClientConfig get() {
@@ -94,7 +94,7 @@ public final class BetelNutClientConfig {
 		migrateOldDefaults();
 
 		if (this.hudAnchor == null) {
-			this.hudAnchor = HudAnchor.TOP_LEFT;
+			this.hudAnchor = HudAnchor.BOTTOM_LEFT;
 		}
 		this.hudOffsetX = clamp(this.hudOffsetX, 0, 300);
 		this.hudOffsetY = clamp(this.hudOffsetY, 0, 300);
@@ -119,6 +119,12 @@ public final class BetelNutClientConfig {
 				this.hudY = this.hudOffsetY;
 			}
 			this.hudUseCustomPosition = this.hudAnchor == null || this.hudAnchor == HudAnchor.TOP_LEFT;
+		}
+		if (this.configVersion < 3 && this.hudAnchor == HudAnchor.TOP_LEFT
+				&& this.hudX == 10 && this.hudY == 30 && this.hudOffsetX == 10 && this.hudOffsetY == 30) {
+			this.hudAnchor = HudAnchor.BOTTOM_LEFT;
+			this.hudOffsetX = this.hudOffsetY = 8;
+			this.hudUseCustomPosition = false;
 		}
 	}
 

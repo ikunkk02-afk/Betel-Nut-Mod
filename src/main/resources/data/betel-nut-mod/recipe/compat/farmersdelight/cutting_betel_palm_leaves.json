@@ -16,15 +16,8 @@
   "result": [
     {
       "item": {
-        "count": 2,
-        "id": "betel-nut-mod:betel_leaf"
-      }
-    },
-    {
-      "chance": 0.1,
-      "item": {
-        "count": 1,
-        "id": "betel-nut-mod:raw_betel_nut"
+        "id": "betel-nut-mod:betel_leaf",
+        "count": 2
       }
     }
   ],

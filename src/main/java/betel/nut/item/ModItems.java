@@ -14,6 +14,25 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 
 public final class ModItems {
+    public static final Item GOLDEN_APPLE_PASTE = register("golden_apple_paste", new RecoveryDrinkItem(RecoveryDrinkItem.Kind.GOLDEN_PASTE));
+    public static final Item ENCHANTED_GOLDEN_APPLE_PASTE = register("enchanted_golden_apple_paste", new RecoveryDrinkItem(RecoveryDrinkItem.Kind.ENCHANTED_PASTE));
+    public static final Item RELIEF_POTION = register("relief_potion", new RecoveryDrinkItem(RecoveryDrinkItem.Kind.RELIEF));
+	public static final Item SHELL = register("shell", new Item(new Item.Properties()));
+	public static final Item SHELL_POWDER = register("shell_powder", new Item(new Item.Properties()));
+	public static final Item ANCIENT_SHELL = register("ancient_shell", new Item(new Item.Properties().rarity(Rarity.RARE)));
+	public static final Item GOLDEN_SHELL = register("golden_shell", new Item(new Item.Properties().rarity(Rarity.EPIC)));
+	public static final Item EMPTY_PACK = register("empty_pack", new Item(new Item.Properties()));
+	public static final Item BRAND_SEAL = register("brand_seal", new Item(new Item.Properties()));
+	public static final Item KOUWEIWANG_PACK = register("kouweiwang_pack", new BetelPackItem(0));
+	public static final Item HECHENG_TIANXIA_PACK = register("hecheng_tianxia_pack", new BetelPackItem(1));
+	public static final Item XIANGTAN_PUZI_PACK = register("xiangtan_puzi_pack", new BetelPackItem(2));
+	public static final Item LOTTERY_TICKET = register("lottery_ticket", new LotteryTicketItem());
+	public static final Item WRAPPED_RAW_BETEL = register("wrapped_raw_betel",
+			new BetelNutItem(foodProperties(2, 0.2F), 1,
+					List.of(new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 160, 0))));
+	public static final Item ECHO_BETEL = register("echo_betel",
+			new BetelNutItem(foodProperties(3, 0.3F).rarity(Rarity.RARE), 1,
+					List.of(new BetelNutItem.EffectSpec(betel.nut.effect.ModEffects.ECHO_SIGHT, 1200, 0))));
 	public static final Item RAW_BETEL_NUT = register("raw_betel_nut", new Item(new Item.Properties()));
 	public static final Item BETEL_LEAF = register("betel_leaf", new Item(new Item.Properties()));
 	public static final Item BETEL_NUT_RESIDUE = register("betel_nut_residue", new Item(new Item.Properties()));

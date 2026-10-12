@@ -1,14 +1,15 @@
 {
-	"required": true,
-	"package": "betel.nut.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ItemStackMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "betel.nut.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemStackMixin",
+    "CakeBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }

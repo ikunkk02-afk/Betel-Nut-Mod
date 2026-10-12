@@ -11,6 +11,7 @@ public final class HudEditScreen extends Screen {
 	private int hudX;
 	private int hudY;
 	private boolean dragging;
+	private boolean positionChanged;
 	private int dragOffsetX;
 	private int dragOffsetY;
 
@@ -29,8 +30,11 @@ public final class HudEditScreen extends Screen {
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
 		graphics.fill(0, 0, this.width, this.height, 0xA0000000);
-		graphics.drawCenteredString(this.font, Component.translatable("screen.betel_nut_mod.hud_edit.hint"),
-				this.width / 2, 16, 0xFFFFFFFF);
+		int hintY = 16;
+		for (var line : this.font.split(Component.translatable("screen.betel_nut_mod.hud_edit.hint"), Math.max(1, this.width - 20))) {
+			graphics.drawString(this.font, line, (this.width - this.font.width(line)) / 2, hintY, 0xFFFFFFFF);
+			hintY += this.font.lineHeight + 2;
+		}
 
 		clampHudPosition();
 		AddictionHudRenderer.renderHud(graphics, this.hudX, this.hudY, partialTick);
@@ -40,6 +44,13 @@ public final class HudEditScreen extends Screen {
 		int outlineWidth = Math.min(this.width - outlineX, AddictionHudRenderer.getScaledHudWidth() + 4);
 		int outlineHeight = Math.min(this.height - outlineY, AddictionHudRenderer.getScaledHudHeight() + 4);
 		graphics.renderOutline(outlineX, outlineY, outlineWidth, outlineHeight, dragging ? 0xFFFFFFFF : 0xCC55D6FF);
+		if (!dragging && isInsideHud(mouseX, mouseY)) {
+			var lines = AddictionHudRenderer.getDetails().stream()
+					.flatMap(line -> this.font.split(line, Math.max(1, this.width - 24)).stream()).toList();
+			graphics.renderTooltip(this.font, lines, (screenW, screenH, cursorX, cursorY, tooltipW, tooltipH) ->
+					new org.joml.Vector2i(Math.max(8, Math.min(cursorX + 12, screenW - tooltipW - 8)),
+							Math.max(8, Math.min(cursorY - tooltipH - 12, screenH - tooltipH - 8))), mouseX, mouseY);
+		}
 	}
 
 	@Override
@@ -56,6 +67,7 @@ public final class HudEditScreen extends Screen {
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 		if (this.dragging && button == 0) {
+			this.positionChanged = true;
 			this.hudX = (int) Math.round(mouseX) - this.dragOffsetX;
 			this.hudY = (int) Math.round(mouseY) - this.dragOffsetY;
 			clampHudPosition();
@@ -99,6 +111,7 @@ public final class HudEditScreen extends Screen {
 	}
 
 	private void savePosition() {
+		if (!this.positionChanged) return;
 		BetelNutClientConfig config = BetelNutClientConfig.get();
 		HudPosition position = AddictionHudRenderer.clampPosition(this.hudX, this.hudY, this.width, this.height);
 		config.setHudPosition(position.x(), position.y());

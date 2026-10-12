@@ -2,6 +2,7 @@ package betel.nut.event;
 
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
+import betel.nut.item.ModItems;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.network.AddictionSyncPayload;
@@ -23,7 +24,7 @@ public final class BetelNutEvents {
 				for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 					if (player.isAlive()) {
 						BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
-						addiction.clearActiveWithdrawalPenalties(player);
+						addiction.serverTick(player);
 						addiction.tickHechengTianxiaAftereffects(player);
 						addiction.tickBetelWithdrawalSuppressions();
 						if (server.getTickCount() % 20 == 0) {
@@ -60,7 +61,12 @@ public final class BetelNutEvents {
 			}
 		});
 
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> AddictionSyncPayload.send(handler.player));
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			BetelNutEntityComponents.ADDICTION.get(handler.player).beginCalendarSession(handler.player);
+			BetelNutEntityComponents.ADDICTION.get(handler.player).maintainDependenceEffects(handler.player);
+			BetelNutEntityComponents.ADDICTION.get(handler.player).maintainOralEffects(handler.player);
+			AddictionSyncPayload.send(handler.player);
+		});
 
 		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
 			if (entity instanceof ServerPlayer player) {
@@ -72,6 +78,8 @@ public final class BetelNutEvents {
 			if (!alive) {
 				BetelNutEntityComponents.ADDICTION.get(newPlayer).scheduleRespawnWithdrawalCheck(newPlayer);
 			}
+			BetelNutEntityComponents.ADDICTION.get(newPlayer).maintainDependenceEffects(newPlayer);
+			BetelNutEntityComponents.ADDICTION.get(newPlayer).maintainOralEffects(newPlayer);
 			AddictionSyncPayload.send(newPlayer);
 		});
 
@@ -97,10 +105,12 @@ public final class BetelNutEvents {
 
 		if (stack.is(Items.MILK_BUCKET)) {
 			addiction.applyMilkRelief(player, gameTime);
-		} else if (stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+		} else if (stack.is(Items.ENCHANTED_GOLDEN_APPLE) || stack.is(ModItems.ENCHANTED_GOLDEN_APPLE_PASTE)) {
 			addiction.applyEnchantedGoldenAppleRecovery(player, gameTime);
-		} else if (stack.is(Items.GOLDEN_APPLE)) {
+		} else if (stack.is(Items.GOLDEN_APPLE) || stack.is(ModItems.GOLDEN_APPLE_PASTE)) {
 			addiction.applyGoldenAppleRecovery(player, gameTime);
+        } else if (stack.is(ModItems.RELIEF_POTION)) {
+            addiction.applyReliefPotion(player, gameTime);
 		}
 	}
 

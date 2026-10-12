@@ -6,6 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 public final class ModItemTags {
+	public static final TagKey<Item> LIQUID_FOODS = create("liquid_foods");
 	public static final TagKey<Item> BETEL_FOODS = create("betel_foods");
 	public static final TagKey<Item> BETEL_NUTS = create("betel_nuts");
 	public static final TagKey<Item> WITHDRAWAL_STAGE2_ALLOWED_FOODS = create(

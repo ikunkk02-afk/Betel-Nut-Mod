@@ -8,26 +8,25 @@
     }
   ],
   "type": "farmersdelight:cooking",
-  "container": {
-    "count": 1,
-    "id": "minecraft:paper"
-  },
-  "cookingtime": 100,
-  "experience": 0.35,
+  "recipe_book_tab": "misc",
   "ingredients": [
     {
       "item": "betel-nut-mod:roasted_betel_nut"
     },
     {
-      "item": "minecraft:golden_carrot"
+      "item": "betel-nut-mod:roasted_betel_nut"
     },
     {
-      "item": "farmersdelight:glow_berry_custard"
+      "item": "betel-nut-mod:betel_leaf"
+    },
+    {
+      "item": "minecraft:golden_carrot"
     }
   ],
-  "recipe_book_tab": "misc",
   "result": {
-    "count": 1,
-    "id": "betel-nut-mod:night_betel_nut"
-  }
+    "id": "betel-nut-mod:night_betel_nut",
+    "count": 2
+  },
+  "cookingtime": 160,
+  "experience": 0.35
 }

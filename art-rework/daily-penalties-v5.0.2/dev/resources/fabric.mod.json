@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1, "id": "betel_daily_penalties_preview", "version": "1.0.0",
+  "name": "Eating-day Penalties Verification", "environment": "client",
+  "entrypoints": { "client": ["betel.nut.preview.DailyPenaltiesPreviewClient"] },
+  "depends": { "betel-nut-mod": "*" }
+}
