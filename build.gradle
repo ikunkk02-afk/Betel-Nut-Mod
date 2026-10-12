@@ -79,6 +79,9 @@ if (project.hasProperty('fruitPreview')) {
 if (project.hasProperty('tradesPreview')) {
 	apply from: "art-rework/trades-v5.4.0/preview.gradle"
 }
+if (project.hasProperty('effectsPreview')) {
+	apply from: "art-rework/effects-v5.5.0/preview.gradle"
+}
 
 dependencies {
 	// To change the versions see the gradle.properties file

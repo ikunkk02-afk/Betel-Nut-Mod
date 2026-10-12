@@ -6,14 +6,13 @@ import java.util.function.IntSupplier;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMidnightConfig;
 import betel.nut.advancement.BetelQuestAdvancements;
-import betel.nut.addiction.AddictionStageUtil;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.event.WithdrawalEatingRestrictions;
 import betel.nut.skyblock.BetelSkyblockManager;
-import net.minecraft.core.Holder;
+import betel.nut.effect.ModEffects;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.InteractionHand;
@@ -21,22 +20,23 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 public class BetelNutItem extends BetelNutFoodItem {
 	private final IntSupplier addictionIncreaseSupplier;
-	private final List<EffectSpec> effects;
+	private final BetelEffectProfile profile;
 
-	public BetelNutItem(Properties properties, int addictionIncrease, List<EffectSpec> effects) {
+	public BetelNutItem(Properties properties, int addictionIncrease, BetelEffectProfile profile) {
 		super(properties);
 		this.addictionIncreaseSupplier = () -> addictionIncrease;
-		this.effects = effects;
+		this.profile = profile;
 	}
 
-	public BetelNutItem(Properties properties, IntSupplier addictionIncreaseSupplier, List<EffectSpec> effects) {
+	public BetelNutItem(Properties properties, IntSupplier addictionIncreaseSupplier, BetelEffectProfile profile) {
 		super(properties);
 		this.addictionIncreaseSupplier = addictionIncreaseSupplier;
-		this.effects = effects;
+		this.profile = profile;
 	}
 
 	@Override
@@ -56,31 +56,36 @@ public class BetelNutItem extends BetelNutFoodItem {
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-		boolean isEchoBetel = stack.is(ModItems.ECHO_BETEL);
 		boolean isEnderBetelNut = stack.is(ModItems.ENDER_BETEL_NUT);
 		boolean isSyntheticWorldBetel = stack.is(ModItems.SYNTHETIC_WORLD_BETEL);
+		// Finish-use must enforce the same repeat guard as right-click, before consuming anything.
+		if (isSyntheticWorldBetel && !level.isClientSide() && entity instanceof ServerPlayer player
+				&& !BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath
+				&& BetelNutEntityComponents.ADDICTION.get(player).hasActiveHechengTianxiaAftermath()) {
+			return stack;
+		}
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
 		if (!level.isClientSide() && entity instanceof ServerPlayer player) {
 			var addiction = BetelNutEntityComponents.ADDICTION.get(player);
-			if (isEchoBetel) addiction.startEchoAftermath(getScaledRewardDurationTicks(this.effects.getFirst(), addiction.getAddictionStage()));
+			addiction.updateDisabledWithdrawalEffects(player);
 			BetelNutConfig config = BetelNutConfig.get();
 			int rewardStage = config.enableAddictionSystem ? addiction.getAddictionStage() : 0;
+			if (this.profile == BetelEffectProfile.HONEY) player.removeEffect(MobEffects.POISON);
 			int suppressSlownessTicks = 0;
 			int suppressMiningFatigueTicks = 0;
 			int suppressWeaknessTicks = 0;
-			for (EffectSpec effect : this.effects) {
-				int durationTicks = getScaledRewardDurationTicks(effect, rewardStage);
-				int amplifier = getScaledRewardAmplifier(effect, rewardStage);
+			for (var effect : isSyntheticWorldBetel ? List.<BetelEffectProfile.EffectSpec>of() : this.profile.scaledEffects(rewardStage)) {
+				int durationTicks = effect.durationTicks();
+				int amplifier = effect.amplifier();
 				player.addEffect(new MobEffectInstance(effect.effect(), durationTicks, amplifier));
-				if (!isSyntheticWorldBetel) {
-					if (effect.effect().equals(MobEffects.MOVEMENT_SPEED)) {
-						suppressSlownessTicks = Math.max(suppressSlownessTicks, durationTicks);
-					} else if (effect.effect().equals(MobEffects.DIG_SPEED)) {
-						suppressMiningFatigueTicks = Math.max(suppressMiningFatigueTicks, durationTicks);
-					} else if (effect.effect().equals(MobEffects.DAMAGE_BOOST)) {
-						suppressWeaknessTicks = Math.max(suppressWeaknessTicks, durationTicks);
-					}
+				if (effect.effect().equals(ModEffects.ECHO_SIGHT)) addiction.startEchoAftermath(durationTicks);
+				if (effect.effect().equals(MobEffects.MOVEMENT_SPEED)) {
+					suppressSlownessTicks = Math.max(suppressSlownessTicks, durationTicks);
+				} else if (effect.effect().equals(MobEffects.DIG_SPEED)) {
+					suppressMiningFatigueTicks = Math.max(suppressMiningFatigueTicks, durationTicks);
+				} else if (effect.effect().equals(MobEffects.DAMAGE_BOOST)) {
+					suppressWeaknessTicks = Math.max(suppressWeaknessTicks, durationTicks);
 				}
 			}
 
@@ -105,7 +110,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 			BetelSkyblockManager.onBetelNutEaten(player);
 
 			if (isEnderBetelNut) {
-				EnderBetelTeleportHandler.tryTeleport(player);
+				EnderBetelTeleportHandler.tryTeleport(player, false, rewardStage);
 			}
 		}
 
@@ -116,28 +121,24 @@ public class BetelNutItem extends BetelNutFoodItem {
 		return 1;
 	}
 
-	private static int getScaledRewardDurationTicks(EffectSpec effect, int addictionStage) {
-		int durationTicks = Math.max(1, effect.durationTicks());
-		if (!isBeneficialReward(effect)) {
-			return durationTicks;
+	@Override
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
+		lines.add(Component.translatable("tooltip.betel-nut-mod.effects.base").withStyle(ChatFormatting.GRAY));
+		var displayedEffects = this.profile == BetelEffectProfile.ENDER
+				? List.of(BetelEffectProfile.enderProtection(0)) : this.profile.baseEffects();
+		for (var effect : displayedEffects) {
+			Component name = Component.translatable(effect.effect().value().getDescriptionId());
+			if (effect.amplifier() > 0) name = Component.translatable("potion.withAmplifier", name,
+					Component.translatable("potion.potency." + effect.amplifier()));
+			String time = String.format(java.util.Locale.ROOT, "%d:%02d", effect.durationTicks() / 1200,
+					(effect.durationTicks() / 20) % 60);
+			lines.add((this.profile == BetelEffectProfile.SYNTHETIC ? name.copy()
+					: Component.translatable("potion.withDuration", name, time))
+					.withStyle(effect.effect().value().getCategory() == net.minecraft.world.effect.MobEffectCategory.BENEFICIAL
+							? ChatFormatting.BLUE : ChatFormatting.RED));
 		}
-		float multiplier = AddictionStageUtil.getBetelRewardDurationMultiplier(addictionStage);
-		return Math.max(1, Math.round(durationTicks * multiplier));
-	}
-
-	private static int getScaledRewardAmplifier(EffectSpec effect, int addictionStage) {
-		int amplifier = Math.max(0, effect.amplifier());
-		if (!isBeneficialReward(effect)) {
-			return amplifier;
-		}
-		int penalty = AddictionStageUtil.getBetelRewardAmplifierPenalty(addictionStage);
-		return Math.max(0, amplifier - penalty);
-	}
-
-	private static boolean isBeneficialReward(EffectSpec effect) {
-		return effect.effect().value().getCategory() == MobEffectCategory.BENEFICIAL;
-	}
-
-	public record EffectSpec(Holder<MobEffect> effect, int durationTicks, int amplifier) {
+		lines.add(Component.translatable("tooltip.betel-nut-mod.effects." + this.profile.name().toLowerCase(java.util.Locale.ROOT))
+				.withStyle(ChatFormatting.GRAY));
+		lines.add(Component.translatable("tooltip.betel-nut-mod.effects.tolerance").withStyle(ChatFormatting.DARK_GRAY));
 	}
 }

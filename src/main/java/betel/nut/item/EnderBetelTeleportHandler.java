@@ -3,6 +3,7 @@ package betel.nut.item;
 import java.util.Set;
 
 import betel.nut.BetelNutConfig;
+import betel.nut.component.BetelNutEntityComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -13,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,6 +30,12 @@ public final class EnderBetelTeleportHandler {
 	}
 
 	public static boolean tryTeleport(ServerPlayer player, boolean force) {
+		int stage = BetelNutConfig.get().enableAddictionSystem
+				? BetelNutEntityComponents.ADDICTION.get(player).getAddictionStage() : 0;
+		return tryTeleport(player, force, stage);
+	}
+
+	public static boolean tryTeleport(ServerPlayer player, boolean force, int rewardStage) {
 		BetelNutConfig config = BetelNutConfig.get();
 		if (!force && !config.enableEnderBetelTeleport) {
 			return false;
@@ -64,7 +70,8 @@ public final class EnderBetelTeleportHandler {
 		}
 
 		player.resetFallDistance();
-		player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 0));
+		var protection = BetelEffectProfile.enderProtection(rewardStage);
+		player.addEffect(new MobEffectInstance(protection.effect(), protection.durationTicks(), protection.amplifier()));
 		if (config.enderBetelTeleportParticles) {
 			spawnTeleportParticles(level, targetX, targetY, targetZ);
 		}

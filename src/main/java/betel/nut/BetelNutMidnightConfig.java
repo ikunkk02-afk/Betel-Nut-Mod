@@ -49,13 +49,15 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 	@Entry(category = "gameplay_values", min = 5)
 	public static int endFrameRitualCheckIntervalTicks = 20;
 	@Entry(category = "gameplay_values", min = 1, max = 1800)
-	public static int hechengTianxiaPositiveDurationSeconds = 300;
+	public static int hechengTianxiaPositiveDurationSeconds = 120;
 	@Entry(category = "gameplay_values", min = 1, max = 600)
-	public static int hechengTianxiaComaDurationSeconds = 120;
+	public static int hechengTianxiaComaDurationSeconds = 5;
 	@Entry(category = "gameplay_values", min = 1, max = 3600)
-	public static int hechengTianxiaNegativeDurationSeconds = 600;
+	public static int hechengTianxiaNegativeDurationSeconds = 60;
 	@Entry(category = "gameplay_values")
 	public static boolean hechengTianxiaAllowRepeatBeforeAftermath = false;
+	@Entry(category = "gameplay_values") @Hidden
+	public static int effectBalanceVersion = 0;
 
 	public static void load() {
 		if (!initialized) {
@@ -75,6 +77,7 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 	}
 
 	private static void clampValues() {
+		upgradeLegacyEffectDefaults();
 		classicIslandY = clamp(classicIslandY, 1, 300);
 		oneBlockY = clamp(oneBlockY, 1, 300);
 		oneBlockStarterBetelNutCount = atLeast(oneBlockStarterBetelNutCount, 0);
@@ -89,6 +92,15 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 		hechengTianxiaPositiveDurationSeconds = clamp(hechengTianxiaPositiveDurationSeconds, 1, 1800);
 		hechengTianxiaComaDurationSeconds = clamp(hechengTianxiaComaDurationSeconds, 1, 600);
 		hechengTianxiaNegativeDurationSeconds = clamp(hechengTianxiaNegativeDurationSeconds, 1, 3600);
+	}
+
+	private static void upgradeLegacyEffectDefaults() {
+		if (effectBalanceVersion >= 1) return;
+		// Only migrate old defaults once; preserve custom values and future deliberate overrides.
+		if (hechengTianxiaPositiveDurationSeconds == 300) hechengTianxiaPositiveDurationSeconds = 120;
+		if (hechengTianxiaComaDurationSeconds == 120) hechengTianxiaComaDurationSeconds = 5;
+		if (hechengTianxiaNegativeDurationSeconds == 600) hechengTianxiaNegativeDurationSeconds = 60;
+		effectBalanceVersion = 1;
 	}
 
 	private static void logLoadedValues() {

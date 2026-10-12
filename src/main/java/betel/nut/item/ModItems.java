@@ -1,6 +1,5 @@
 package betel.nut.item;
 
-import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.ToIntFunction;
 
@@ -8,7 +7,6 @@ import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -29,118 +27,92 @@ public final class ModItems {
 	public static final Item LOTTERY_TICKET = register("lottery_ticket", new LotteryTicketItem());
 	public static final Item WRAPPED_RAW_BETEL = register("wrapped_raw_betel",
 			new BetelNutItem(foodProperties(2, 0.2F), 1,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 160, 0))));
+					BetelEffectProfile.WRAPPED));
 	public static final Item ECHO_BETEL = register("echo_betel",
 			new BetelNutItem(foodProperties(3, 0.3F).rarity(Rarity.RARE), 1,
-					List.of(new BetelNutItem.EffectSpec(betel.nut.effect.ModEffects.ECHO_SIGHT, 1200, 0))));
+					BetelEffectProfile.ECHO));
 	public static final Item RAW_BETEL_NUT = register("raw_betel_nut", new Item(new Item.Properties()));
 	public static final Item BETEL_LEAF = register("betel_leaf", new Item(new Item.Properties()));
 	public static final Item BETEL_NUT_RESIDUE = register("betel_nut_residue", new Item(new Item.Properties()));
 
 	public static final Item ROASTED_BETEL_NUT = register("roasted_betel_nut",
 			new BetelNutItem(foodProperties(2, 0.3F), BetelNutConfig.ROASTED_ADDICTION,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 300, 1))));
+					BetelEffectProfile.ROASTED));
 
 	public static final Item SPICY_BETEL_NUT = register("spicy_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F), BetelNutConfig.SPICY_ADDICTION,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.FIRE_RESISTANCE, 3600, 1))));
+					BetelEffectProfile.SPICY));
 
 	public static final Item SWEET_BETEL_NUT = register("sweet_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F), BetelNutConfig.SWEET_ADDICTION,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 2700, 1))));
+					BetelEffectProfile.SWEET));
 
 	public static final Item REFRESHING_BETEL_NUT = register("refreshing_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F), BetelNutConfig.REFRESHING_ADDICTION,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.WATER_BREATHING, 3600, 1))));
+					BetelEffectProfile.REFRESHING));
 
 	public static final Item NIGHT_BETEL_NUT = register("night_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F), BetelNutConfig.NIGHT_ADDICTION,
-					List.of(new BetelNutItem.EffectSpec(MobEffects.NIGHT_VISION, 3600, 1))));
+					BetelEffectProfile.NIGHT));
 
 	public static final Item ENERGIZING_BETEL_NUT = register("energizing_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F), BetelNutConfig.ENERGIZING_ADDICTION,
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 1800, 1),
-							new BetelNutItem.EffectSpec(MobEffects.DIG_SPEED, 1800, 1))));
+					BetelEffectProfile.ENERGIZING));
 
 	public static final Item HONEY_BETEL_NUT = register("honey_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.honeyBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.REGENERATION, 400, 1),
-							new BetelNutItem.EffectSpec(MobEffects.ABSORPTION, 400, 1))));
+					BetelEffectProfile.HONEY));
 
 	public static final Item GLOW_BETEL_NUT = register("glow_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.glowingBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.NIGHT_VISION, 3600, 1),
-							new BetelNutItem.EffectSpec(MobEffects.GLOWING, 300, 0))));
+					BetelEffectProfile.GLOW));
 
 	public static final Item PHANTOM_BETEL_NUT = register("phantom_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.phantomBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.SLOW_FALLING, 2400, 1),
-							new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 600, 1))));
+					BetelEffectProfile.PHANTOM));
 
 	public static final Item ENDER_BETEL_NUT = register("ender_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.enderBetelAddictionIncrease),
-					List.of()));
+					BetelEffectProfile.ENDER));
 
 	public static final Item LAPIS_BETEL_NUT = register("lapis_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.lapisBetelAddictionIncrease),
-					List.of(new BetelNutItem.EffectSpec(MobEffects.LUCK, 2400, 1))));
+					BetelEffectProfile.LAPIS));
 
 	public static final Item QUARTZ_BETEL_NUT = register("quartz_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.quartzBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.DIG_SPEED, 1600, 1),
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_RESISTANCE, 400, 1))));
+					BetelEffectProfile.QUARTZ));
 
 	public static final Item MAGMA_BETEL_NUT = register("magma_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.magmaBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.FIRE_RESISTANCE, 3600, 1),
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_BOOST, 400, 1),
-							new BetelNutItem.EffectSpec(MobEffects.HUNGER, 160, 0))));
+					BetelEffectProfile.MAGMA));
 
 	public static final Item AMETHYST_BETEL_NUT = register("amethyst_betel_nut",
 			new BetelNutItem(foodProperties(3, 0.4F),
 					configValue(config -> config.amethystBetelAddictionIncrease),
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_RESISTANCE, 800, 1),
-							new BetelNutItem.EffectSpec(MobEffects.LUCK, 1200, 1))));
+					BetelEffectProfile.AMETHYST));
 
 	public static final Item SYNTHETIC_WORLD_BETEL = register("synthetic_world_betel",
-			new BetelNutItem(foodProperties(6, 0.8F).rarity(Rarity.EPIC).fireResistant(),
+			new BetelNutItem(foodProperties(3, 0.5F).rarity(Rarity.EPIC).fireResistant(),
 					BetelNutConfig.SYNTHETIC_WORLD_ADDICTION,
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 6000, 2),
-							new BetelNutItem.EffectSpec(MobEffects.DIG_SPEED, 6000, 2),
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_RESISTANCE, 6000, 1))));
+					BetelEffectProfile.SYNTHETIC));
 
 	public static final Item RICH_WORLD_BETEL = register("rich_world_betel",
-			new BetelNutItem(foodProperties(6, 0.8F).rarity(Rarity.EPIC).fireResistant(),
+			new BetelNutItem(foodProperties(3, 0.5F).rarity(Rarity.EPIC).fireResistant(),
 					BetelNutConfig.RICH_WORLD_ADDICTION,
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SPEED, 2400, 2),
-							new BetelNutItem.EffectSpec(MobEffects.DIG_SPEED, 2400, 2),
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_RESISTANCE, 1800, 1),
-							new BetelNutItem.EffectSpec(MobEffects.NIGHT_VISION, 3600, 1))));
+					BetelEffectProfile.RICH));
 
 	public static final Item UNDERGROUND_BETEL = register("underground_betel",
-			new BetelNutItem(foodProperties(5, 0.6F).rarity(Rarity.EPIC),
+			new BetelNutItem(foodProperties(3, 0.4F).rarity(Rarity.EPIC),
 					BetelNutConfig.UNDERGROUND_ADDICTION,
-					List.of(
-							new BetelNutItem.EffectSpec(MobEffects.NIGHT_VISION, 6000, 1),
-							new BetelNutItem.EffectSpec(MobEffects.DIG_SPEED, 3600, 2),
-							new BetelNutItem.EffectSpec(MobEffects.DAMAGE_RESISTANCE, 2400, 1),
-							new BetelNutItem.EffectSpec(MobEffects.MOVEMENT_SLOWDOWN, 200, 0))));
+					BetelEffectProfile.UNDERGROUND));
 
 	private static <T extends Item> T register(String path, T item) {
 		return Registry.register(BuiltInRegistries.ITEM, BetelNutMod.id(path), item);

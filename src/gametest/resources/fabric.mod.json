@@ -13,7 +13,8 @@
       "betel.nut.test.BetelGameplayGameTests",
       "betel.nut.test.BetelRecipeGameTests",
       "betel.nut.test.BetelRecoveryGameTests",
-      "betel.nut.test.BetelTradeGameTests"
+      "betel.nut.test.BetelTradeGameTests",
+      "betel.nut.test.BetelEffectGameTests"
     ]
   },
   "depends": {

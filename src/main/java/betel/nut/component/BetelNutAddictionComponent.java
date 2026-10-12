@@ -45,6 +45,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 	private int oralExposureDays;
 	private int withdrawalSeverityFloor;
 	private int echoAftermathTicks;
+	private boolean disabledWithdrawalEffectsCleared;
 	private boolean needsLegacyCalendarAnchor;
 	private int withdrawalValue;
 	private long lastEatTime;
@@ -311,12 +312,11 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			return false;
 		}
 
-		int positiveTicks = HechengTianxiaEffects.positiveDurationTicks();
+		int positiveTicks = HechengTianxiaEffects.applyPositiveBurst(player);
 		this.hechengTianxiaPositiveTicks = positiveTicks;
 		this.hechengTianxiaComaTicks = 0;
 		this.hechengTianxiaNegativeTicks = 0;
-		HechengTianxiaEffects.applyPositiveBurst(player);
-		suppressConflictingWithdrawalEffects(player, positiveTicks, positiveTicks, positiveTicks);
+		suppressConflictingWithdrawalEffects(player, positiveTicks, positiveTicks, 0);
 		BetelNutMod.LOGGER.info(
 				"Started synthetic world betel aftereffect for {}: positiveTicks={}, comaTicks={}, negativeTicks={}",
 				player.getScoreboardName(), this.hechengTianxiaPositiveTicks,
@@ -457,10 +457,10 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 
 	public void serverTick(ServerPlayer player) {
 		BetelNutConfig config = BetelNutConfig.get();
+		updateDisabledWithdrawalEffects(player);
 		if (this.echoAftermathTicks > 0 && --this.echoAftermathTicks == 0)
 			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160, 0));
 		if (!config.enableAddictionSystem) {
-			clearWithdrawalPenalties(player);
 			maintainDependenceEffects(player);
 			maintainOralEffects(player);
 			return;
@@ -483,6 +483,16 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 			clearWithdrawalPenalties(player);
 		}
 		maintainOralEffects(player);
+	}
+
+	public void updateDisabledWithdrawalEffects(ServerPlayer player) {
+		if (BetelNutConfig.get().enableAddictionSystem) {
+			this.disabledWithdrawalEffectsCleared = false;
+		} else if (!this.disabledWithdrawalEffectsCleared) {
+			// Clear stale withdrawal once, without erasing newly applied food side effects every tick.
+			clearWithdrawalPenalties(player);
+			this.disabledWithdrawalEffectsCleared = true;
+		}
 	}
 
 	public void setAddictionValue(int value) {
