@@ -17,7 +17,7 @@ import net.fabricmc.loader.api.FabricLoader;
 public final class BetelNutConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String CONFIG_FILE_NAME = "betel_nut.json";
-	private static final int CONFIG_VERSION = 14;
+	private static final int CONFIG_VERSION = 15;
 	private static BetelNutConfig INSTANCE = new BetelNutConfig();
 
 	public static final int ROASTED_ADDICTION = 5;
@@ -112,12 +112,30 @@ public final class BetelNutConfig {
 	public double enderBetelTeleportDamageAmount = 2.0D;
 
 	public boolean enableFarmerTrades = true;
+	public boolean enableFishermanTrades = true;
+	public boolean enableClericTrades = true;
+	// Retained for old config files; raw/leaf sales were retired to prevent buyback loops.
 	public int farmerTradeRawBetelBuyCount = 4;
 	public int farmerTradeRawBetelSellCount = 16;
 	public int farmerTradeLeafBuyCount = 6;
 	public int farmerTradeRoastedBetelBuyCount = 4;
 	public int farmerTradeFlavorEmeraldCost = 3;
 	public int farmerTradeSyntheticWorldEmeraldCost = 16;
+	public int farmerTradeUnripeBunchSellCount = 6;
+	public int farmerTradeRipeBunchSellCount = 4;
+	public int farmerTradeLeafSellCount = 24;
+	public int farmerTradeSaplingEmeraldCost = 4;
+	public int farmerTradeEmptyPackBuyCount = 4;
+	public int farmerTradeBrandSealEmeraldCost = 2;
+	public int farmerTradeKouweiwangPackEmeraldCost = 12;
+	public int farmerTradeXiangtanPackEmeraldCost = 14;
+	public int farmerTradeHechengPackEmeraldCost = 20;
+	public int fishermanTradeShellBuyCount = 4;
+	public int fishermanTradeShellPowderBuyCount = 8;
+	public int clericTradeReliefEmeraldCost = 2;
+	public int clericTradeGoldenPasteServiceEmeraldCost = 2;
+	public int clericTradeGoldenPasteEmeraldCost = 8;
+	public int clericTradeEnchantedPasteServiceEmeraldCost = 8;
 
 	public boolean betelSkyblockEnabled = false;
 	public boolean enableBetelSkyblockVoidProtection = true;
@@ -243,6 +261,21 @@ public final class BetelNutConfig {
 		this.farmerTradeRoastedBetelBuyCount = clamp(this.farmerTradeRoastedBetelBuyCount, 1, 64);
 		this.farmerTradeFlavorEmeraldCost = clamp(this.farmerTradeFlavorEmeraldCost, 1, 64);
 		this.farmerTradeSyntheticWorldEmeraldCost = clamp(this.farmerTradeSyntheticWorldEmeraldCost, 1, 64);
+		this.farmerTradeUnripeBunchSellCount = clamp(this.farmerTradeUnripeBunchSellCount, 1, 64);
+		this.farmerTradeRipeBunchSellCount = clamp(this.farmerTradeRipeBunchSellCount, 1, 64);
+		this.farmerTradeLeafSellCount = clamp(this.farmerTradeLeafSellCount, 1, 64);
+		this.farmerTradeSaplingEmeraldCost = clamp(this.farmerTradeSaplingEmeraldCost, 1, 64);
+		this.farmerTradeEmptyPackBuyCount = clamp(this.farmerTradeEmptyPackBuyCount, 1, 64);
+		this.farmerTradeBrandSealEmeraldCost = clamp(this.farmerTradeBrandSealEmeraldCost, 1, 64);
+		this.farmerTradeKouweiwangPackEmeraldCost = clamp(this.farmerTradeKouweiwangPackEmeraldCost, 1, 64);
+		this.farmerTradeXiangtanPackEmeraldCost = clamp(this.farmerTradeXiangtanPackEmeraldCost, 1, 64);
+		this.farmerTradeHechengPackEmeraldCost = clamp(this.farmerTradeHechengPackEmeraldCost, 1, 64);
+		this.fishermanTradeShellBuyCount = clamp(this.fishermanTradeShellBuyCount, 1, 64);
+		this.fishermanTradeShellPowderBuyCount = clamp(this.fishermanTradeShellPowderBuyCount, 1, 64);
+		this.clericTradeReliefEmeraldCost = clamp(this.clericTradeReliefEmeraldCost, 1, 64);
+		this.clericTradeGoldenPasteServiceEmeraldCost = clamp(this.clericTradeGoldenPasteServiceEmeraldCost, 1, 64);
+		this.clericTradeGoldenPasteEmeraldCost = clamp(this.clericTradeGoldenPasteEmeraldCost, 1, 64);
+		this.clericTradeEnchantedPasteServiceEmeraldCost = clamp(this.clericTradeEnchantedPasteServiceEmeraldCost, 1, 64);
 		this.betelSkyblockSpawnProtectionTicks = atLeast(this.betelSkyblockSpawnProtectionTicks, 0);
 		this.betelSkyblockVoidProtectionDamageAmount = atLeast(this.betelSkyblockVoidProtectionDamageAmount, 0.0D);
 		this.configVersion = CONFIG_VERSION;

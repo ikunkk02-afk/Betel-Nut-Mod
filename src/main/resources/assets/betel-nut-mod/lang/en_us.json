@@ -181,7 +181,7 @@
   "command.betel-nut-mod.ender_teleport.failure": "Ender Betel Nut teleport test failed: no safe landing spot was found.",
   "command.betel-nut-mod.reload.success": "Betel Nut config and MidnightLib config reloaded.",
   "command.betel-nut-mod.reload.failure": "Failed to read Betel Nut config; defaults were used. Check the log.",
-  "command.betel-nut-mod.trades.info": "Farmer betel trades are %s. Novice: 1 emerald -> %s raw betel nut; %s raw betel nut -> 1 emerald. Apprentice: 1 emerald -> %s betel leaf. Journeyman: 2 emeralds -> %s roasted betel nut. Expert: %s emeralds -> 1 flavored betel nut. Master: %s emeralds + 1 roasted betel nut -> 1 synthetic world betel.",
+  "command.betel-nut-mod.trades.info": "Betel villager trades: %s. Current base prices follow; actual prices depend on discounts, demand and saved offers.",
   "command.betel-nut-mod.skyblock.status": "Betel Skyblock: enabled=%s, isBetelSkyblockPreset=%s, isBetelOneBlockSkyblockPreset=%s, classicConfigEnabled=%s, oneBlockConfigEnabled=%s, legacyConfigFallback=%s, hasGeneratedBetelSkyIsland=%s, betelSkyIslandResetPending=%s, islandCenter=%s, fixedIslandCenter=%s, skyblockSpawn=%s, hasSetSkyblockSpawn=%s, hasGeneratedBetelOneBlockIsland=%s, betelOneBlockIslandResetPending=%s, oneBlockCenter=%s, fixedOneBlockCenter=%s, oneBlockSpawn=%s, hasSetBetelOneBlockSpawn=%s.",
   "command.betel-nut-mod.skyblock.generate.success": "Generated Betel Skyblock island at %s, set spawn to %s, teleportedCommandPlayer=%s.",
   "command.betel-nut-mod.skyblock.force_generate.success": "Dangerous operation: force-generated Betel Skyblock island at %s, teleportedCommandPlayer=%s.",
@@ -301,5 +301,11 @@
   "item.betel-nut-mod.unripe_betel_nut_cluster": "Unripe Betel Nut Bunch",
   "tooltip.betel-nut-mod.cluster.ripe": "Yellow: unpack into 5 raw betel nuts, or combine with a betel leaf for 1 sapling.",
   "tooltip.betel-nut-mod.cluster.unripe": "Green: unpack into 3 raw betel nuts for normal processing.",
-  "tooltip.betel-nut-mod.sapling.seed": "Craft a sapling from a ripe yellow bunch and a betel leaf."
+  "tooltip.betel-nut-mod.sapling.seed": "Craft a sapling from a ripe yellow bunch and a betel leaf.",
+  "command.betel-nut-mod.trades.profession": "%s (%s)",
+  "command.betel-nut-mod.trades.entry": "  Level %s: %s x %s%s -> %s x %s (%s uses per restock)",
+  "command.betel-nut-mod.trades.extra": " + %s x %s",
+  "command.betel-nut-mod.trades.enabled": "enabled",
+  "command.betel-nut-mod.trades.disabled": "disabled",
+  "command.betel-nut-mod.trades.saved_note": "Trades are randomly selected from profession pools; each villager offers a subset. Reload affects newly generated offers, preserving existing ones."
 }

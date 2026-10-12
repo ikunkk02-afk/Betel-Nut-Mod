@@ -261,6 +261,7 @@ public final class BetelCommands {
 	private static int reloadConfig(CommandContext<CommandSourceStack> context) {
 		boolean loaded = BetelNutConfig.reload();
 		BetelNutMidnightConfig.reload();
+		betel.nut.villager.ModVillagerTrades.refresh();
 
 		if (loaded) {
 			sendSuccess(context.getSource(), "command.betel-nut-mod.reload.success", true);
@@ -273,12 +274,7 @@ public final class BetelCommands {
 
 	private static int showTradeInfo(CommandContext<CommandSourceStack> context) {
 		BetelNutConfig config = BetelNutConfig.get();
-		String status = config.enableFarmerTrades ? "enabled" : "disabled";
-
-		sendSuccess(context.getSource(), "command.betel-nut-mod.trades.info", false, status,
-				config.farmerTradeRawBetelBuyCount, config.farmerTradeRawBetelSellCount,
-				config.farmerTradeLeafBuyCount, config.farmerTradeRoastedBetelBuyCount,
-				config.farmerTradeFlavorEmeraldCost, config.farmerTradeSyntheticWorldEmeraldCost);
+		context.getSource().sendSuccess(() -> betel.nut.villager.ModVillagerTrades.describe(config), false);
 		return Command.SINGLE_SUCCESS;
 	}
 

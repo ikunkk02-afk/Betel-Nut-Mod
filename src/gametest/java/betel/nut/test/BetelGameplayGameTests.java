@@ -95,7 +95,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
             h.assertTrue(s.getSoberDays()==3 && s.getAddictionValue()==5,"Third completed abstinent date starts daily recovery");
             h.assertTrue(s.getWithdrawalSeverity()==3 && s.getOralCancerStage()==2,"Withdrawal grows by abstinent days while oral exposure stays independent");
             var fresh=new betel.nut.BetelNutConfig();
-            h.assertTrue(fresh.configVersion==14 && fresh.maxAddictionValue==7 && fresh.legacyMaxAddictionValue==100
+            h.assertTrue(fresh.configVersion==15 && fresh.maxAddictionValue==7 && fresh.legacyMaxAddictionValue==100
                     && fresh.minimumAddictionForWithdrawal==2,"Fresh configuration keeps the legacy save migration scale");
         } finally {world.setDayTime(before);}
         h.succeed();
@@ -234,7 +234,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         var config=new betel.nut.BetelNutConfig(); config.configVersion=12; config.maxAddictionValue=30;
         config.minimumAddictionForWithdrawal=3; config.enableOralDisease=false; config.oralCancerStage2Days=24;
         var validate=betel.nut.BetelNutConfig.class.getDeclaredMethod("validated"); validate.setAccessible(true); validate.invoke(config);
-        h.assertTrue(config.maxAddictionValue==7 && config.minimumAddictionForWithdrawal==2 && config.configVersion==14,"Existing default config adopts seven-day timing");
+        h.assertTrue(config.maxAddictionValue==7 && config.minimumAddictionForWithdrawal==2 && config.configVersion==15,"Existing default config adopts seven-day timing");
         h.assertTrue(!config.enableOralDisease && config.oralCancerStage2Days==24 && config.legacyMaxAddictionValue==100,"Unrelated custom settings survive migration");
         for(int chosen=5;chosen<=8;chosen++) {
             config.maxAddictionValue=chosen; validate.invoke(config);
@@ -331,7 +331,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         var defaults=new betel.nut.BetelNutConfig();defaults.configVersion=13;
         defaults.oralCancerStage1Days=12;defaults.oralCancerStage2Days=21;defaults.oralCancerStage3Days=30;
         validate.invoke(defaults);
-        h.assertTrue(defaults.configVersion==14&&defaults.oralCancerStage1Days==3&&defaults.oralCancerStage2Days==5&&defaults.oralCancerStage3Days==7,"Version 13 default disease schedule upgrades to the new seven-day cycle");
+        h.assertTrue(defaults.configVersion==15&&defaults.oralCancerStage1Days==3&&defaults.oralCancerStage2Days==5&&defaults.oralCancerStage3Days==7,"Version 13 default disease schedule upgrades to the new seven-day cycle");
         var custom=new betel.nut.BetelNutConfig();custom.configVersion=13;custom.enableOralDisease=false;
         custom.oralCancerStage1Days=12;custom.oralCancerStage2Days=24;custom.oralCancerStage3Days=30;
         validate.invoke(custom);

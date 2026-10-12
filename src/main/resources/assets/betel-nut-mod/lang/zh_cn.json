@@ -181,7 +181,7 @@
   "command.betel-nut-mod.ender_teleport.failure": "末影槟榔瞬移测试失败：没有找到安全落点。",
   "command.betel-nut-mod.reload.success": "槟榔配置和 MidnightLib 配置已重新加载。",
   "command.betel-nut-mod.reload.failure": "槟榔配置读取失败，已回退到默认配置。请查看日志。",
-  "command.betel-nut-mod.trades.info": "农民槟榔交易状态：%s。新手：1 绿宝石 -> %s 个生槟榔；%s 个生槟榔 -> 1 绿宝石。学徒：1 绿宝石 -> %s 个槟榔叶。老手：2 绿宝石 -> %s 个烤槟榔。专家：%s 个绿宝石 -> 1 个口味槟榔。大师：%s 个绿宝石 + 1 个烤槟榔 -> 1 个合成天下槟榔。",
+  "command.betel-nut-mod.trades.info": "村民槟榔交易：%s。以下为当前基础报价；折扣、需求及已保存报价以村民界面为准。",
   "command.betel-nut-mod.skyblock.status": "Betel Skyblock: enabled=%s, isBetelSkyblockPreset=%s, isBetelOneBlockSkyblockPreset=%s, classicConfigEnabled=%s, oneBlockConfigEnabled=%s, legacyConfigFallback=%s, hasGeneratedBetelSkyIsland=%s, betelSkyIslandResetPending=%s, islandCenter=%s, fixedIslandCenter=%s, skyblockSpawn=%s, hasSetSkyblockSpawn=%s, hasGeneratedBetelOneBlockIsland=%s, betelOneBlockIslandResetPending=%s, oneBlockCenter=%s, fixedOneBlockCenter=%s, oneBlockSpawn=%s, hasSetBetelOneBlockSpawn=%s。",
   "command.betel-nut-mod.skyblock.generate.success": "已生成槟榔空岛，中心 %s，出生点 %s，teleportedCommandPlayer=%s。",
   "command.betel-nut-mod.skyblock.force_generate.success": "危险操作：已强制覆盖生成槟榔空岛，中心 %s，teleportedCommandPlayer=%s。",
@@ -301,5 +301,11 @@
   "item.betel-nut-mod.unripe_betel_nut_cluster": "未成熟槟榔果串",
   "tooltip.betel-nut-mod.cluster.ripe": "黄色：拆成 5 个生槟榔，或配槟榔叶制作 1 棵树苗。",
   "tooltip.betel-nut-mod.cluster.unripe": "绿色：拆成 3 个生槟榔，用于普通槟榔加工。",
-  "tooltip.betel-nut-mod.sapling.seed": "成熟黄果串 + 槟榔叶可制作树苗。"
+  "tooltip.betel-nut-mod.sapling.seed": "成熟黄果串 + 槟榔叶可制作树苗。",
+  "command.betel-nut-mod.trades.profession": "%s（%s）",
+  "command.betel-nut-mod.trades.entry": "  %s 级：%s × %s%s → %s × %s（每次补货 %s 次）",
+  "command.betel-nut-mod.trades.extra": " + %s × %s",
+  "command.betel-nut-mod.trades.enabled": "已启用",
+  "command.betel-nut-mod.trades.disabled": "已关闭",
+  "command.betel-nut-mod.trades.saved_note": "交易从职业候选池随机抽取，并非每位村民都有全部商品。重载只更新新生成的报价，不重置老村民。"
 }

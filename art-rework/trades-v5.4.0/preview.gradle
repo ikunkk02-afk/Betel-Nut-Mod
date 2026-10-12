@@ -1,0 +1,20 @@
+// Isolated client verification; never included in published JARs.
+sourceSets {
+    tradesPreview {
+        java.srcDir 'art-rework/trades-v5.4.0/dev/java'
+        resources.srcDir 'art-rework/trades-v5.4.0/dev/resources'
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output + sourceSets.client.compileClasspath + sourceSets.client.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.client.runtimeClasspath
+    }
+}
+loom {
+    mods { betel_trades_preview { sourceSet sourceSets.tradesPreview } }
+    runs {
+        tradesPreviewClient {
+            client()
+            source sourceSets.tradesPreview
+            runDir 'art-rework/trades-v5.4.0/client-run'
+            programArgs '--quickPlaySingleplayer', 'TradesPreview', '--width', '1600', '--height', '1000'
+        }
+    }
+}
