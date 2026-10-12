@@ -2,6 +2,7 @@ package betel.nut.event;
 
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
+import betel.nut.advancement.BetelQuestAdvancements;
 import betel.nut.item.ModItems;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
@@ -102,6 +103,10 @@ public final class BetelNutEvents {
 		}
 
 		BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(player);
+		int oldDependence = addiction.getAddictionValue();
+		int oldWithdrawal = addiction.getWithdrawalValue();
+		int oldExposure = addiction.getOralExposureDays();
+		boolean recovery = !stack.is(Items.MILK_BUCKET);
 
 		if (stack.is(Items.MILK_BUCKET)) {
 			addiction.applyMilkRelief(player, gameTime);
@@ -111,6 +116,11 @@ public final class BetelNutEvents {
 			addiction.applyGoldenAppleRecovery(player, gameTime);
         } else if (stack.is(ModItems.RELIEF_POTION)) {
             addiction.applyReliefPotion(player, gameTime);
+		}
+		if (recovery && (addiction.getAddictionValue() < oldDependence
+				|| addiction.getWithdrawalValue() < oldWithdrawal || addiction.getOralExposureDays() < oldExposure)) {
+			BetelQuestAdvancements.grantRecovery(player, addiction.getAddictionValue() == 0
+					&& addiction.getWithdrawalValue() == 0 && addiction.getOralExposureDays() == 0);
 		}
 	}
 

@@ -40,6 +40,7 @@ public class BetelNutMod implements ModInitializer {
 		ModItemGroups.register();
 		WithdrawalEatingRestrictions.register();
 		BetelNutEvents.register();
+		betel.nut.advancement.BetelQuestAdvancements.register();
 		ModWorldGeneration.register();
 		BetelSkyblockManager.register();
 		ModVillagerTrades.register();

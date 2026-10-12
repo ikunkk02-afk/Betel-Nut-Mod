@@ -179,6 +179,31 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
     }
 
     @GameTest(template = EMPTY_STRUCTURE)
+    public void endProgressCallbackRequiresAnEnabledSkyblock(GameTestHelper h) throws ReflectiveOperationException {
+        var level = h.getLevel(); var p = player(h);
+        var end = p.server.getLevel(net.minecraft.world.level.Level.END);
+        var event = net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.invoker();
+        var advancement = p.server.getAdvancements().get(betel.nut.BetelNutMod.id("skyblock/enter_end"));
+        try {
+            event.afterChangeWorld(p, level, end);
+            h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Normal worlds entering the End do not unlock a skyblock milestone");
+            for (boolean one : new boolean[]{false, true}) try (var preset = new Preset(level, one)) {
+                p.getAdvancements().revoke(advancement, "entered_the_end");
+                event.afterChangeWorld(p, level, p.server.getLevel(net.minecraft.world.level.Level.NETHER));
+                h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Other dimensions do not qualify");
+                if (one) BetelNutMidnightConfig.enableOneBlockSkyblock = false;
+                else BetelNutMidnightConfig.enableClassicSkyblock = false;
+                event.afterChangeWorld(p, level, end);
+                h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Disabled presets do not qualify");
+                BetelNutMidnightConfig.enableClassicSkyblock = BetelNutMidnightConfig.enableOneBlockSkyblock = true;
+                event.afterChangeWorld(p, level, end);
+                h.assertTrue(p.getAdvancements().getOrStartProgress(advancement).isDone(), "Both enabled presets support either End-entry route");
+            }
+        } finally { p.server.getPlayerList().remove(p); }
+        h.succeed();
+    }
+
+    @GameTest(template = EMPTY_STRUCTURE)
     public void rawFruitAndLeavesCompostInBothPresets(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel(); var p = player(h); var pos = h.absolutePos(new BlockPos(2,2,2));
         for (boolean one : new boolean[]{false,true}) try (var preset = new Preset(level, one)) {
@@ -195,11 +220,18 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
                 h.assertTrue(count == p.getOffhandItem().getCount(), "Full composter consumes no further inputs");
                 level.getBlockState(pos).tick(level,pos,RandomSource.create(0));
                 h.assertTrue(level.getBlockState(pos).getValue(ComposterBlock.LEVEL) == 8, "Vanilla maturation produces ready compost");
+                var advancement = p.server.getAdvancements().get(betel.nut.BetelNutMod.id("skyblock/first_compost"));
+                p.getAdvancements().revoke(advancement, "has_bone_meal");
+                var boneMeal = new ItemStack(Items.BONE_MEAL);
+                p.getInventory().add(boneMeal.copy());
+                net.minecraft.advancements.CriteriaTriggers.INVENTORY_CHANGED.trigger(p, p.getInventory(), boneMeal);
+                h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Even in skyblock, owning bone meal cannot complete composting");
                 p.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                 level.getBlockState(pos).useWithoutItem(level,p,hit(pos));
                 h.assertTrue(level.getBlockState(pos).getValue(ComposterBlock.LEVEL) == 0
                         && !level.getEntitiesOfClass(ItemEntity.class,new AABB(pos).inflate(2), e -> e.getItem().is(Items.BONE_MEAL)).isEmpty(),
                         "Vanilla empty-hand extraction returns real bone meal");
+                h.assertTrue(p.getAdvancements().getOrStartProgress(advancement).isDone(), "Actual extraction awards the preserved skyblock criterion in both presets");
             }
         }
         level.getServer().getPlayerList().remove(p); h.succeed();

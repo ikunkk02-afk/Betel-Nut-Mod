@@ -1,0 +1,41 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel-nut-mod:echo_betel"
+    },
+    "title": {
+      "translate": "advancement.betel-nut-mod.collection.echo.title"
+    },
+    "description": {
+      "translate": "advancement.betel-nut-mod.collection.echo.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "betel-nut-mod:echo_betel"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "betel-nut-mod:collection/ancient_shell",
+  "rewards": {
+    "experience": 25
+  }
+}

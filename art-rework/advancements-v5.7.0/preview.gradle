@@ -1,0 +1,21 @@
+// Optional real-client verification; its code is excluded from published JARs.
+sourceSets {
+    advancementsPreview {
+        java.srcDir 'art-rework/advancements-v5.7.0/dev/java'
+        resources.srcDir 'art-rework/advancements-v5.7.0/dev/resources'
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output + sourceSets.client.compileClasspath + sourceSets.client.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.client.runtimeClasspath
+    }
+}
+loom {
+    mods { betel_advancements_preview { sourceSet sourceSets.advancementsPreview } }
+    runs {
+        advancementsPreviewClient {
+            client()
+            source sourceSets.advancementsPreview
+            runDir 'art-rework/advancements-v5.7.0/client-run'
+            programArgs '--quickPlaySingleplayer', 'AdvancementsPreview', '--width', '1600', '--height', '1000',
+                    '--username', 'AdvPreview', '--uuid', '853b046ad7b54c8db071abc9a0be6251'
+        }
+    }
+}

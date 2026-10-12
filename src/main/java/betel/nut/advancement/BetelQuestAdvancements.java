@@ -1,12 +1,46 @@
 package betel.nut.advancement;
 
 import betel.nut.BetelNutMod;
+import betel.nut.skyblock.BetelSkyblockManager;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
 public final class BetelQuestAdvancements {
+	public static void register() {
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
+			if (destination.dimension() == Level.END && isSkyblock(player)) {
+				grant(player, BetelNutMod.id("skyblock/enter_end"));
+			}
+		});
+	}
+
+	private static boolean isSkyblock(ServerPlayer player) {
+		var overworld = player.server.overworld();
+		return BetelSkyblockManager.isEnabled(overworld) || BetelSkyblockManager.isOneBlockEnabled(overworld);
+	}
+
+	public static void grantHarvest(ServerPlayer player, boolean ripe) {
+		grant(player, BetelNutMod.id("cultivation/harvest"));
+		if (ripe) grant(player, BetelNutMod.id("cultivation/ripe_harvest"));
+	}
+
+	public static void grantCompost(ServerPlayer player) {
+		grant(player, BetelNutMod.id("cultivation/compost"));
+		if (isSkyblock(player)) grant(player, BetelNutMod.id("skyblock/first_compost"));
+	}
+
+	public static void grantOpenPack(ServerPlayer player) {
+		grant(player, BetelNutMod.id("trade/open_pack"));
+	}
+
+	public static void grantRecovery(ServerPlayer player, boolean fullyRecovered) {
+		grant(player, BetelNutMod.id("recovery/relief"));
+		if (fullyRecovered) grant(player, BetelNutMod.id("recovery/recovered"));
+	}
 	public static final ResourceLocation ENTER_BETEL_SKYBLOCK = BetelNutMod
 			.id("skyblock/enter_betel_skyblock");
 	public static final ResourceLocation EAT_FIRST_BETEL_NUT = BetelNutMod
@@ -53,7 +87,7 @@ public final class BetelQuestAdvancements {
 	private static void grant(ServerPlayer player, ResourceLocation id) {
 		AdvancementHolder advancement = player.server.getAdvancements().get(id);
 		if (advancement == null) {
-			BetelNutMod.LOGGER.warn("FTB Quests helper advancement {} is not loaded; cannot grant it to {}.",
+			BetelNutMod.LOGGER.warn("Betel advancement {} is not loaded; cannot grant it to {}.",
 					id, player.getScoreboardName());
 			return;
 		}

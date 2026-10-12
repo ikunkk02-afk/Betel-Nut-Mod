@@ -1,0 +1,247 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel-nut-mod:synthetic_world_betel"
+    },
+    "title": {
+      "translate": "advancement.betel-nut-mod.processing.all_flavors.title"
+    },
+    "description": {
+      "translate": "advancement.betel-nut-mod.processing.all_flavors.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "spicy_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:spicy_betel_nut"
+          }
+        ]
+      }
+    },
+    "sweet_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:sweet_betel_nut"
+          }
+        ]
+      }
+    },
+    "refreshing_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:refreshing_betel_nut"
+          }
+        ]
+      }
+    },
+    "night_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:night_betel_nut"
+          }
+        ]
+      }
+    },
+    "energizing_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:energizing_betel_nut"
+          }
+        ]
+      }
+    },
+    "honey_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:honey_betel_nut"
+          }
+        ]
+      }
+    },
+    "glow_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:glow_betel_nut"
+          }
+        ]
+      }
+    },
+    "phantom_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:phantom_betel_nut"
+          }
+        ]
+      }
+    },
+    "ender_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:ender_betel_nut"
+          }
+        ]
+      }
+    },
+    "lapis_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:lapis_betel_nut"
+          }
+        ]
+      }
+    },
+    "quartz_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:quartz_betel_nut"
+          }
+        ]
+      }
+    },
+    "magma_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:magma_betel_nut"
+          }
+        ]
+      }
+    },
+    "amethyst_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:amethyst_betel_nut"
+          }
+        ]
+      }
+    },
+    "synthetic_world_betel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:synthetic_world_betel"
+          }
+        ]
+      }
+    },
+    "rich_world_betel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:rich_world_betel"
+          }
+        ]
+      }
+    },
+    "underground_betel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:underground_betel"
+          }
+        ]
+      }
+    },
+    "echo_betel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:echo_betel"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "spicy_betel_nut"
+    ],
+    [
+      "sweet_betel_nut"
+    ],
+    [
+      "refreshing_betel_nut"
+    ],
+    [
+      "night_betel_nut"
+    ],
+    [
+      "energizing_betel_nut"
+    ],
+    [
+      "honey_betel_nut"
+    ],
+    [
+      "glow_betel_nut"
+    ],
+    [
+      "phantom_betel_nut"
+    ],
+    [
+      "ender_betel_nut"
+    ],
+    [
+      "lapis_betel_nut"
+    ],
+    [
+      "quartz_betel_nut"
+    ],
+    [
+      "magma_betel_nut"
+    ],
+    [
+      "amethyst_betel_nut"
+    ],
+    [
+      "synthetic_world_betel"
+    ],
+    [
+      "rich_world_betel"
+    ],
+    [
+      "underground_betel"
+    ],
+    [
+      "echo_betel"
+    ]
+  ],
+  "parent": "betel-nut-mod:processing/mineral_flavors",
+  "rewards": {
+    "experience": 100
+  }
+}

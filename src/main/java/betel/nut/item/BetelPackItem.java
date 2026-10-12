@@ -1,5 +1,6 @@
 package betel.nut.item;
 
+import betel.nut.advancement.BetelQuestAdvancements;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -36,6 +37,7 @@ public final class BetelPackItem extends Item {
             stack.shrink(1);
             for (Item item : contents()) give(serverPlayer, new ItemStack(item));
             give(serverPlayer, LotteryTicketItem.create(level.getRandom()));
+            BetelQuestAdvancements.grantOpenPack(serverPlayer);
             player.displayClientMessage(Component.translatable("message.betel-nut-mod.pack_opened"), true);
             player.getCooldowns().addCooldown(this, 10);
         }

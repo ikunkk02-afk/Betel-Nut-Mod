@@ -1,5 +1,5 @@
 {
-  "parent": "betel-nut-mod:root",
+  "parent": "betel-nut-mod:processing/mineral_flavors",
   "display": {
     "icon": {
       "count": 1,
@@ -14,7 +14,7 @@
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": true
+    "hidden": false
   },
   "rewards": {
     "experience": 100

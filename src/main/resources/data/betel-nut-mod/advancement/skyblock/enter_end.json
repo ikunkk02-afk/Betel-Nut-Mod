@@ -1,15 +1,32 @@
 {
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "minecraft:ender_eye"
+    },
+    "title": {
+      "translate": "advancement.betel-nut-mod.skyblock.enter_end.title"
+    },
+    "description": {
+      "translate": "advancement.betel-nut-mod.skyblock.enter_end.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
   "criteria": {
     "entered_the_end": {
-      "trigger": "minecraft:changed_dimension",
-      "conditions": {
-        "to": "minecraft:the_end"
-      }
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
       "entered_the_end"
     ]
-  ]
+  ],
+  "parent": "betel-nut-mod:skyblock/first_compost",
+  "rewards": {
+    "experience": 50
+  }
 }

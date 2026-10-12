@@ -10,10 +10,11 @@
     "description": {
       "translate": "advancement.betel-nut-mod.root.description"
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,
-    "hidden": false
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/husbandry.png"
   },
   "criteria": {
     "has_raw_betel_nut": {
@@ -21,7 +22,14 @@
       "conditions": {
         "items": [
           {
-            "items": "betel-nut-mod:raw_betel_nut"
+            "items": [
+              "betel-nut-mod:raw_betel_nut",
+              "betel-nut-mod:betel_nut_cluster",
+              "betel-nut-mod:unripe_betel_nut_cluster",
+              "betel-nut-mod:betel_leaf",
+              "betel-nut-mod:betel_palm_log",
+              "betel-nut-mod:betel_palm_sapling"
+            ]
           }
         ]
       }

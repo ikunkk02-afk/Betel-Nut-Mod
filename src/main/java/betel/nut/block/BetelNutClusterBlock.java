@@ -1,5 +1,7 @@
 package betel.nut.block;
 
+import betel.nut.advancement.BetelQuestAdvancements;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -139,6 +141,9 @@ public class BetelNutClusterBlock extends Block {
 			// Remove first, then drop once: stale packets cannot duplicate a whole bunch.
 			if (!level.removeBlock(pos, false)) return ItemInteractionResult.FAIL;
 			popResource(level, pos, harvestedBunch(current));
+			if (player instanceof ServerPlayer serverPlayer) {
+				BetelQuestAdvancements.grantHarvest(serverPlayer, current.getValue(AGE) == 2);
+			}
 			level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 0.9F);
 			level.gameEvent(player, GameEvent.SHEAR, pos);
 			player.awardStat(Stats.ITEM_USED.get(stack.getItem()));

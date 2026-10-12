@@ -1,0 +1,65 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel-nut-mod:xiangtan_puzi_pack"
+    },
+    "title": {
+      "translate": "advancement.betel-nut-mod.trade.three_packs.title"
+    },
+    "description": {
+      "translate": "advancement.betel-nut-mod.trade.three_packs.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "kouweiwang_pack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:kouweiwang_pack"
+          }
+        ]
+      }
+    },
+    "hecheng_tianxia_pack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:hecheng_tianxia_pack"
+          }
+        ]
+      }
+    },
+    "xiangtan_puzi_pack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel-nut-mod:xiangtan_puzi_pack"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "kouweiwang_pack"
+    ],
+    [
+      "hecheng_tianxia_pack"
+    ],
+    [
+      "xiangtan_puzi_pack"
+    ]
+  ],
+  "parent": "betel-nut-mod:trade/open_pack",
+  "rewards": {
+    "experience": 20
+  }
+}

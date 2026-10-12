@@ -85,6 +85,9 @@ if (project.hasProperty('effectsPreview')) {
 if (project.hasProperty('skyblockPreview')) {
 	apply from: "art-rework/skyblock-v5.6.0/preview.gradle"
 }
+if (project.hasProperty('advancementsPreview')) {
+	apply from: "art-rework/advancements-v5.7.0/preview.gradle"
+}
 
 dependencies {
 	// To change the versions see the gradle.properties file

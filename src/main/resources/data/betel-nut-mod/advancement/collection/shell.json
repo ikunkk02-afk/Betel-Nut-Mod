@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel-nut-mod:shell"
+    },
+    "title": {
+      "translate": "advancement.betel-nut-mod.collection.shell.title"
+    },
+    "description": {
+      "translate": "advancement.betel-nut-mod.collection.shell.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "betel-nut-mod:shell"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "betel-nut-mod:processing/wrap"
+}

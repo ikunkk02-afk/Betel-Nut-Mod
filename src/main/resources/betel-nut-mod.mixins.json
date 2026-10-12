@@ -5,7 +5,8 @@
   "mixins": [
     "ItemStackMixin",
     "CakeBlockMixin",
-    "NaturalSpawnerMixin"
+    "NaturalSpawnerMixin",
+    "ComposterBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
