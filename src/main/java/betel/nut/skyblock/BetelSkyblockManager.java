@@ -80,6 +80,7 @@ public final class BetelSkyblockManager {
 		ServerTickEvents.END_SERVER_TICK.register(BetelSkyblockManager::handleSkyblockPlayers);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> resetStartupCheckState());
 		EndFrameWaterRitualManager.register();
+		SkyblockComposting.register();
 	}
 
 	public static boolean isConfigEnabled() {
@@ -373,6 +374,7 @@ public final class BetelSkyblockManager {
 			BetelQuestAdvancements.grantEnterBetelSkyblock(player);
 			handleVoidProtection(player, overworld, worldData);
 		}
+		upgradeSurvivalSupplies(server, overworld, worldData, false);
 	}
 
 	private static void handleOneBlockSkyblockPlayers(MinecraftServer server, ServerLevel overworld,
@@ -393,6 +395,7 @@ public final class BetelSkyblockManager {
 			BetelQuestAdvancements.grantEnterBetelSkyblock(player);
 			handleOneBlockVoidProtection(player, overworld, worldData);
 		}
+		upgradeSurvivalSupplies(server, overworld, worldData, true);
 	}
 
 	private static void handleFirstSkyblockJoin(ServerPlayer player, ServerLevel overworld,
@@ -437,6 +440,7 @@ public final class BetelSkyblockManager {
 		}
 		sendOneBlockWelcomeMessage(player);
 		playerData.markReceivedBetelOneBlockStarterItems();
+		worldData.markSurvivalSuppliesProvided();
 		BetelNutMod.LOGGER.info(
 				"Player {} joined Betel One Block Skyblock for the first time and received starter items.",
 				player.getScoreboardName());
@@ -445,7 +449,7 @@ public final class BetelSkyblockManager {
 	private static void handleVoidProtection(ServerPlayer player, ServerLevel overworld,
 			BetelSkyblockWorldComponent worldData) {
 		BetelNutConfig config = BetelNutConfig.get();
-		if (!BetelNutMidnightConfig.classicEnableVoidRescue
+		if (!config.enableBetelSkyblockVoidProtection || !BetelNutMidnightConfig.classicEnableVoidRescue
 				|| player.getY() >= config.betelSkyblockVoidProtectionMinY) {
 			return;
 		}
@@ -467,7 +471,7 @@ public final class BetelSkyblockManager {
 	private static void handleOneBlockVoidProtection(ServerPlayer player, ServerLevel overworld,
 			BetelSkyblockWorldComponent worldData) {
 		BetelNutConfig config = BetelNutConfig.get();
-		if (!BetelNutMidnightConfig.oneBlockEnableVoidRescue
+		if (!config.enableBetelSkyblockVoidProtection || !BetelNutMidnightConfig.oneBlockEnableVoidRescue
 				|| player.getY() >= config.betelSkyblockVoidProtectionMinY) {
 			return;
 		}
@@ -487,8 +491,10 @@ public final class BetelSkyblockManager {
 	}
 
 	private static boolean teleportPlayerToSkyblockSpawn(ServerPlayer player, ServerLevel level, BlockPos spawnPos) {
-		boolean teleported = player.teleportTo(level, spawnPos.getX() + 0.5D, spawnPos.getY(),
-				spawnPos.getZ() + 0.5D, Set.<RelativeMovement>of(), player.getYRot(), player.getXRot());
+		Vec3 landing = SkyblockSpawnSafety.findLanding(player, level, spawnPos);
+		if (landing == null) return false;
+		boolean teleported = player.teleportTo(level, landing.x, landing.y,
+				landing.z, Set.<RelativeMovement>of(), player.getYRot(), player.getXRot());
 		if (teleported) {
 			player.setDeltaMovement(Vec3.ZERO);
 			player.resetFallDistance();
@@ -511,6 +517,31 @@ public final class BetelSkyblockManager {
 		giveOrDrop(player, new ItemStack(Items.DIRT, BetelNutMidnightConfig.oneBlockStarterDirtCount));
 		giveOrDrop(player, new ItemStack(ModItems.ROASTED_BETEL_NUT,
 				BetelNutMidnightConfig.oneBlockStarterBetelNutCount));
+		giveSurvivalSupplies(player, true);
+	}
+
+	private static void giveSurvivalSupplies(ServerPlayer player, boolean giveGuide) {
+		for (ItemStack stack : SkyblockStarterKit.supplies()) giveOrDrop(player, stack);
+		giveOrDrop(player, new ItemStack(Items.DIRT, 4));
+		giveOrDrop(player, new ItemStack(ModItems.BETEL_NUT_RESIDUE, 18));
+		if (giveGuide) giveOrDrop(player, createGuideBook());
+	}
+
+	/** Upgrade an existing island once, without touching its terrain or starter chest. */
+	private static void upgradeSurvivalSupplies(MinecraftServer server, ServerLevel level,
+			BetelSkyblockWorldComponent worldData, boolean oneBlock) {
+		if (worldData.hasSurvivalSuppliesProvided()) return;
+		boolean suppliesEnabled = oneBlock ? BetelNutMidnightConfig.oneBlockGiveStarterItems
+				: BetelNutMidnightConfig.classicGenerateStarterChest;
+		if (!suppliesEnabled) { worldData.markSurvivalSuppliesProvided(); return; }
+		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+			if (player.serverLevel() != level || !player.isAlive()
+					|| player.getY() < BetelNutConfig.get().betelSkyblockVoidProtectionMinY) continue;
+			giveSurvivalSupplies(player, oneBlock || BetelNutMidnightConfig.classicGiveGuideBook);
+			worldData.markSurvivalSuppliesProvided();
+			player.sendSystemMessage(Component.translatable("message.betel-nut-mod.skyblock_supplies_upgrade"));
+			return;
+		}
 	}
 
 	private static void giveOrDrop(ServerPlayer player, ItemStack stack) {
@@ -799,12 +830,12 @@ public final class BetelSkyblockManager {
 						exception);
 			}
 
-			chest.setItem(4, new ItemStack(Items.BONE_MEAL, 1));
-			chest.setItem(5, new ItemStack(Items.STICK, 4));
-			chest.setItem(6, new ItemStack(Items.ICE, 1));
-			chest.setItem(7, new ItemStack(Items.LAVA_BUCKET, 1));
+			int slot = 4;
+			for (ItemStack stack : SkyblockStarterKit.supplies()) chest.setItem(slot++, stack);
+			chest.setItem(slot++, new ItemStack(Items.STICK, 4));
+			chest.setItem(slot++, new ItemStack(Items.DIRT, 4));
 			if (BetelNutMidnightConfig.classicGiveGuideBook) {
-				chest.setItem(8, createGuideBook());
+				chest.setItem(slot, createGuideBook());
 			}
 		} catch (RuntimeException exception) {
 			BetelNutMod.LOGGER.warn(
@@ -824,7 +855,11 @@ public final class BetelSkyblockManager {
 						guidePage("book.betel-nut-mod.skyblock_guide.page2"),
 						guidePage("book.betel-nut-mod.skyblock_guide.page3"),
 						guidePage("book.betel-nut-mod.skyblock_guide.page4"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page5")),
+						guidePage("book.betel-nut-mod.skyblock_guide.page5"),
+						guidePage("book.betel-nut-mod.skyblock_guide.page6"),
+						guidePage("book.betel-nut-mod.skyblock_guide.page7"),
+						guidePage("book.betel-nut-mod.skyblock_guide.page8"),
+						guidePage("book.betel-nut-mod.skyblock_guide.page9")),
 				true));
 		return book;
 	}

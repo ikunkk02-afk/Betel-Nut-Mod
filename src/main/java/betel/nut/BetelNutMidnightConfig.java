@@ -24,6 +24,8 @@ public class BetelNutMidnightConfig extends MidnightConfig {
 	public static boolean oneBlockGiveStarterItems = true;
 	@Entry(category = "one_block_skyblock")
 	public static boolean oneBlockEnableVoidRescue = true;
+	@Entry(category = "gameplay_values")
+	public static boolean skyblockEmergencyPlatform = true;
 
 	@Entry(category = "one_block_starter_items", min = 0)
 	public static int oneBlockStarterBetelNutCount = 1;

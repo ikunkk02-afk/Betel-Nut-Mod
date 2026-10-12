@@ -33,6 +33,10 @@ public class BetelSkyblockWorldComponent implements Component {
 	private boolean hasSetBetelOneBlockSpawn;
 	private boolean betelSkyIslandResetPending;
 	private boolean betelOneBlockIslandResetPending;
+	private boolean survivalSuppliesProvided;
+
+	public boolean hasSurvivalSuppliesProvided() { return this.survivalSuppliesProvided; }
+	public void markSurvivalSuppliesProvided() { this.survivalSuppliesProvided = true; }
 
 	public BetelSkyblockWorldComponent(Level level) {
 	}
@@ -75,6 +79,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.islandY = islandCenter.getY();
 		this.islandZ = islandCenter.getZ();
 		this.betelSkyIslandResetPending = false;
+		this.survivalSuppliesProvided = true;
 	}
 
 	public void markSkyblockSpawnSet() {
@@ -87,6 +92,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.oneBlockY = oneBlockCenter.getY();
 		this.oneBlockZ = oneBlockCenter.getZ();
 		this.betelOneBlockIslandResetPending = false;
+		this.survivalSuppliesProvided = true;
 	}
 
 	public void markBetelOneBlockSpawnSet() {
@@ -126,6 +132,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.hasSetBetelOneBlockSpawn = tag.getBoolean(HAS_SET_BETEL_ONE_BLOCK_SPAWN_KEY);
 		this.betelSkyIslandResetPending = tag.getBoolean(BETEL_SKY_ISLAND_RESET_PENDING_KEY);
 		this.betelOneBlockIslandResetPending = tag.getBoolean(BETEL_ONE_BLOCK_ISLAND_RESET_PENDING_KEY);
+		this.survivalSuppliesProvided = tag.getBoolean("survivalSuppliesProvided");
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] hasGeneratedBetelSkyIsland = {}",
 				this.hasGeneratedBetelSkyIsland);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] hasGeneratedBetelOneBlockIsland = {}",
@@ -147,6 +154,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		tag.putBoolean(HAS_SET_BETEL_ONE_BLOCK_SPAWN_KEY, this.hasSetBetelOneBlockSpawn);
 		tag.putBoolean(BETEL_SKY_ISLAND_RESET_PENDING_KEY, this.betelSkyIslandResetPending);
 		tag.putBoolean(BETEL_ONE_BLOCK_ISLAND_RESET_PENDING_KEY, this.betelOneBlockIslandResetPending);
+		tag.putBoolean("survivalSuppliesProvided", this.survivalSuppliesProvided);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = {}",
 				this.hasGeneratedBetelSkyIsland);
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = {}",
