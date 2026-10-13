@@ -16,6 +16,7 @@
 </p>
 
 <p>
+  <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases/tag/fabric-1.21.1-v5.7.0">下载</a> ·
   <a href="#快速安装">快速安装</a> ·
   <a href="#玩法一览">玩法一览</a> ·
   <a href="#空岛生存">空岛生存</a> ·
@@ -76,12 +77,12 @@
 ### 安装步骤
 
 1. 安装 Minecraft 1.21.1 的 Fabric 环境，并准备表中的 Fabric API 与 Cardinal Components API。
-2. 打开 [Fabric 分支构建](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain)，选择最新一次成功运行，登录 GitHub 后下载 **Artifacts**。
-3. 解压并取出 `betel-nut-mod-5.7.0.jar`，与必需前置一起放入游戏实例的 `mods` 文件夹。`-sources.jar` 是供开发使用的源码包。
+2. 从 [Fabric 5.7.0 发布页](https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases/tag/fabric-1.21.1-v5.7.0) 下载 `betel-nut-mod-5.7.0.jar`，发布页也提供源码包和 SHA-256 校验文件。
+3. 将安装包与必需前置一起放入游戏实例的 `mods` 文件夹。`-sources.jar` 是供开发使用的源码包。
 4. 如需厨具加工，再安装 Minecraft 1.21.1 对应的 Farmer's Delight Refabricated。
 5. 启动游戏，在创造模式的模组物品栏中确认能找到槟榔树苗、果串与各类槟榔。
 
-多人游戏时，客户端与服务端都需要安装本模组和必需前置。本页版本对应当前分支源码；[Releases](https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases) 按已发布标签提供历史安装包，也可以按下方说明自行构建。
+多人游戏时，客户端与服务端都需要安装本模组和必需前置。[Releases](https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases) 提供按版本保存的安装包；开发中的快照可从 [Fabric 分支构建](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain) 获取，也可以按下方说明自行构建。
 
 ## 从第一串果实开始
 
