@@ -16,6 +16,7 @@
 </p>
 
 <p>
+  <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases/tag/neoforge-1.21.1-v5.7.1">下载</a> ·
   <a href="#快速安装">快速安装</a> ·
   <a href="#玩法一览">玩法一览</a> ·
   <a href="#机械动力生产线">机械动力</a> ·
@@ -77,12 +78,12 @@ Create 与 Farmer's Delight 均为可选联动；本模组也能独立运行。�
 ### 安装步骤
 
 1. 安装 Minecraft 1.21.1 的 NeoForge 环境。
-2. 打开 [NeoForge 分支构建](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1)，选择最新一次成功运行，登录 GitHub 后下载 **neoforge-core** 构建产物。
-3. 解压并取出 `betel-nut-mod-neoforge-5.7.1.jar`，放入游戏实例的 `mods` 文件夹。`-sources.jar` 是供开发使用的源码包。
+2. 从 [NeoForge 5.7.1 发布页](https://github.com/ikunkk02-afk/Betel-Nut-Mod/releases/tag/neoforge-1.21.1-v5.7.1) 下载 `betel-nut-mod-neoforge-5.7.1.jar`，发布页也提供源码包和 SHA-256 校验文件。
+3. 将安装包放入游戏实例的 `mods` 文件夹。`-sources.jar` 是供开发使用的源码包。
 4. 按需安装 Minecraft 1.21.1 对应的 NeoForge 版 Create、Farmer's Delight 及它们各自的必需前置。
 5. 启动游戏，在创造模式的模组物品栏中确认槟榔物品已加载；创建普通世界或选择槟榔空岛预设开始游玩。
 
-多人游戏时，客户端与服务端都需要安装本模组。本页版本对应当前分支源码；也可按下方说明自行构建。
+多人游戏时，客户端与服务端都需要安装本模组。开发中的快照可从 [NeoForge 分支构建](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1) 获取，也可按下方说明自行构建。
 
 > **存档说明**：Fabric 使用 `betel-nut-mod` 命名空间，NeoForge 使用 `betel_nut_mod`，两端的数据存储格式也不同。跨加载器请创建独立存档；本工程未提供 Fabric 旧世界转换器。
 
