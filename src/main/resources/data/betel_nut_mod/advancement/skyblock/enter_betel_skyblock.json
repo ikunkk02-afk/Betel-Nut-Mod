@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:betel_nut_residue_block"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.skyblock.enter_betel_skyblock.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.skyblock.enter_betel_skyblock.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/husbandry.png"
+  },
+  "criteria": {
+    "triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "triggered"
+    ]
+  ]
+}

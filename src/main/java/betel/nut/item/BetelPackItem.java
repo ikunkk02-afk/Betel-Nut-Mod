@@ -38,15 +38,15 @@ public final class BetelPackItem extends Item {
             for (Item item : contents()) give(serverPlayer, new ItemStack(item));
             give(serverPlayer, LotteryTicketItem.create(level.getRandom()));
             BetelQuestAdvancements.grantOpenPack(serverPlayer);
-            player.displayClientMessage(Component.translatable("message.betel-nut-mod.pack_opened"), true);
+            player.displayClientMessage(Component.translatable("message.betel_nut_mod.pack_opened"), true);
             player.getCooldowns().addCooldown(this, 10);
         }
         // Inventory insertion may fill the consumed bag's now-empty hand slot.
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
     @Override public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
-        lines.add(Component.translatable("tooltip.betel-nut-mod.pack").withStyle(ChatFormatting.GOLD));
+        lines.add(Component.translatable("tooltip.betel_nut_mod.pack").withStyle(ChatFormatting.GOLD));
         for (Item item : contents()) lines.add(Component.translatable(item.getDescriptionId()).withStyle(ChatFormatting.GRAY));
-        lines.add(Component.translatable("tooltip.betel-nut-mod.pack_seal").withStyle(ChatFormatting.DARK_GRAY));
+        lines.add(Component.translatable("tooltip.betel_nut_mod.pack_seal").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

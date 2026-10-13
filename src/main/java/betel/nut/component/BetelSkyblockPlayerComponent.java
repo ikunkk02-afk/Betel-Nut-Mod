@@ -3,9 +3,8 @@ package betel.nut.component;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import org.ladysnake.cca.api.v3.component.CopyableComponent;
 
-public class BetelSkyblockPlayerComponent implements CopyableComponent<BetelSkyblockPlayerComponent> {
+public class BetelSkyblockPlayerComponent implements BetelPersistentData {
 	private static final String HAS_JOINED_BETEL_SKYBLOCK_BEFORE_KEY = "hasJoinedBetelSkyblockBefore";
 	private static final String HAS_EATEN_FIRST_BETEL_NUT_IN_SKYBLOCK_KEY = "hasEatenFirstBetelNutInSkyblock";
 	private static final String HAS_RECEIVED_BETEL_ONE_BLOCK_STARTER_ITEMS_KEY =
@@ -61,7 +60,6 @@ public class BetelSkyblockPlayerComponent implements CopyableComponent<BetelSkyb
 				this.hasReceivedBetelOneBlockStarterItems);
 	}
 
-	@Override
 	public void copyFrom(BetelSkyblockPlayerComponent other, HolderLookup.Provider registryLookup) {
 		this.hasJoinedBetelSkyblockBefore = other.hasJoinedBetelSkyblockBefore;
 		this.hasEatenFirstBetelNutInSkyblock = other.hasEatenFirstBetelNutInSkyblock;

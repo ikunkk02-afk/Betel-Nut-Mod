@@ -1,7 +1,8 @@
 package betel.nut.loot;
 
 import betel.nut.item.ModItems;
-import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
@@ -11,16 +12,17 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 public final class ModLoot {
     public static void register() {
-        LootTableEvents.MODIFY.register((key, builder, source, registries) -> {
-            if (!source.isBuiltin() || !key.location().getNamespace().equals("minecraft")) return;
-            switch (key.location().getPath()) {
-                case "chests/ancient_city" -> builder.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+        NeoForge.EVENT_BUS.addListener((LootTableLoadEvent event) -> {
+            var key = event.getName(); var builder = event.getTable();
+            if (!key.getNamespace().equals("minecraft")) return;
+            switch (key.getPath()) {
+                case "chests/ancient_city" -> builder.addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .when(LootItemRandomChanceCondition.randomChance(0.15F))
                         .add(LootItem.lootTableItem(ModItems.ANCIENT_SHELL)
-                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))));
-                case "gameplay/fishing/junk" -> builder.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                                .apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2)))).build());
+                case "gameplay/fishing/junk" -> builder.addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                         .when(LootItemRandomChanceCondition.randomChance(0.35F))
-                        .add(LootItem.lootTableItem(ModItems.SHELL)));
+                        .add(LootItem.lootTableItem(ModItems.SHELL)).build());
                 default -> { }
             }
         });

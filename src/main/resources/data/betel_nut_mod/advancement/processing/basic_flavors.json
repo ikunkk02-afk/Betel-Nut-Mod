@@ -1,0 +1,65 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:honey_betel_nut"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.processing.basic_flavors.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.processing.basic_flavors.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "spicy_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:spicy_betel_nut"
+          }
+        ]
+      }
+    },
+    "sweet_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:sweet_betel_nut"
+          }
+        ]
+      }
+    },
+    "honey_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:honey_betel_nut"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "spicy_betel_nut"
+    ],
+    [
+      "sweet_betel_nut"
+    ],
+    [
+      "honey_betel_nut"
+    ]
+  ],
+  "parent": "betel_nut_mod:processing/roast",
+  "rewards": {
+    "experience": 15
+  }
+}

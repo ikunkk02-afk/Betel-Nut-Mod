@@ -1,15 +1,15 @@
 {
   "replace": false,
   "values": [
-    "betel-nut-mod:betel_palm_log",
-    "betel-nut-mod:betel_palm_planks",
-    "betel-nut-mod:betel_palm_stairs",
-    "betel-nut-mod:betel_palm_slab",
-    "betel-nut-mod:betel_palm_fence",
-    "betel-nut-mod:betel_palm_fence_gate",
-    "betel-nut-mod:betel_palm_button",
-    "betel-nut-mod:betel_palm_pressure_plate",
-    "betel-nut-mod:betel_palm_door",
-    "betel-nut-mod:betel_palm_trapdoor"
+    "betel_nut_mod:betel_palm_log",
+    "betel_nut_mod:betel_palm_planks",
+    "betel_nut_mod:betel_palm_stairs",
+    "betel_nut_mod:betel_palm_slab",
+    "betel_nut_mod:betel_palm_fence",
+    "betel_nut_mod:betel_palm_fence_gate",
+    "betel_nut_mod:betel_palm_button",
+    "betel_nut_mod:betel_palm_pressure_plate",
+    "betel_nut_mod:betel_palm_door",
+    "betel_nut_mod:betel_palm_trapdoor"
   ]
 }

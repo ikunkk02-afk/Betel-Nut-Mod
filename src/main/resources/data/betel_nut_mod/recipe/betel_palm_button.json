@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_palm_planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "betel_nut_mod:betel_palm_button"
+  }
+}

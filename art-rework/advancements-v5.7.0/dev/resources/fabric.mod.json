@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "betel_advancements_preview",
-  "version": "1.0.0",
-  "name": "Betel Advancements Verification",
-  "environment": "client",
-  "entrypoints": {"client": ["betel.nut.preview.AdvancementsPreviewClient"]},
-  "depends": {"betel-nut-mod": "*"}
-}

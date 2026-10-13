@@ -1,0 +1,30 @@
+{
+  "type": "farmersdelight:cooking",
+  "recipe_book_tab": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:wrapped_raw_betel"
+    },
+    {
+      "item": "betel_nut_mod:wrapped_raw_betel"
+    },
+    {
+      "item": "betel_nut_mod:ancient_shell"
+    },
+    {
+      "item": "minecraft:echo_shard"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:echo_betel",
+    "count": 2
+  },
+  "cookingtime": 240,
+  "experience": 0.35,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ]
+}

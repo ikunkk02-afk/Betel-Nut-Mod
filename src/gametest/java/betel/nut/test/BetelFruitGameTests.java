@@ -7,7 +7,8 @@ import betel.nut.block.ModBlocks;
 import betel.nut.item.ModItems;
 import betel.nut.worldgen.BetelPalmTreeGenerator;
 import java.util.HashSet;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -31,7 +32,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class BetelFruitGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public class BetelFruitGameTests {
 	private static BlockPos site(GameTestHelper h) {
 		BlockPos base=h.absolutePos(new BlockPos(4,2,4));
 		for(BlockPos p:BlockPos.betweenClosed(base.offset(-3,0,-3),base.offset(3,18,3))) h.getLevel().setBlock(p,Blocks.AIR.defaultBlockState(),2);
@@ -54,9 +57,9 @@ public class BetelFruitGameTests implements FabricGameTest {
 	}
 	private static BlockHitResult hit(BlockPos p) {return new BlockHitResult(Vec3.atCenterOf(p),Direction.NORTH,p,false);}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void ripeShearingCannotRepeat(GameTestHelper h) {
-		var level=h.getLevel(); var p=bunch(h,2); var player=h.makeMockServerPlayerInLevel();
+		var level=h.getLevel(); var p=bunch(h,2); var player=PortTestPlayers.join(h);
 		player.setGameMode(GameType.SURVIVAL); var shears=new ItemStack(Items.SHEARS);
 		player.setItemInHand(InteractionHand.OFF_HAND,shears); var old=level.getBlockState(p);
 		old.useItemOn(shears,level,player,InteractionHand.OFF_HAND,hit(p)); int count=drops(h,p,ModBlocks.BETEL_NUT_CLUSTER_ITEM);
@@ -67,9 +70,9 @@ public class BetelFruitGameTests implements FabricGameTest {
 		h.assertTrue(drops(h,p,ModBlocks.BETEL_NUT_CLUSTER_ITEM)==count&&shears.getDamageValue()==1,"Stale second interaction cannot duplicate drops or durability cost");
 		h.assertTrue(level.getBlockState(p.south()).is(ModBlocks.BETEL_PALM_LOG),"Harvest preserves tree"); h.succeed();
 	}
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void wrongToolAndGreenHarvest(GameTestHelper h) {
-		var level=h.getLevel();var p=bunch(h,1);var player=h.makeMockServerPlayerInLevel();player.setGameMode(GameType.SURVIVAL);
+		var level=h.getLevel();var p=bunch(h,1);var player=PortTestPlayers.join(h);player.setGameMode(GameType.SURVIVAL);
 		level.getBlockState(p).useItemOn(new ItemStack(Items.STICK),level,player,InteractionHand.MAIN_HAND,hit(p));
 		h.assertTrue(nuts(h,p)==0&&level.getBlockState(p).getValue(BetelNutClusterBlock.AGE)==1,"Wrong tool does nothing");
 		var shears=new ItemStack(Items.SHEARS);player.setItemInHand(InteractionHand.MAIN_HAND,shears);
@@ -78,7 +81,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 				"Green bunch stays whole and damages mainhand shears once");
 		h.assertTrue(level.getBlockState(p).isAir(),"No green stalk remains after harvest");h.succeed();
 	}
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void spentBunchRegrows(GameTestHelper h) {
 		var level=h.getLevel();var base=site(h);
 		h.assertTrue(BetelPalmTreeGenerator.generateVariant(level,base,RandomSource.create(2),9,9,0,false),"An initially fruitless tree grows");
@@ -96,14 +99,14 @@ public class BetelFruitGameTests implements FabricGameTest {
 				h.assertTrue(level.getBlockState(fruit).getValue(BetelNutClusterBlock.AGE)==2&&!level.getBlockState(fruit).isRandomlyTicking(),"Green fruit ripens and stops ticking");}}
 		h.assertTrue(count==3,"A tree renews up to three bunches, without any retained fruit block");h.succeed();
 	}
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void fruitNeedsSupportInAllDirections(GameTestHelper h) {
 		var level=h.getLevel();var base=site(h);level.setBlock(base,ModBlocks.BETEL_PALM_LOG.defaultBlockState(),3);
 		for(Direction d:Direction.Plane.HORIZONTAL){var p=base.relative(d);var state=ModBlocks.BETEL_NUT_CLUSTER.defaultBlockState().setValue(BetelNutClusterBlock.FACING,d).setValue(BetelNutClusterBlock.AGE,2);level.setBlock(p,state,3);h.assertTrue(state.canSurvive(level,p),"Fruit attaches in all directions");}
 		level.setBlock(base,Blocks.AIR.defaultBlockState(),3);
 		for(Direction d:Direction.Plane.HORIZONTAL)h.assertTrue(level.getBlockState(base.relative(d)).isAir(),"No floating fruit after support removal");h.succeed();
 	}
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void breakingFruitUsesLootTable(GameTestHelper h) {
 		var p=bunch(h,2);h.getLevel().destroyBlock(p,true);
 		h.assertTrue(drops(h,p,ModBlocks.BETEL_NUT_CLUSTER_ITEM)==1&&nuts(h,p)==0,"Ripe block break drops a whole ripe bunch");
@@ -111,7 +114,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 		h.assertTrue(drops(h,p,ModBlocks.UNRIPE_BETEL_NUT_CLUSTER_ITEM)==1&&nuts(h,p)==0,"Green block break drops a whole green bunch");h.succeed();
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void leavesYieldOnlyLeafMaterialAndKeepWholeBlockTools(GameTestHelper h) {
 		var pos=site(h);var level=h.getLevel();var state=ModBlocks.BETEL_PALM_LEAVES.defaultBlockState();
 		for(int i=0;i<100;i++) {
@@ -132,7 +135,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 				"Actual natural decay drops a leaf, never fruit");h.succeed();
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void fruitingNeedsIntactRootCrownAndClearSpace(GameTestHelper h) {
 		var level=h.getLevel();var base=site(h);BetelPalmTreeGenerator.generateVariant(level,base,RandomSource.create(3),9,9,1,false);
 		var anchor=base.above(6);h.assertTrue(BetelPalmLogBlock.isFruitingNode(level,anchor),"Existing tree geometry is sufficient, no new saved property is required");
@@ -151,10 +154,10 @@ public class BetelFruitGameTests implements FabricGameTest {
 		h.assertTrue(!BetelPalmLogBlock.isFruitingNode(level,base)&&!level.getBlockState(base.above(7)).isRandomlyTicking(),"Plain and crownshaft logs are not fruiting nodes");h.succeed();
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void harvestedMaturitySurvivesPlacementAndCreativePick(GameTestHelper h) {
 		var level=h.getLevel();var base=site(h);level.setBlock(base,ModBlocks.BETEL_PALM_LOG.defaultBlockState(),3);
-		var player=h.makeMockServerPlayerInLevel();player.setGameMode(GameType.SURVIVAL);
+		var player=PortTestPlayers.join(h);player.setGameMode(GameType.SURVIVAL);
 		for(int age=1;age<=2;age++) {
 			Item item=age==1?ModBlocks.UNRIPE_BETEL_NUT_CLUSTER_ITEM:ModBlocks.BETEL_NUT_CLUSTER_ITEM;
 			var stack=new ItemStack(item);h.assertTrue(stack.get(DataComponents.BLOCK_STATE).get(BetelNutClusterBlock.AGE)==age,"Inventory default retains maturity");
@@ -168,7 +171,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 		h.assertTrue(!new ItemStack(ModBlocks.UNRIPE_BETEL_NUT_CLUSTER_ITEM).getDescriptionId().equals(new ItemStack(ModBlocks.BETEL_NUT_CLUSTER_ITEM).getDescriptionId()),"Two bunches have distinct inventory names");h.succeed();
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void bunchProcessingAndYellowOnlySeedsUseActualRecipes(GameTestHelper h) throws Exception {
 		var level=h.getLevel();
 		for(Item item:List.of(ModBlocks.UNRIPE_BETEL_NUT_CLUSTER_ITEM,ModBlocks.BETEL_NUT_CLUSTER_ITEM)) {
@@ -186,14 +189,14 @@ public class BetelFruitGameTests implements FabricGameTest {
 			var wrong=CraftingInput.of(2,1,List.of(new ItemStack(item),new ItemStack(ModItems.BETEL_LEAF)));
 			h.assertTrue(!recipe.value().matches(wrong,level),"Green/loose fruit cannot bypass the yellow seed route");
 		}
-		if(net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("farmersdelight"))
+		if(net.neoforged.fml.ModList.get().isLoaded("farmersdelight"))
 			Class.forName("betel.nut.test.FruitFarmerChecks").getMethod("run",GameTestHelper.class).invoke(null,h);
 		h.succeed();
 	}
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void repeatedWholeHarvestRegrowsWithoutAnyStalk(GameTestHelper h) {
 		var level=h.getLevel();var base=site(h);BetelPalmTreeGenerator.generateVariant(level,base,RandomSource.create(5),9,9,0,true);
-		var anchor=base.above(6);var player=h.makeMockServerPlayerInLevel();player.setGameMode(GameType.SURVIVAL);
+		var anchor=base.above(6);var player=PortTestPlayers.join(h);player.setGameMode(GameType.SURVIVAL);
 		var shears=new ItemStack(Items.SHEARS);player.setItemInHand(InteractionHand.MAIN_HAND,shears);
 		var random=RandomSource.create(8);
 		for(int cycle=0;cycle<3;cycle++) {
@@ -220,7 +223,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 		h.assertTrue(BetelPalmLogBlock.isFruitingNode(level,anchor),"Repeated harvest preserves the living tree");h.succeed();
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void greenFruitMaturesOnlyWithEnoughLight(GameTestHelper h) {
 		var level=h.getLevel();var pos=bunch(h,1);
 		for(BlockPos wall:BlockPos.betweenClosed(pos.offset(-2,-2,-2),pos.offset(2,2,2)))
@@ -240,7 +243,7 @@ public class BetelFruitGameTests implements FabricGameTest {
 		});
 	}
 
-	@GameTest(template=EMPTY_STRUCTURE)
+	@GameTest(template="empty")
 	public void fourProfilesHaveVariedContinuousFronds(GameTestHelper h) {
 		var level=h.getLevel();var fingerprints=new HashSet<String>();
 		for(int profile=0;profile<4;profile++){

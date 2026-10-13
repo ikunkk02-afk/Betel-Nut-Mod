@@ -1,0 +1,40 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:relief_potion"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.recovery.supplies.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.recovery.supplies.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "betel_nut_mod:relief_potion",
+              "betel_nut_mod:golden_apple_paste",
+              "betel_nut_mod:enchanted_golden_apple_paste"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "betel_nut_mod:root"
+}

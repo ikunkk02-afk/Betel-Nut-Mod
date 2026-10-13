@@ -115,7 +115,7 @@ public final class ModItems {
 					BetelEffectProfile.UNDERGROUND));
 
 	private static <T extends Item> T register(String path, T item) {
-		return Registry.register(BuiltInRegistries.ITEM, BetelNutMod.id(path), item);
+		return betel.nut.platform.BetelRegistries.add(BuiltInRegistries.ITEM, BetelNutMod.id(path), item);
 	}
 
 	private static Item.Properties foodProperties(int nutrition, float saturationModifier) {

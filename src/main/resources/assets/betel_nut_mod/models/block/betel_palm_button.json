@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "betel_nut_mod:block/betel_palm_planks"
+  }
+}

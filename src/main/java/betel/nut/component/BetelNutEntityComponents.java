@@ -1,27 +1,20 @@
 package betel.nut.component;
-
 import betel.nut.BetelNutMod;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
-
-public final class BetelNutEntityComponents implements EntityComponentInitializer {
-	public static final ComponentKey<BetelNutAddictionComponent> ADDICTION = ComponentRegistry.getOrCreate(
-			BetelNutMod.id("addiction"),
-			BetelNutAddictionComponent.class);
-	public static final ComponentKey<BetelSkyblockPlayerComponent> SKYBLOCK_PLAYER = ComponentRegistry.getOrCreate(
-			BetelNutMod.id("skyblock_player"),
-			BetelSkyblockPlayerComponent.class);
-
-	@Override
-	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-		registry.registerForPlayers(ADDICTION, BetelNutAddictionComponent::new,
-				(from, to, registryLookup, lossless, keepInventory, sameCharacter) -> to.copyForRespawn(from,
-						lossless));
-		registry.registerForPlayers(SKYBLOCK_PLAYER, BetelSkyblockPlayerComponent::new,
-				(from, to, registryLookup, lossless, keepInventory, sameCharacter) -> to.copyFrom(from,
-						registryLookup));
-		BetelNutMod.LOGGER.info("Betel nut Cardinal Components data registered successfully");
-	}
+import java.util.function.Supplier;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+public final class BetelNutEntityComponents {
+ private static final DeferredRegister<AttachmentType<?>> TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, BetelNutMod.MOD_ID);
+ private static final Supplier<AttachmentType<BetelNutAddictionComponent>> ADDICTION_TYPE = TYPES.register("addiction",
+  () -> AttachmentType.serializable(holder -> new BetelNutAddictionComponent((Player) holder)).build());
+ private static final Supplier<AttachmentType<BetelSkyblockPlayerComponent>> SKYBLOCK_TYPE = TYPES.register("skyblock_player",
+  () -> AttachmentType.serializable(holder -> new BetelSkyblockPlayerComponent((Player) holder)).build());
+ public record PlayerData<T>(Supplier<AttachmentType<T>> type) { public T get(Player player) { return player.getData(type); } }
+ public static final PlayerData<BetelNutAddictionComponent> ADDICTION = new PlayerData<>(ADDICTION_TYPE);
+ public static final PlayerData<BetelSkyblockPlayerComponent> SKYBLOCK_PLAYER = new PlayerData<>(SKYBLOCK_TYPE);
+ public static void register(IEventBus bus) { TYPES.register(bus); }
+ private BetelNutEntityComponents() {}
 }

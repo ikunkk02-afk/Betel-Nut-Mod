@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "betel_effects_preview",
-  "version": "1.0.0",
-  "name": "Betel Effects Verification",
-  "environment": "client",
-  "entrypoints": {"client": ["betel.nut.preview.EffectsPreviewClient"]},
-  "depends": {"betel-nut-mod": "*"}
-}

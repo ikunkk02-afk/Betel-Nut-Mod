@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "betel-nut-mod:betel_skyblock",
-    "betel-nut-mod:betel_one_block_skyblock"
+    "betel_nut_mod:betel_skyblock",
+    "betel_nut_mod:betel_one_block_skyblock"
   ]
 }

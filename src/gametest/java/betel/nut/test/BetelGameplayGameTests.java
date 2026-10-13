@@ -15,7 +15,8 @@ import io.netty.buffer.Unpooled;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -37,17 +38,20 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
-public final class BetelGameplayGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelGameplayGameTests {
     private static net.minecraft.server.level.ServerPlayer player(GameTestHelper h) {
         var cookie=net.minecraft.server.network.CommonListenerCookie.createInitial(
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "gameplay-test"),false);
         var p=new net.minecraft.server.level.ServerPlayer(h.getLevel().getServer(),h.getLevel(),cookie.gameProfile(),cookie.clientInformation());
         var connection=new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection,p,cookie);
         p.setGameMode(GameType.SURVIVAL); return p;
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void calendarCountsDistinctDatesAndSleep(GameTestHelper h) {
         DailyUseTracker c = new DailyUseTracker(); c.beginSession(10);
         h.assertTrue(c.eat(10), "First nut on date counts");
@@ -57,7 +61,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         c.advance(11); h.assertTrue(!c.eat(11), "Returning to consumed date cannot count twice");
         c.advance(12); h.assertTrue(c.eat(12), "New high-water date still counts"); h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void sobrietyRequiresWholeObservedDays(GameTestHelper h) {
         DailyUseTracker c = new DailyUseTracker(); c.beginSession(10); c.eat(10);
         h.assertTrue(!c.advance(11) && c.soberDays()==0, "Eating date is not a sober date");
@@ -70,7 +74,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(!c.advance(200) && c.soberDays()==4, "Admin jumps do not invent sober days");
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void actualEatingCountsOnceAndPlayersAreIndependent(GameTestHelper h) {
         var a=player(h); var b=player(h);
         var sa=BetelNutEntityComponents.ADDICTION.get(a); var sb=BetelNutEntityComponents.ADDICTION.get(b);
@@ -82,7 +86,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(sb.getAddictionValue()==0 && sb.getOralExposureDays()==0, "Another player's state stays independent");
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void actualCalendarSettlesRecoveryAndKeepsDiseaseSeparate(GameTestHelper h) {
         var p=player(h); var world=p.server.overworld(); long before=world.getDayTime();
         try {
@@ -100,7 +104,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         } finally {world.setDayTime(before);}
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void stagesAndLegacyMigrationAreStable(GameTestHelper h) {
         int[] start={0,2,3,4,5,7};
         for(int stage=1;stage<=5;stage++) {
@@ -119,7 +123,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(respawn.getAddictionValue()==4 && respawn.getOralCancerStage()==2 && respawn.hasEatenToday(),"Death preserves calendar and oral state");
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void fullDependenceFitsFiveToEightDays(GameTestHelper h) {
         for (int max=5; max<=8; max++) {
             int previous=0;
@@ -137,7 +141,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         }
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void sevenActualEatingDatesReachFullDependence(GameTestHelper h) {
         var p=player(h); var world=p.server.overworld(); long before=world.getDayTime();
         var config=betel.nut.BetelNutConfig.get();boolean oral=config.enableOralDisease;
@@ -177,7 +181,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(Math.abs(attack.getValue()-Math.max(0,attack.getBaseValue()-.5*Math.max(0,stage-1)))<.00001,
                 "Attack loss begins at stage II and scales with days");
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void dailySymptomsSurviveBetelSuppressionAndMilk(GameTestHelper h) {
         var p=player(h); var s=BetelNutEntityComponents.ADDICTION.get(p); s.clearAddiction(p); s.setAddictionValue(7);
         p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).setBaseValue(10);
@@ -196,7 +200,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
                 "Daily dependence alone does not falsely lock the jaw before day seven");
         s.clearAddiction(p); assertDependence(h,p,0); h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void recoveryImmediatelyDowngradesAndRemovesDailySymptoms(GameTestHelper h) {
         var p=player(h); var s=BetelNutEntityComponents.ADDICTION.get(p); s.clearAddiction(p); s.setAddictionValue(7);
         p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).setBaseValue(10);
@@ -209,7 +213,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         s.setAddictionValue(2);s.maintainDependenceEffects(p);assertDependence(h,p,1);
         s.clearAddiction(p);assertDependence(h,p,0);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void oldDailySaveReceivesSymptomsAndGameModesStaySafe(GameTestHelper h) {
         var p=player(h); var s=BetelNutEntityComponents.ADDICTION.get(p); s.clearAddiction(p);
         p.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE).setBaseValue(10);
@@ -229,7 +233,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         finally {config.enableAddictionSystem=enabled;}
         s.serverTick(p);assertDependence(h,p,5);s.clearAddiction(p);copied.clearAddiction(respawn);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void dailySavesAndVersionTwelveConfigMigrate(GameTestHelper h) throws ReflectiveOperationException {
         var config=new betel.nut.BetelNutConfig(); config.configVersion=12; config.maxAddictionValue=30;
         config.minimumAddictionForWithdrawal=3; config.enableOralDisease=false; config.oralCancerStage2Days=24;
@@ -253,7 +257,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         }
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void cancerHasThreeRealEffectAmplifiers(GameTestHelper h) {
         var p=player(h);p.setGameMode(GameType.SURVIVAL);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);
         int[] days={3,5,7};
@@ -268,7 +272,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
                 "Disease and withdrawal together preserve the configured health floor immediately");
         s.clearAddiction(p);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void lockedJawBlocksBetelAndFinishUseButAllowsRecovery(GameTestHelper h) {
         var p=player(h);p.setGameMode(GameType.SURVIVAL);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);s.setOralExposureDays(30);s.maintainOralEffects(p);
         for(Item food:List.of(Items.BREAD,Items.APPLE,Items.GOLDEN_APPLE,Items.ENCHANTED_GOLDEN_APPLE,Items.HONEY_BOTTLE,Items.MUSHROOM_STEW,ModItems.ROASTED_BETEL_NUT,ModItems.WRAPPED_RAW_BETEL)) {
@@ -280,7 +284,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         s.applyEnchantedGoldenAppleRecovery(p,h.getLevel().getGameTime());s.maintainOralEffects(p);
         h.assertTrue(s.getOralExposureDays()==0&&!p.hasEffect(ModEffects.MOUTH_LOCKED),"Magic recovery reduces independent oral exposure and releases jaw");h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void realMilkRestoresDiseaseAfterVanillaClearing(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);
         s.setAddictionValue(7);s.setOralExposureDays(7);s.refreshWithdrawalEffects(p);
@@ -298,7 +302,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(!WithdrawalEatingRestrictions.shouldBlockUse(p,new ItemStack(Items.BREAD),false),"Recovery immediately unlocks food use");
         s.clearAddiction(p);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void withdrawalJawUpdatesImmediatelyWithoutCancer(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);
         s.setAddictionValue(7);s.setWithdrawalValue(p,100);
@@ -308,14 +312,14 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(!WithdrawalEatingRestrictions.shouldBlockUse(p,new ItemStack(Items.BREAD),false),"Milk relief immediately clears withdrawal-only locked jaw");
         s.clearAddiction(p);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void oralEffectsRestoreOnTickAndRespawnAndRespectSwitches(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);
         CompoundTag old=new CompoundTag();old.putInt("dailySchema",2);old.putInt("addictionValue",7);old.putInt("oralExposureDays",7);
         s.readFromNbt(old,h.getLevel().registryAccess());s.beginCalendarSession(p);s.serverTick(p);assertOral(h,p,3);
         p.removeAllEffects();s.serverTick(p);assertOral(h,p,3);
         var next=player(h);var copied=BetelNutEntityComponents.ADDICTION.get(next);copied.copyForRespawn(s,false);
-        net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.invoker().afterRespawn(p,next,false);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent(next,false));
         assertOral(h,next,3);
         var config=betel.nut.BetelNutConfig.get();boolean oral=config.enableOralDisease,enabled=config.enableAddictionSystem;
         try {
@@ -325,7 +329,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         } finally {config.enableOralDisease=oral;config.enableAddictionSystem=enabled;}
         s.serverTick(p);assertOral(h,p,3);s.clearAddiction(p);copied.clearAddiction(next);h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void oldOralDefaultsMigrateAndCustomSchedulesSurvive(GameTestHelper h) throws ReflectiveOperationException {
         var validate=betel.nut.BetelNutConfig.class.getDeclaredMethod("validated");validate.setAccessible(true);
         var defaults=new betel.nut.BetelNutConfig();defaults.configVersion=13;
@@ -339,7 +343,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         defaults.oralCancerStage1Days=12;defaults.oralCancerStage2Days=21;defaults.oralCancerStage3Days=30;validate.invoke(defaults);
         h.assertTrue(defaults.oralCancerStage3Days==30,"Current-version intentional custom old values are not repeatedly migrated");h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void customOralExposureStillOutlivesDependenceCap(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);var world=p.server.overworld();
         var config=betel.nut.BetelNutConfig.get();int threshold=config.oralCancerStage3Days,soft=config.oralCancerStage2Days;long before=world.getDayTime();
@@ -356,7 +360,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(p.hasEffect(ModEffects.MOUTH_LOCKED)==(stage==3),"Locked-jaw icon agrees with disease stage");
         h.assertTrue(Math.abs(p.getMaxHealth()-(20-2*stage))<.001,"Disease health modifier agrees with its displayed level");
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void packsContainSixDistinctNutsAndCannotReplay(GameTestHelper h) {
         var p=player(h);p.setGameMode(GameType.SURVIVAL);
         for(Item item:List.of(ModItems.KOUWEIWANG_PACK,ModItems.HECHENG_TIANXIA_PACK,ModItems.XIANGTAN_PUZI_PACK)) {
@@ -371,7 +375,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
             h.assertTrue(after==count,"Stale empty-hand replay cannot issue contents");
         }h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void lastTicketRewardSurvivesHandReplacementAndFullBagsDropOverflow(GameTestHelper h) {
         var p=player(h);p.getInventory().clearContent();
         var ticket=new ItemStack(ModItems.LOTTERY_TICKET); var data=new CompoundTag();data.putInt("betelPrize",4);
@@ -390,7 +394,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         h.assertTrue(p.getOffhandItem().isEmpty() && drops==7,"A full inventory drops all six flavors and ticket without overwriting existing stacks");
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void recipesConsumeSealAndPreserveAssortments(GameTestHelper h) {
         var level=h.getLevel();
         for(Item item:List.of(ModItems.KOUWEIWANG_PACK,ModItems.HECHENG_TIANXIA_PACK,ModItems.XIANGTAN_PUZI_PACK)) {
@@ -401,11 +405,11 @@ public final class BetelGameplayGameTests implements FabricGameTest {
             h.assertTrue(recipe.get().value().getRemainingItems(grid).stream().allMatch(ItemStack::isEmpty),"No seal or bag is returned");
             inputs.set(7,ItemStack.EMPTY);h.assertTrue(level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING,CraftingInput.of(3,3,inputs),level).isEmpty(),"Cannot craft a free prize ticket without paid seal");
         }
-        String echoRecipe = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("farmersdelight")
+        String echoRecipe = net.neoforged.fml.ModList.get().isLoaded("farmersdelight")
                 ? "compat/farmersdelight/cooking_echo_betel" : "echo_betel";
         h.assertTrue(level.getRecipeManager().byKey(BetelNutMod.id(echoRecipe)).isPresent(),"Ancient-shell recipe loads in the active processing environment");h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void lotteryOddsAndIssuedTicketSurviveSerialization(GameTestHelper h) {
         int[] counts=new int[5];for(int i=0;i<100;i++)counts[LotteryTicketItem.prizeForRoll(i)]++;
         h.assertTrue(java.util.Arrays.equals(counts,new int[]{60,25,10,4,1}),"Published probabilities match every possible roll");
@@ -416,7 +420,7 @@ public final class BetelGameplayGameTests implements FabricGameTest {
         ((LotteryTicketItem)ModItems.LOTTERY_TICKET).use(h.getLevel(),p,InteractionHand.MAIN_HAND);
         h.assertTrue(!p.getMainHandItem().is(ModItems.LOTTERY_TICKET),"Redeeming consumes ticket");h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void ancientCityLootAppendsRatherThanReplaces(GameTestHelper h) {
         var level=h.getLevel();var key=ResourceKey.create(Registries.LOOT_TABLE,ResourceLocation.withDefaultNamespace("chests/ancient_city"));
         var table=level.getServer().reloadableRegistries().getLootTable(key);
@@ -425,14 +429,14 @@ public final class BetelGameplayGameTests implements FabricGameTest {
             if(stack.is(ModItems.ANCIENT_SHELL)){h.assertTrue(stack.getCount()<=2,"Ancient shell drop count is bounded");shells+=stack.getCount();}else other+=stack.getCount();}
         h.assertTrue(shells>0&&other>500,"Ancient shell appears while vanilla chest contents remain");h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void extendedHudPayloadRoundTrips(GameTestHelper h) {
         var payload=new AddictionSyncPayload(21,5,3,1234,30,3,true,3,2);
         var buf=new RegistryFriendlyByteBuf(Unpooled.buffer(),h.getLevel().registryAccess());
         try{AddictionSyncPayload.CODEC.encode(buf,payload);h.assertTrue(AddictionSyncPayload.CODEC.decode(buf).equals(payload),"All daily, disease and mouth HUD fields round-trip");}finally{buf.release();}
         h.succeed();
     }
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void echoBetelAppliesActualExplorationEffect(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.clearAddiction(p);
         new ItemStack(ModItems.ECHO_BETEL).finishUsingItem(h.getLevel(),p);

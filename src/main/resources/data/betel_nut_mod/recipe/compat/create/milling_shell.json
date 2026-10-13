@@ -1,0 +1,21 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:shell"
+    }
+  ],
+  "results": [
+    {
+      "id": "betel_nut_mod:shell_powder",
+      "count": 4
+    }
+  ],
+  "processing_time": 100,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "minecraft:bone_meal"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.skyblock.first_compost.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.skyblock.first_compost.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "has_bone_meal": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "has_bone_meal"
+    ]
+  ],
+  "parent": "betel_nut_mod:skyblock/enter_betel_skyblock"
+}

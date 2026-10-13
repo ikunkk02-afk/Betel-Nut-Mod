@@ -1,0 +1,38 @@
+Calculating task graph as configuration cache cannot be reused because file 'gradle.properties' has changed.
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :generateModMetadata
+> Task :processResources
+> Task :classes
+
+> Task :compileGametestJava
+D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\src\gametest\java\betel\nut\test\CreateRecipeChecks.java:75: 错误: 无法访问VirtualBlockEntity
+        for (int i = 0; i < ingredients.length; i++) basin.getInputInventory().setStackInSlot(i, new ItemStack(ingredients[i]));
+                                                          ^
+  找不到net.createmod.ponder.api.VirtualBlockEntity的类文件
+注: 某些输入文件使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+1 个错误
+
+
+FAILURE: Build failed with an exception.
+> Task :compileGametestJava FAILED
+
+
+[Incubating] Problems report is available at: file:///D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/reports/problems/problems-report.html
+* What went wrong:
+Execution failed for task ':compileGametestJava'.
+> Compilation failed; see the compiler output below.
+  D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\src\gametest\java\betel\nut\test\CreateRecipeChecks.java:75: 错误: 无法访问VirtualBlockEntity
+          for (int i = 0; i < ingredients.length; i++) basin.getInputInventory().setStackInSlot(i, new ItemStack(ingredients[i]));
+                                                            ^
+    找不到net.createmod.ponder.api.VirtualBlockEntity的类文件
+  1 个错误
+
+* Try:
+> Check your code and dependencies to fix the compilation error(s)
+> Run with --scan to generate a Build Scan (powered by Develocity).
+
+BUILD FAILED in 5s
+5 actionable tasks: 3 executed, 2 up-to-date
+Configuration cache entry stored.

@@ -1,0 +1,44 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    },
+    {
+      "item": "betel_nut_mod:betel_nut_residue"
+    }
+  ],
+  "results": [
+    {
+      "id": "betel_nut_mod:betel_nut_residue_block",
+      "count": 1
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 package betel.nut.advancement;
 
+import betel.nut.platform.BetelPlatform;
 import betel.nut.BetelNutMod;
 import betel.nut.skyblock.BetelSkyblockManager;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 
 public final class BetelQuestAdvancements {
 	public static void register() {
-		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> {
+		BetelPlatform.onDimensionChange((player, origin, destination) -> {
 			if (destination.dimension() == Level.END && isSkyblock(player)) {
 				grant(player, BetelNutMod.id("skyblock/enter_end"));
 			}

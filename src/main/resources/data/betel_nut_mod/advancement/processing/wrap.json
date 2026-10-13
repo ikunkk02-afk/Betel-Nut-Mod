@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:wrapped_raw_betel"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.processing.wrap.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.processing.wrap.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "betel_nut_mod:wrapped_raw_betel"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "betel_nut_mod:processing/roast"
+}

@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "betel_skyblock_preview",
-  "version": "1.0.0",
-  "name": "Betel Skyblock Verification",
-  "environment": "client",
-  "entrypoints": {"client": ["betel.nut.preview.SkyblockPreviewClient"]},
-  "depends": {"betel-nut-mod": "*"}
-}

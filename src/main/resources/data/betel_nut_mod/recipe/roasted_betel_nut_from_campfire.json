@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "betel_nut_mod:raw_betel_nut"
+  },
+  "result": {
+    "id": "betel_nut_mod:roasted_betel_nut"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

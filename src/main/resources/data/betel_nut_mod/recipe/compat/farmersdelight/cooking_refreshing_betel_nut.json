@@ -1,0 +1,33 @@
+{
+  "type": "farmersdelight:cooking",
+  "recipe_book_tab": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    },
+    {
+      "item": "minecraft:prismarine_shard"
+    },
+    {
+      "item": "minecraft:kelp"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:refreshing_betel_nut",
+    "count": 2
+  },
+  "cookingtime": 160,
+  "experience": 0.35,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:wrapped_raw_betel"
+    },
+    {
+      "item": "betel_nut_mod:wrapped_raw_betel"
+    },
+    {
+      "item": "betel_nut_mod:ancient_shell"
+    },
+    {
+      "item": "minecraft:echo_shard"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:echo_betel",
+    "count": 2
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "farmersdelight"
+      }
+    }
+  ]
+}

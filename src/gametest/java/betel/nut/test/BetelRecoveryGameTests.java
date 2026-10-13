@@ -10,8 +10,9 @@ import betel.nut.item.ModItems;
 import betel.nut.item.RecoveryDrinkItem;
 import java.util.ArrayList;
 import java.util.List;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.fml.ModList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,13 +37,16 @@ import net.minecraft.world.level.block.CakeBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public final class BetelRecoveryGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelRecoveryGameTests {
     private static ServerPlayer player(GameTestHelper h) {
         var cookie=net.minecraft.server.network.CommonListenerCookie.createInitial(
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "recovery-test"),false);
         var p=new ServerPlayer(h.getLevel().getServer(),h.getLevel(),cookie.gameProfile(),cookie.clientInformation());
         var connection=new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection,p,cookie);
         p.setGameMode(GameType.SURVIVAL);p.getFoodData().setFoodLevel(6);return p;
     }
@@ -58,7 +62,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         var result=stack.finishUsingItem(p.level(),p);p.setItemInHand(InteractionHand.MAIN_HAND,result);return result;
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void stageTwoSoftFoodsCannotAdmitGoldenApplesOrBetel(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);disease(p,5);
         s.applyMilkRelief(p,p.level().getGameTime());
@@ -75,7 +79,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         s.clearAddiction(p);h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void stageThreeAndStandaloneJawBlockEveryOrdinaryFood(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);
         for(int scenario=0;scenario<3;scenario++) {
@@ -96,7 +100,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         p.removeAllEffects();s.clearAddiction(p);h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void fiveRealEatingDatesStopFurtherChewingAtStageTwo(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);var world=p.server.overworld();long before=world.getDayTime();
         try {
@@ -112,7 +116,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void lockedJawDuringUseAndPlacedCakeCannotBypassGate(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);disease(p,5);
         var bread=new ItemStack(Items.BREAD,2);p.setItemInHand(InteractionHand.MAIN_HAND,bread);
@@ -132,7 +136,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         h.getLevel().setBlock(pos,Blocks.AIR.defaultBlockState(),3);s.clearAddiction(p);h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void pastesKeepVanillaBuffsAndApplyRecoveryExactlyOnce(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.setAddictionValue(7);disease(p,7);
         long time=p.level().getGameTime();
@@ -149,7 +153,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         s.clearAddiction(p);h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void stackedPastesAndFullInventoryReturnOnlyOneBottle(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);s.setAddictionValue(7);disease(p,7);
         p.getInventory().clearContent();
@@ -168,7 +172,7 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
         s.clearAddiction(p);h.succeed();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void affordableReliefIsGradualDailyAndPersistsThroughReloadAndDeath(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);var world=p.server.overworld();long before=world.getDayTime();
         try {
@@ -197,13 +201,13 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
     }
 
     public static List<RecipeHolder<?>> recipes(GameTestHelper h) {
-        return h.getLevel().getRecipeManager().getRecipes().stream().filter(r->r.id().getNamespace().equals(BetelNutMod.MOD_ID)
+        return h.getLevel().getRecipeManager().getRecipes().stream().filter(r->r.id().getNamespace().equals(BetelNutMod.MOD_ID) && !r.id().getPath().startsWith("compat/create/")
                 && r.value().getResultItem(h.getLevel().registryAccess()).getItem() instanceof RecoveryDrinkItem).toList();
     }
 
-    @GameTest(template=EMPTY_STRUCTURE)
+    @GameTest(template="empty")
     public void recoveryRecipesRequireIngredientsAndBottleInBothEnvironments(GameTestHelper h) throws Exception {
-        boolean delight=FabricLoader.getInstance().isModLoaded("farmersdelight");var recipes=recipes(h);
+        boolean delight=ModList.get().isLoaded("farmersdelight");var recipes=recipes(h);
         h.assertTrue(recipes.size()==3,"Exactly one active route for each remedy");
         for(var holder:recipes) {
             h.assertTrue(BuiltInRegistries.RECIPE_TYPE.getKey(holder.value().getType()).toString().equals(delight?"farmersdelight:cooking":"minecraft:crafting"),"Correct environment route");

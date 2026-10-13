@@ -12,7 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.fml.loading.FMLPaths;
 
 public final class BetelNutConfig {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -198,7 +198,7 @@ public final class BetelNutConfig {
 	}
 
 	private static Path getConfigPath() {
-		return FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FILE_NAME);
+		return FMLPaths.CONFIGDIR.get().resolve(CONFIG_FILE_NAME);
 	}
 
 	private BetelNutConfig validated() {

@@ -1,0 +1,76 @@
+{
+  "version": "5.7.1",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.259",
+  "verificationDate": "2026-10-13",
+  "fabricSourceCommit": "45a37b8",
+  "testedOptionalMods": {
+    "farmersdelight": "1.3.4",
+    "create": "6.0.10"
+  },
+  "evidence": [
+    {
+      "log": "verification\\create-5.7.1\\core-tests.log",
+      "sha256": "1cc50e4d254551cddc5a9a95f246ea6a7b7e7aad78376306ec639a49f960f80d",
+      "marker": "All 126 required tests passed"
+    },
+    {
+      "log": "verification\\create-5.7.1\\create-only-tests.log",
+      "sha256": "9702b22b316da92001c943869f7b0d528fabf89f95327ae3819c110b747877a6",
+      "marker": "All 126 required tests passed"
+    },
+    {
+      "log": "verification\\create-5.7.1\\compat-tests.log",
+      "sha256": "2c3ffac19ae921d70828b1aa8b4f42a76154087afa5d14d2b2f90e5d802bc492",
+      "marker": "All 126 required tests passed"
+    },
+    {
+      "log": "verification\\create-5.7.1\\client-smoke.log",
+      "sha256": "0daccc8d9ea9098cacc706f7c0cc8938ea9c6576e1a3cc8feeb52fa3bc104559",
+      "marker": "PORT_CLIENT_ALL_CHECKS_PASS"
+    },
+    {
+      "log": "verification\\create-5.7.1\\build.log",
+      "sha256": "096629f2dec07de686177e66983266a3232986f2f273ffc0aec58e6e6c7126be",
+      "marker": "BUILD SUCCESSFUL"
+    }
+  ],
+  "baselineValidation": {
+    "version": "5.7.0",
+    "naturalWorldReport": "verification/natural-world-report.json",
+    "note": "Existing models, world generation and base gameplay are retained; recipe revision has new tests above."
+  },
+  "packagedResources": 456,
+  "productionJavaFiles": 67,
+  "originalResourcesPreservedOrAdapted": 422,
+  "visibleAdvancements": 28,
+  "createRecipes": 33,
+  "naturalWorldDistinctRoots": 20,
+  "naturalWorldSampleRootBiomes": {
+    "minecraft:sparse_jungle": {
+      "minecraft:sparse_jungle": 6
+    },
+    "minecraft:jungle": {
+      "minecraft:jungle": 7
+    },
+    "minecraft:bamboo_jungle": {
+      "minecraft:bamboo_jungle": 5
+    },
+    "minecraft:river": {
+      "minecraft:sparse_jungle": 8
+    }
+  },
+  "artifacts": [
+    {
+      "file": "build\\libs\\betel-nut-mod-neoforge-5.7.1.jar",
+      "bytes": 1123015,
+      "sha256": "e2a02ac45da9f9dc62deaf1c4dd702cd5f7e583990fb23a3a9ff7d1206d1c122"
+    },
+    {
+      "file": "build\\libs\\betel-nut-mod-neoforge-5.7.1-sources.jar",
+      "bytes": 925386,
+      "sha256": "e82cb25c9e5a8dae9fcf4ac4ee483c11e9d838323217227e03f2063b0190695b"
+    }
+  ],
+  "passed": true
+}

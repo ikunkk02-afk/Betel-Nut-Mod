@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1, "id": "betel_art_preview", "version": "1.0.0",
-  "name": "Development Art Preview", "environment": "client",
-  "entrypoints": { "client": ["betel.nut.preview.ArecaPreviewClient"] },
-  "depends": { "betel-nut-mod": "*" }
-}

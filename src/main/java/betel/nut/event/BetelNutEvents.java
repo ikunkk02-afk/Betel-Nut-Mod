@@ -1,5 +1,6 @@
 package betel.nut.event;
 
+import betel.nut.platform.BetelPlatform;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.advancement.BetelQuestAdvancements;
@@ -7,11 +8,6 @@ import betel.nut.item.ModItems;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
 import betel.nut.network.AddictionSyncPayload;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +15,7 @@ import net.minecraft.world.item.Items;
 
 public final class BetelNutEvents {
 	public static void register() {
-		ServerTickEvents.END_SERVER_TICK.register(server -> {
+		BetelPlatform.onServerTick(server -> {
 			BetelNutConfig config = BetelNutConfig.get();
 			if (!config.enableAddictionSystem) {
 				for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -62,20 +58,20 @@ public final class BetelNutEvents {
 			}
 		});
 
-		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+		BetelPlatform.onJoin((handler, sender, server) -> {
 			BetelNutEntityComponents.ADDICTION.get(handler.player).beginCalendarSession(handler.player);
 			BetelNutEntityComponents.ADDICTION.get(handler.player).maintainDependenceEffects(handler.player);
 			BetelNutEntityComponents.ADDICTION.get(handler.player).maintainOralEffects(handler.player);
 			AddictionSyncPayload.send(handler.player);
 		});
 
-		ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+		BetelPlatform.onEntityLoad((entity, world) -> {
 			if (entity instanceof ServerPlayer player) {
 				AddictionSyncPayload.send(player);
 			}
 		});
 
-		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+		BetelPlatform.onRespawn((oldPlayer, newPlayer, alive) -> {
 			if (!alive) {
 				BetelNutEntityComponents.ADDICTION.get(newPlayer).scheduleRespawnWithdrawalCheck(newPlayer);
 			}
@@ -84,7 +80,7 @@ public final class BetelNutEvents {
 			AddictionSyncPayload.send(newPlayer);
 		});
 
-		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+		BetelPlatform.onAttack((player, world, hand, entity, hitResult) -> {
 			if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
 				BetelNutAddictionComponent addiction = BetelNutEntityComponents.ADDICTION.get(serverPlayer);
 				if (addiction.blockHechengTianxiaActionIfComatose(serverPlayer, true)) {

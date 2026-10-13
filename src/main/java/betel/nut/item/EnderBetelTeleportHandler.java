@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public final class EnderBetelTeleportHandler {
-	private static final String TELEPORT_SUCCESS_MESSAGE = "message.betel-nut-mod.ender_betel.teleport_success";
-	private static final String TELEPORT_FAILURE_MESSAGE = "message.betel-nut-mod.ender_betel.teleport_failure";
+	private static final String TELEPORT_SUCCESS_MESSAGE = "message.betel_nut_mod.ender_betel.teleport_success";
+	private static final String TELEPORT_FAILURE_MESSAGE = "message.betel_nut_mod.ender_betel.teleport_failure";
 	private static final int PRIMARY_VERTICAL_SEARCH_RANGE = 8;
 	private static final int SECONDARY_VERTICAL_SEARCH_RANGE = 16;
 

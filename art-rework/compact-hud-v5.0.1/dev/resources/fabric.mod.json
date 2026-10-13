@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1, "id": "betel_compact_hud_preview", "version": "1.0.0",
-  "name": "Compact HUD Verification", "environment": "client",
-  "entrypoints": { "client": ["betel.nut.preview.CompactHudPreviewClient"] },
-  "depends": { "betel-nut-mod": "*" }
-}

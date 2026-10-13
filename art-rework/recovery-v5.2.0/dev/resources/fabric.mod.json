@@ -1,6 +1,0 @@
-{
-  "schemaVersion":1,"id":"betel_recovery_preview","version":"1.0.0",
-  "name":"Recovery Verification","environment":"client",
-  "entrypoints":{"client":["betel.nut.preview.RecoveryPreviewClient"]},
-  "depends":{"betel-nut-mod":"*"}
-}

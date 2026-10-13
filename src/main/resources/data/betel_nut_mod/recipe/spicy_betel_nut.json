@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "minecraft:sweet_berries"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:spicy_betel_nut",
+    "count": 2
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "farmersdelight"
+      }
+    }
+  ]
+}

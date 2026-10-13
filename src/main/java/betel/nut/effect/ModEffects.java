@@ -15,11 +15,11 @@ public final class ModEffects {
             new StatusEffect(0xB84A57).addAttributeModifier(Attributes.MAX_HEALTH,
                     BetelNutMod.id("oral_cancer_health"), -2, AttributeModifier.Operation.ADD_VALUE));
     public static final Holder<MobEffect> MOUTH_LOCKED = register("mouth_locked", new StatusEffect(0xD5A679));
-    public static final Holder<MobEffect> ECHO_SIGHT = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT,
+    public static final Holder<MobEffect> ECHO_SIGHT = betel.nut.platform.BetelRegistries.holder(BuiltInRegistries.MOB_EFFECT,
             BetelNutMod.id("echo_sight"), new EchoSightEffect());
 
     private static Holder<MobEffect> register(String name, MobEffect effect) {
-        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, BetelNutMod.id(name), effect);
+        return betel.nut.platform.BetelRegistries.holder(BuiltInRegistries.MOB_EFFECT, BetelNutMod.id(name), effect);
     }
     private static final class StatusEffect extends MobEffect {
         private StatusEffect(int color) { super(MobEffectCategory.HARMFUL, color); }

@@ -1,5 +1,6 @@
 package betel.nut.skyblock;
 
+import betel.nut.platform.BetelPlatform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,8 +9,6 @@ import betel.nut.BetelNutMidnightConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.advancement.BetelQuestAdvancements;
 import betel.nut.item.ModItems;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -42,8 +41,8 @@ public final class EndFrameWaterRitualManager {
 			return;
 		}
 
-		ServerTickEvents.END_WORLD_TICK.register(EndFrameWaterRitualManager::tickWorld);
-		ServerLifecycleEvents.SERVER_STOPPED.register(server -> PENDING_REWARDS.clear());
+		BetelPlatform.onWorldTick(EndFrameWaterRitualManager::tickWorld);
+		BetelPlatform.onServerStopped(server -> PENDING_REWARDS.clear());
 		registered = true;
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] End frame water ritual handler registered.");
 	}
@@ -199,7 +198,7 @@ public final class EndFrameWaterRitualManager {
 	}
 
 	private static void notifyNearbyPlayers(ServerLevel level, Vec3 center) {
-		Component message = Component.translatable("message.betel-nut-mod.end_frame_ritual.success");
+		Component message = Component.translatable("message.betel_nut_mod.end_frame_ritual.success");
 		for (ServerPlayer player : level.getPlayers(player -> player.distanceToSqr(center) <= MESSAGE_RADIUS_SQUARED)) {
 			player.sendSystemMessage(message);
 		}

@@ -1,8 +1,8 @@
 package betel.nut.skyblock;
 
+import betel.nut.platform.BetelPlatform;
 import betel.nut.block.ModBlocks;
 import betel.nut.item.ModItems;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -18,7 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /** Extra manual compost inputs only in the two enabled skyblock presets. */
 public final class SkyblockComposting {
-    public static void register() { UseBlockCallback.EVENT.register(SkyblockComposting::use); }
+    public static void register() { BetelPlatform.onUseBlock(SkyblockComposting::use); }
 
     public static InteractionResult use(Player player, Level world, InteractionHand hand, BlockHitResult hit) {
         if (!(world instanceof ServerLevel level) || player.isSpectator() || !player.mayBuild()

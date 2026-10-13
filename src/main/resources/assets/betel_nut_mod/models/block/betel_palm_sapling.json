@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "betel_nut_mod:block/betel_palm_sapling"
+  }
+}

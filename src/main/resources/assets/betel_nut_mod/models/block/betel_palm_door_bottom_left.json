@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_left",
+  "textures": {
+    "bottom": "betel_nut_mod:block/betel_palm_door_bottom",
+    "top": "betel_nut_mod:block/betel_palm_door_top"
+  }
+}

@@ -21,9 +21,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import org.ladysnake.cca.api.v3.component.CopyableComponent;
 
-public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAddictionComponent> {
+public class BetelNutAddictionComponent implements BetelPersistentData {
 	private static final String ADDICTION_VALUE_KEY = "addictionValue";
 	private static final String WITHDRAWAL_VALUE_KEY = "withdrawalValue";
 	private static final String LAST_EAT_TIME_KEY = "lastEatTime";
@@ -383,7 +382,7 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
         boolean removed = clearWithdrawalPenalties(player);
         maintainDependenceEffects(player);
         maintainOralEffects(player);
-        sendFeedback(player, gameTime, "message.betel-nut-mod.relief_potion");
+        sendFeedback(player, gameTime, "message.betel_nut_mod.relief_potion");
         sendRecoveryFeedbackIfNeeded(player, removed);
         AddictionSyncPayload.send(player);
     }
@@ -1042,7 +1041,6 @@ public class BetelNutAddictionComponent implements CopyableComponent<BetelNutAdd
 		tag.putInt(BETEL_SUPPRESS_WEAKNESS_TICKS_KEY, this.betelSuppressWeaknessTicks);
 	}
 
-	@Override
 	public void copyFrom(BetelNutAddictionComponent other, HolderLookup.Provider registryLookup) {
 		copyAllFrom(other);
 	}

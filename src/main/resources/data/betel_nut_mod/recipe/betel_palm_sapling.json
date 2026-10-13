@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_nut_cluster"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:betel_palm_sapling",
+    "count": 1
+  }
+}

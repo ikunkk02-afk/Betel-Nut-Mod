@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "betel_trades_preview",
-  "version": "1.0.0",
-  "name": "Villager Trades Verification",
-  "environment": "client",
-  "entrypoints": {"client": ["betel.nut.preview.TradesPreviewClient"]},
-  "depends": {"betel-nut-mod": "*"}
-}

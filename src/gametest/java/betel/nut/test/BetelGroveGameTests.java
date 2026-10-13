@@ -6,7 +6,8 @@ import betel.nut.worldgen.BetelPalmGroveGenerator;
 import betel.nut.worldgen.BetelPalmGroveGenerator.Habitat;
 import java.util.List;
 import java.util.function.Function;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -18,8 +19,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 
-public class BetelGroveGameTests implements FabricGameTest {
-    private static final String SITE = "betel_art_tests:grove_site";
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public class BetelGroveGameTests {
+    private static final String SITE = "grove_site";
 
     private static BlockPos site(GameTestHelper h) {
         var base = h.absolutePos(new BlockPos(24, 3, 24));

@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1, "id": "betel_features_preview", "version": "1.0.0",
-  "name": "Development Feature Verification", "environment": "client",
-  "entrypoints": { "client": ["betel.nut.preview.FeaturesPreviewClient"] },
-  "depends": { "betel-nut-mod": "*" }
-}

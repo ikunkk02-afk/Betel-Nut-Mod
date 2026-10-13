@@ -1,0 +1,25 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:sweet_betel_nut"
+    },
+    {
+      "type": "neoforge:tag",
+      "tag": "c:honey",
+      "amount": 125
+    }
+  ],
+  "results": [
+    {
+      "id": "betel_nut_mod:honey_betel_nut",
+      "count": 1
+    }
+  ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

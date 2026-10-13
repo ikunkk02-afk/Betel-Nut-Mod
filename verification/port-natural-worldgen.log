@@ -1,0 +1,134 @@
+Calculating task graph as no cached configuration is available for tasks: runNaturalProbe
+> Task :generateModMetadata UP-TO-DATE
+> Task :processGametestResources UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :downloadAssets UP-TO-DATE
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :writeNaturalProbeLegacyClasspath
+> Task :prepareNaturalProbeRun
+> Task :compileJava
+> Task :classes
+
+> Task :compileGametestJava
+注: D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\src\gametest\java\betel\nut\test\PortSmokeClient.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+> Task :gametestClasses
+
+> Task :runNaturalProbe
+WARN StatusConsoleListener Advanced terminal features are not available in this environment
+[14:51:21] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.45, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.259, --fml.neoFormVersion, 20240808.144430, --nogui]
+[14:51:21] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS
+[14:51:21] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
+[14:51:21] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[14:51:21] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/shouy/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.4+mixin.0.8.7/26d01f0567ab46e9ca0d2ed89d0ecc11aadbd433/sponge-mixin-0.16.4+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[14:51:21] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 2 dependencies adding them to mods collection
+[14:51:21] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Betel Nut Mod 5.7.0 (betel_nut_mod)
+		MidnightLib 1.9.2 (midnightlib)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.259 (neoforge)
+[14:51:22] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[14:51:22] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[14:51:22] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, ., --nogui]
+[14:51:24] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[14:51:29] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:51:29] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:51:29] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14:51:29] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[14:51:29] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: Betel nut config loaded successfully: D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\run-worldgen-port\config\betel_nut.json
+[14:51:29] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.259, for MC 1.21.1
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] MidnightLib config loaded.
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] classicIslandY = 128
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] oneBlockY = 128
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] residueCompostChance = 0.3
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] residueBlockCompostChance = 1.0
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] enableEndFrameWaterRitual = true
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualEnderEyeCost = 16
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualHechengBetelCost = 12
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualFrameReward = 12
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualCheckIntervalTicks = 20
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaPositiveDurationSeconds = 120
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaComaDurationSeconds = 5
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaNegativeDurationSeconds = 60
+[14:51:29] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaAllowRepeatBeforeAftermath = false
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel palm blocks
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel nut items
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel nut item group
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registered betel palm configured feature type
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Withdrawal eating restriction handler registered.
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel nut addiction system initialized successfully
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock event handlers registered
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: [Betel Nut Mod] End frame water ritual handler registered.
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel nut debug commands registered successfully
+[14:51:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel Nut Mod 5.7.0 initialized for NeoForge
+[14:51:30] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[14:51:30] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/moddev/artifacts/neoforge-21.1.259.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[14:51:30] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/moddev/artifacts/neoforge-21.1.259.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[14:51:30] [main/INFO] [minecraft/Main]: No existing world data, creating new world
+[14:51:31] [main/INFO] [minecraft/RecipeManager]: Loaded 1332 recipes
+[14:51:31] [main/INFO] [minecraft/AdvancementTree]: Loaded 1471 advancements
+[14:51:31] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.21.1
+[14:51:31] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[14:51:31] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[14:51:31] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+[14:51:31] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on *:25569
+[14:51:31] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using default channel type
+[14:51:31] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[14:51:31] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+[14:51:31] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[14:51:31] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+[14:51:31] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "NeoForgeNaturalPalmProbe"
+[14:51:32] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock overworld load event received
+[14:51:32] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock startup check scheduled: overworld load
+[14:51:33] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[14:51:33] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[14:51:34] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[14:51:34] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 18%
+[14:51:35] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 51%
+[14:51:35] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 1850 ms
+[14:51:35] [Server thread/INFO] [minecraft/DedicatedServer]: Done (3.941s)! For help, type "help"
+[14:51:35] [LanServerPinger #1/WARN] [minecraft/LanServerPinger]: LanServerPinger: No route to host: sendto
+[14:51:35] [Server thread/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: []
+[14:51:35] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[14:51:35] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[14:51:35] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock startup check scheduled: server started
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Checking Betel Skyblock world...
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Current dimension: overworld
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Is Betel Skyblock preset: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Is Betel One Block Skyblock preset: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Classic Betel Skyblock enabled: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel One Block Skyblock enabled: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Has generated island: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Island position: x=0, y=128, z=0
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Has generated one-block island: false
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] One-block island position: x=0, y=128, z=0
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock disabled because current world is not a skyblock preset.
+[14:51:36] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_LOCATED minecraft:sparse_jungle BlockPos{x=-64, y=64, z=-448}
+[14:51:44] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_SAMPLE minecraft:sparse_jungle trees=6 biomes={minecraft:sparse_jungle=6}
+[14:51:44] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_LOCATED minecraft:jungle BlockPos{x=128, y=64, z=-416}
+[14:51:53] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_SAMPLE minecraft:jungle trees=7 biomes={minecraft:jungle=7}
+[14:51:53] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_LOCATED minecraft:bamboo_jungle BlockPos{x=-480, y=64, z=-1760}
+[14:52:17] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_SAMPLE minecraft:bamboo_jungle trees=5 biomes={minecraft:bamboo_jungle=5}
+[14:52:17] [Server thread/INFO] [betel_nut_mod/]: NATURAL_PROBE_SAMPLE minecraft:river trees=8 biomes={minecraft:sparse_jungle=8}
+[14:52:17] [Server thread/INFO] [betel_nut_mod/]: NATURAL_WORLDGEN_PROBE_PASSED samples=4 trees=26
+[14:52:17] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[14:52:17] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[14:52:17] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[14:52:18] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[NeoForgeNaturalPalmProbe]'/minecraft:overworld
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[NeoForgeNaturalPalmProbe]'/minecraft:the_nether
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[NeoForgeNaturalPalmProbe]'/minecraft:the_end
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (NeoForgeNaturalPalmProbe): All chunks are saved
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[14:52:21] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+
+[Incubating] Problems report is available at: file:///D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 8s
+10 actionable tasks: 5 executed, 5 up-to-date
+Configuration cache entry stored.

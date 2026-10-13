@@ -1,8 +1,6 @@
 package betel.nut.block;
 
 import betel.nut.BetelNutMod;
-import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -82,23 +80,23 @@ public final class ModBlocks {
 			BETEL_NUT_RESIDUE_BLOCK);
 
 	private static Block registerBlock(String path, Block block) {
-		return Registry.register(BuiltInRegistries.BLOCK, BetelNutMod.id(path), block);
+		return betel.nut.platform.BetelRegistries.add(BuiltInRegistries.BLOCK, BetelNutMod.id(path), block);
 	}
 
 	private static Item registerBlockItem(String path, Block block) {
 		ResourceLocation id = BetelNutMod.id(path);
 		BlockItem blockItem = new BlockItem(block, new Item.Properties());
-		return Items.registerItem(ResourceKey.create(Registries.ITEM, id), blockItem);
+		return betel.nut.platform.BetelRegistries.item(ResourceKey.create(Registries.ITEM, id), blockItem);
 	}
 
 	private static Item registerClusterItem(String path, int age) {
-		return Items.registerItem(ResourceKey.create(Registries.ITEM, BetelNutMod.id(path)),
+		return betel.nut.platform.BetelRegistries.item(ResourceKey.create(Registries.ITEM, BetelNutMod.id(path)),
 				new BetelNutClusterItem(BETEL_NUT_CLUSTER, age));
 	}
 
 	public static void register() {
 		BetelNutMod.LOGGER.info("Registering betel palm blocks");
-		FlammableBlockRegistry flammableBlocks = FlammableBlockRegistry.getDefaultInstance();
+		var flammableBlocks = betel.nut.platform.BetelPlatform.FLAMMABILITY;
 		flammableBlocks.add(BETEL_PALM_LOG, 5, 5);
 		flammableBlocks.add(BETEL_PALM_PLANKS, 5, 20);
 		flammableBlocks.add(BETEL_PALM_STAIRS, 5, 20);
@@ -110,16 +108,16 @@ public final class ModBlocks {
 		flammableBlocks.add(BETEL_PALM_TRAPDOOR, 5, 20);
 		flammableBlocks.add(BETEL_PALM_DOOR, 5, 20);
 
-		FuelRegistry.INSTANCE.add(BETEL_PALM_LOG_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_PLANKS_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_STAIRS_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_SLAB_ITEM, 150);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_FENCE_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_FENCE_GATE_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_BUTTON_ITEM, 100);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_PRESSURE_PLATE_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_TRAPDOOR_ITEM, 300);
-		FuelRegistry.INSTANCE.add(BETEL_PALM_DOOR_ITEM, 200);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_LOG_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_PLANKS_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_STAIRS_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_SLAB_ITEM, 150);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_FENCE_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_FENCE_GATE_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_BUTTON_ITEM, 100);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_PRESSURE_PLATE_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_TRAPDOOR_ITEM, 300);
+		betel.nut.platform.BetelPlatform.fuel(BETEL_PALM_DOOR_ITEM, 200);
 	}
 
 	private ModBlocks() {

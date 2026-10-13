@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "minecraft:end_portal_frame"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.skyblock.end_frame_ritual.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.skyblock.end_frame_ritual.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "triggered"
+    ]
+  ],
+  "parent": "betel_nut_mod:skyblock/first_compost",
+  "rewards": {
+    "experience": 25
+  }
+}

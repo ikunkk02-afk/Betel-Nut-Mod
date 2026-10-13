@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_palm_log"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "betel_nut_mod:betel_palm_planks"
+  }
+}

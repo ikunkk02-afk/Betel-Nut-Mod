@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:kouweiwang_pack"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.trade.open_pack.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.trade.open_pack.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "triggered"
+    ]
+  ],
+  "parent": "betel_nut_mod:trade/seal"
+}

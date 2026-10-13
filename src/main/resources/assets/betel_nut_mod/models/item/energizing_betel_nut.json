@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "betel_nut_mod:item/energizing_betel_nut"
+  }
+}

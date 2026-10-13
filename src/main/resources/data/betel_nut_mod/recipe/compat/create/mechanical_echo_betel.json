@@ -1,0 +1,31 @@
+{
+  "type": "create:mechanical_crafting",
+  "category": "misc",
+  "accept_mirrored": false,
+  "pattern": [
+    "WSW",
+    " E "
+  ],
+  "key": {
+    "W": {
+      "item": "betel_nut_mod:wrapped_raw_betel"
+    },
+    "S": {
+      "item": "betel_nut_mod:ancient_shell"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    }
+  },
+  "result": {
+    "id": "betel_nut_mod:echo_betel",
+    "count": 2
+  },
+  "show_notification": false,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

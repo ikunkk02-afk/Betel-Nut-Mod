@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_nut_cluster"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:raw_betel_nut",
+    "count": 5
+  }
+}

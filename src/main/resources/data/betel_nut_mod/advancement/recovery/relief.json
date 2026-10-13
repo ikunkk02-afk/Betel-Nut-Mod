@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:golden_apple_paste"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.recovery.relief.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.recovery.relief.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "triggered": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "triggered"
+    ]
+  ],
+  "parent": "betel_nut_mod:recovery/supplies",
+  "rewards": {
+    "experience": 10
+  }
+}

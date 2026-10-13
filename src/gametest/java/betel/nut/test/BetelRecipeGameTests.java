@@ -9,8 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.fml.ModList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -24,14 +25,16 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 
-public final class BetelRecipeGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelRecipeGameTests {
     private static boolean isVariant(Item item) {
         return item instanceof BetelNutItem && item != ModItems.ROASTED_BETEL_NUT && item != ModItems.WRAPPED_RAW_BETEL;
     }
 
     public static List<RecipeHolder<?>> variants(GameTestHelper h) {
         return h.getLevel().getRecipeManager().getRecipes().stream()
-                .filter(r -> r.id().getNamespace().equals(BetelNutMod.MOD_ID)
+                .filter(r -> r.id().getNamespace().equals(BetelNutMod.MOD_ID) && !r.id().getPath().startsWith("compat/create/")
                         && isVariant(r.value().getResultItem(h.getLevel().registryAccess()).getItem()))
                 .sorted(java.util.Comparator.comparing(r -> r.id().toString())).toList();
     }
@@ -46,9 +49,9 @@ public final class BetelRecipeGameTests implements FabricGameTest {
         return CraftingInput.of(3, 3, stacks);
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void everyVariantHasExactlyOneEnvironmentRouteAndConservesNuts(GameTestHelper h) {
-        boolean delight = FabricLoader.getInstance().isModLoaded("farmersdelight");
+        boolean delight = ModList.get().isLoaded("farmersdelight");
         var recipes = variants(h);
         h.assertTrue(recipes.size() == 18, "All 17 variants load, with exactly two refreshing alternatives");
         Set<Item> outputs = new HashSet<>();
@@ -84,7 +87,7 @@ public final class BetelRecipeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void processingChainIsReachableAndRejectsOldPaperShortcuts(GameTestHelper h) {
         Map<Item, Set<Item>> dependencies = new HashMap<>();
         for (var holder : variants(h)) {
@@ -113,7 +116,7 @@ public final class BetelRecipeGameTests implements FabricGameTest {
         done.add(item);
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void ordinaryProcessingStaysUsableAndRealPotCookingWorksWhenInstalled(GameTestHelper h) throws Exception {
         var level = h.getLevel();
         var roasted = level.getRecipeManager().byKey(BetelNutMod.id("roasted_betel_nut_from_campfire")).orElseThrow().value();
@@ -127,8 +130,8 @@ public final class BetelRecipeGameTests implements FabricGameTest {
         var wrap = grid(List.of(new ItemStack(ModItems.RAW_BETEL_NUT), new ItemStack(ModItems.BETEL_LEAF), new ItemStack(ModItems.SHELL_POWDER)));
         var wrapped = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, wrap, level).orElseThrow().value().assemble(wrap, level.registryAccess());
         h.assertTrue(wrapped.is(ModItems.WRAPPED_RAW_BETEL) && wrapped.getCount() == 1, "Ordinary raw leaf-wrapping remains available with or without Delight");
-        if (FabricLoader.getInstance().isModLoaded("farmersdelight")) {
-            Class.forName("betel.nut.test.FarmerRecipeChecks").getMethod("run", GameTestHelper.class).invoke(null, h);
+        if (ModList.get().isLoaded("farmersdelight")) {
+            FarmerRecipeChecks.run(h);
         }
         h.succeed();
     }

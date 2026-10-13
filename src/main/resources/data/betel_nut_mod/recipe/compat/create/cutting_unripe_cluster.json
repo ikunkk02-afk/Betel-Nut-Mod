@@ -1,0 +1,21 @@
+{
+  "type": "create:cutting",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:unripe_betel_nut_cluster"
+    }
+  ],
+  "results": [
+    {
+      "id": "betel_nut_mod:raw_betel_nut",
+      "count": 3
+    }
+  ],
+  "processing_time": 80,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

@@ -2,8 +2,6 @@ package betel.nut.item;
 
 import betel.nut.BetelNutMod;
 import betel.nut.block.ModBlocks;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -18,11 +16,11 @@ public final class ModItemGroups {
 			Registries.CREATIVE_MODE_TAB,
 			BetelNutMod.id("betel_nut_mod"));
 
-	public static final CreativeModeTab BETEL_NUT_GROUP = Registry.register(
+	public static final CreativeModeTab BETEL_NUT_GROUP = betel.nut.platform.BetelRegistries.add(
 			BuiltInRegistries.CREATIVE_MODE_TAB,
 			BETEL_NUT_GROUP_KEY,
-			FabricItemGroup.builder()
-					.title(Component.translatable("itemGroup.betel-nut-mod.betel_nut_mod"))
+			CreativeModeTab.builder()
+					.title(Component.translatable("itemGroup.betel_nut_mod.betel_nut_mod"))
 					.icon(() -> new ItemStack(ModItems.ROASTED_BETEL_NUT))
 					.displayItems((parameters, output) -> {
 						output.accept(ModItems.GOLDEN_APPLE_PASTE);
@@ -80,12 +78,12 @@ public final class ModItemGroups {
 
 	public static void register() {
 		BetelNutMod.LOGGER.info("Registering betel nut item group");
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FOOD_AND_DRINKS).register(entries -> {
+        betel.nut.platform.BetelPlatform.creative(CreativeModeTabs.FOOD_AND_DRINKS, entries -> {
             entries.accept(ModItems.GOLDEN_APPLE_PASTE);
             entries.accept(ModItems.ENCHANTED_GOLDEN_APPLE_PASTE);
             entries.accept(ModItems.RELIEF_POTION);
         });
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.BUILDING_BLOCKS).register(entries -> {
+		betel.nut.platform.BetelPlatform.creative(CreativeModeTabs.BUILDING_BLOCKS, entries -> {
 			entries.accept(ModBlocks.BETEL_PALM_LOG_ITEM);
 			entries.accept(ModBlocks.BETEL_PALM_PLANKS_ITEM);
 			entries.accept(ModBlocks.BETEL_PALM_STAIRS_ITEM);
@@ -97,7 +95,7 @@ public final class ModItemGroups {
 			entries.accept(ModBlocks.BETEL_PALM_PRESSURE_PLATE_ITEM);
 			entries.accept(ModBlocks.BETEL_PALM_BUTTON_ITEM);
 		});
-		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
+		betel.nut.platform.BetelPlatform.creative(CreativeModeTabs.REDSTONE_BLOCKS, entries -> {
 			entries.accept(ModBlocks.BETEL_PALM_BUTTON_ITEM);
 			entries.accept(ModBlocks.BETEL_PALM_PRESSURE_PLATE_ITEM);
 			entries.accept(ModBlocks.BETEL_PALM_FENCE_GATE_ITEM);

@@ -16,7 +16,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -44,13 +45,16 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public final class BetelSkyblockGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelSkyblockGameTests {
     private static ServerPlayer player(GameTestHelper h) {
         var cookie = net.minecraft.server.network.CommonListenerCookie.createInitial(
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "skyblock-test"), false);
         var p = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation());
         var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection, p, cookie);
         p.setGameMode(GameType.SURVIVAL);
         p.teleportTo(h.absolutePos(new BlockPos(1, 2, 1)).getX(), 200, h.absolutePos(BlockPos.ZERO).getZ());
@@ -100,7 +104,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         }
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void voidMonsterSpawnsAreScopedToEnabledSkyblocks(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel();
         var biome = level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.THE_VOID);
@@ -133,7 +137,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void classicChestSupportsHarvestFarmingAndRecovery(GameTestHelper h) throws ReflectiveOperationException {
         try (var preset = new Preset(h.getLevel(), false)) {
             var level = h.getLevel(); clear(level, new BlockPos(0, 244, 0), 9);
@@ -155,7 +159,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void oneBlockStarterIsOnceOnlyAndDoesNotRegenerateTerrain(GameTestHelper h) throws ReflectiveOperationException {
         try (var preset = new Preset(h.getLevel(), true)) {
             var level = h.getLevel(); var center = new BlockPos(0,244,0); clear(level, center, 9);
@@ -178,32 +182,32 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void endProgressCallbackRequiresAnEnabledSkyblock(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel(); var p = player(h);
         var end = p.server.getLevel(net.minecraft.world.level.Level.END);
-        var event = net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.invoker();
+        java.util.function.BiConsumer<net.minecraft.server.level.ServerPlayer,net.minecraft.server.level.ServerLevel> event = (who,to) -> net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent(who,level.dimension(),to.dimension()));
         var advancement = p.server.getAdvancements().get(betel.nut.BetelNutMod.id("skyblock/enter_end"));
         try {
-            event.afterChangeWorld(p, level, end);
+            event.accept(p, end);
             h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Normal worlds entering the End do not unlock a skyblock milestone");
             for (boolean one : new boolean[]{false, true}) try (var preset = new Preset(level, one)) {
                 p.getAdvancements().revoke(advancement, "entered_the_end");
-                event.afterChangeWorld(p, level, p.server.getLevel(net.minecraft.world.level.Level.NETHER));
+                event.accept(p, p.server.getLevel(net.minecraft.world.level.Level.NETHER));
                 h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Other dimensions do not qualify");
                 if (one) BetelNutMidnightConfig.enableOneBlockSkyblock = false;
                 else BetelNutMidnightConfig.enableClassicSkyblock = false;
-                event.afterChangeWorld(p, level, end);
+                event.accept(p, end);
                 h.assertTrue(!p.getAdvancements().getOrStartProgress(advancement).isDone(), "Disabled presets do not qualify");
                 BetelNutMidnightConfig.enableClassicSkyblock = BetelNutMidnightConfig.enableOneBlockSkyblock = true;
-                event.afterChangeWorld(p, level, end);
+                event.accept(p, end);
                 h.assertTrue(p.getAdvancements().getOrStartProgress(advancement).isDone(), "Both enabled presets support either End-entry route");
             }
         } finally { p.server.getPlayerList().remove(p); }
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void rawFruitAndLeavesCompostInBothPresets(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel(); var p = player(h); var pos = h.absolutePos(new BlockPos(2,2,2));
         for (boolean one : new boolean[]{false,true}) try (var preset = new Preset(level, one)) {
@@ -237,7 +241,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         level.getServer().getPlayerList().remove(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void compostDoesNotChangeOrdinaryWorldsOrDisabledModes(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel(); var p = player(h); var pos = h.absolutePos(new BlockPos(2,2,2));
         level.setBlock(pos, Blocks.COMPOSTER.defaultBlockState(), 3);
@@ -251,7 +255,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         level.getServer().getPlayerList().remove(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void rescueAvoidsObstructionsHazardsAndSupportsSlabs(GameTestHelper h) {
         var level = h.getLevel(); var p = player(h); var origin = h.absolutePos(new BlockPos(2,100,2));
         clear(level,origin,17); level.setBlock(origin.below(),Blocks.STONE.defaultBlockState(),3);
@@ -265,7 +269,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         level.getServer().getPlayerList().remove(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void missingIslandGetsOneNonFarmableEmergencyFoothold(GameTestHelper h) {
         var level = h.getLevel(); var p = player(h); var origin = h.absolutePos(new BlockPos(2,100,2));
         clear(level,origin,17); boolean emergency = BetelNutMidnightConfig.skyblockEmergencyPlatform;
@@ -284,7 +288,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         level.getServer().getPlayerList().remove(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void legacySupplyUpgradePersistsWithoutChangingChest(GameTestHelper h) throws ReflectiveOperationException {
         try (var preset = new Preset(h.getLevel(),false)) {
             var level = h.getLevel(); var data = BetelNutWorldComponents.SKYBLOCK_WORLD.get(level);
@@ -309,7 +313,7 @@ public final class BetelSkyblockGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void globalVoidSwitchAndBothRescueRoutesUseSafeGround(GameTestHelper h) throws ReflectiveOperationException {
         var level = h.getLevel(); var p = player(h); var origin = h.absolutePos(new BlockPos(2,100,2));
         clear(level,origin,17); level.setBlock(origin.below(),Blocks.STONE.defaultBlockState(),3);

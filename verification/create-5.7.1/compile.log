@@ -1,0 +1,13 @@
+Starting a Gradle Daemon, 1 busy Daemon could not be reused, use --status for details
+Calculating task graph as configuration cache cannot be reused because file 'gradle.properties' has changed.
+> Task :createMinecraftArtifacts UP-TO-DATE
+
+> Task :compileJava
+注: D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\src\main\java\betel\nut\client\BetelPalmMeshModels.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+
+[Incubating] Problems report is available at: file:///D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 13s
+2 actionable tasks: 1 executed, 1 up-to-date
+Configuration cache entry stored.

@@ -1,20 +1,18 @@
 package betel.nut.component;
-
-import betel.nut.BetelNutMod;
 import net.minecraft.world.level.Level;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistry;
-import org.ladysnake.cca.api.v3.world.WorldComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.world.WorldComponentInitializer;
-
-public final class BetelNutWorldComponents implements WorldComponentInitializer {
-	public static final ComponentKey<BetelSkyblockWorldComponent> SKYBLOCK_WORLD = ComponentRegistry.getOrCreate(
-			BetelNutMod.id("skyblock_world"),
-			BetelSkyblockWorldComponent.class);
-
-	@Override
-	public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
-		registry.registerFor(Level.OVERWORLD, SKYBLOCK_WORLD, BetelSkyblockWorldComponent::new);
-		BetelNutMod.LOGGER.info("Betel nut world Cardinal Components data registered successfully");
-	}
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.SavedData;
+public final class BetelNutWorldComponents {
+ public static final WorldData SKYBLOCK_WORLD = new WorldData();
+ public static final class WorldData {
+  public BetelSkyblockWorldComponent get(Level level) {
+   if (!(level instanceof ServerLevel server)) throw new IllegalArgumentException("Skyblock data is server-authoritative");
+   ServerLevel overworld = server.getServer().overworld();
+   return overworld.getDataStorage().computeIfAbsent(new SavedData.Factory<>(
+    () -> new BetelSkyblockWorldComponent(overworld), (tag, lookup) -> {
+     var data = new BetelSkyblockWorldComponent(overworld); data.readFromNbt(tag, lookup); return data;
+    }), "betel_nut_mod_skyblock");
+  }
+ }
+ private BetelNutWorldComponents() {}
 }

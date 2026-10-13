@@ -6,7 +6,8 @@ import betel.nut.block.BetelPalmLogBlock;
 import betel.nut.block.BetelPalmSaplingBlock;
 import betel.nut.block.ModBlocks;
 import betel.nut.worldgen.BetelPalmTreeGenerator;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -17,7 +18,9 @@ import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
-public class BetelPalmGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public class BetelPalmGameTests {
 	private static BlockPos site(GameTestHelper helper) {
 		BlockPos base = helper.absolutePos(new BlockPos(4, 2, 4));
 		// The stock empty fixture is only one block high; clear the full tall-palm envelope.
@@ -28,7 +31,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		return base;
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE, timeoutTicks = 100)
+	@GameTest(template = "empty", timeoutTicks = 100)
 	public void frondsStayAttachedAndDecayAfterFelling(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -74,7 +77,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		}
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void overhangingFrondsReserveNeighboringSpace(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -89,7 +92,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void obstructedCrownLeavesSaplingAndObstacleIntact(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -103,7 +106,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void sandMudAndStandingWaterRejectGrowth(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -117,7 +120,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void cultivatedSaplingGrowsOnSingleDirtBlock(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -130,7 +133,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void uprightFrondHeadroomIsReserved(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);
@@ -140,7 +143,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void treeMigrationPreservesExistingGameplaySettings(GameTestHelper helper) throws ReflectiveOperationException {
 		var config = new BetelNutConfig();
 		config.configVersion = 9;
@@ -166,7 +169,7 @@ public class BetelPalmGameTests implements FabricGameTest {
 		helper.succeed();
 	}
 
-	@GameTest(template = EMPTY_STRUCTURE)
+	@GameTest(template = "empty")
 	public void trunkCollisionFollowsAllThreeAxes(GameTestHelper helper) {
 		var level = helper.getLevel();
 		BlockPos base = site(helper);

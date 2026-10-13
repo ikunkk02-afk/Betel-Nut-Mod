@@ -1,0 +1,76 @@
+{
+  "version": "5.7.0",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.259",
+  "verificationDate": "2026-10-13",
+  "fabricSourceCommit": "45a37b8",
+  "testedOptionalMods": {
+    "farmersdelight": "1.3.4",
+    "create": "6.0.10"
+  },
+  "evidence": [
+    {
+      "log": "verification\\port-tests.log",
+      "sha256": "18035290a3ff752df497e02f273d65335e5fbb816deddc54984dacf861cb84a9",
+      "marker": "All 121 required tests passed"
+    },
+    {
+      "log": "verification\\port-tests-compat.log",
+      "sha256": "3f72e5f4244127d7519a09a650e4ac4afb93171bce5774d884ed331f55b0510a",
+      "marker": "All 121 required tests passed"
+    },
+    {
+      "log": "verification\\port-client.log",
+      "sha256": "0d67c52324b677663e05fad07257476f0b7ce3736b5f6bcfa3895ee8759223f5",
+      "marker": "PORT_CLIENT_ALL_CHECKS_PASS"
+    },
+    {
+      "log": "verification\\port-client-core.log",
+      "sha256": "1672fae57ca4fe16050aa2fbb1e86f193758bc2ebd0fd512fcba10894703e78e",
+      "marker": "PORT_CLIENT_ALL_CHECKS_PASS"
+    },
+    {
+      "log": "verification\\port-natural-worldgen.log",
+      "sha256": "c4fd000efa2f66db750a8911356bb72fad6e3bc3b28adb263d19841316a3b30a",
+      "marker": "NATURAL_WORLDGEN_PROBE_PASSED"
+    },
+    {
+      "log": "verification\\port-build.log",
+      "sha256": "3f72e5f4244127d7519a09a650e4ac4afb93171bce5774d884ed331f55b0510a",
+      "marker": "BUILD SUCCESSFUL"
+    }
+  ],
+  "packagedResources": 448,
+  "productionJavaFiles": 65,
+  "originalResourcesPreservedOrAdapted": 422,
+  "visibleAdvancements": 28,
+  "createRecipes": 25,
+  "naturalWorldDistinctRoots": 20,
+  "naturalWorldSampleRootBiomes": {
+    "minecraft:sparse_jungle": {
+      "minecraft:sparse_jungle": 6
+    },
+    "minecraft:jungle": {
+      "minecraft:jungle": 7
+    },
+    "minecraft:bamboo_jungle": {
+      "minecraft:bamboo_jungle": 5
+    },
+    "minecraft:river": {
+      "minecraft:sparse_jungle": 8
+    }
+  },
+  "artifacts": [
+    {
+      "file": "build\\libs\\betel-nut-mod-neoforge-5.7.0.jar",
+      "bytes": 1115857,
+      "sha256": "93ae0e6447fe6ff26dc2fe48c1d679db0c4bb8d9965dc4f62f04231067eb6963"
+    },
+    {
+      "file": "build\\libs\\betel-nut-mod-neoforge-5.7.0-sources.jar",
+      "bytes": 919157,
+      "sha256": "cfa8813ebec5a7fb219bc3982b57b60cc5d60f339c112331f48d0771119fa82f"
+    }
+  ],
+  "passed": true
+}

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "betel-nut-mod:block/betel_palm_planks",
-    "side": "betel-nut-mod:block/betel_palm_planks",
-    "top": "betel-nut-mod:block/betel_palm_planks"
-  }
-}

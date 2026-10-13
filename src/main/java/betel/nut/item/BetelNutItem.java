@@ -123,7 +123,7 @@ public class BetelNutItem extends BetelNutFoodItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
-		lines.add(Component.translatable("tooltip.betel-nut-mod.effects.base").withStyle(ChatFormatting.GRAY));
+		lines.add(Component.translatable("tooltip.betel_nut_mod.effects.base").withStyle(ChatFormatting.GRAY));
 		var displayedEffects = this.profile == BetelEffectProfile.ENDER
 				? List.of(BetelEffectProfile.enderProtection(0)) : this.profile.baseEffects();
 		for (var effect : displayedEffects) {
@@ -137,8 +137,8 @@ public class BetelNutItem extends BetelNutFoodItem {
 					.withStyle(effect.effect().value().getCategory() == net.minecraft.world.effect.MobEffectCategory.BENEFICIAL
 							? ChatFormatting.BLUE : ChatFormatting.RED));
 		}
-		lines.add(Component.translatable("tooltip.betel-nut-mod.effects." + this.profile.name().toLowerCase(java.util.Locale.ROOT))
+		lines.add(Component.translatable("tooltip.betel_nut_mod.effects." + this.profile.name().toLowerCase(java.util.Locale.ROOT))
 				.withStyle(ChatFormatting.GRAY));
-		lines.add(Component.translatable("tooltip.betel-nut-mod.effects.tolerance").withStyle(ChatFormatting.DARK_GRAY));
+		lines.add(Component.translatable("tooltip.betel_nut_mod.effects.tolerance").withStyle(ChatFormatting.DARK_GRAY));
 	}
 }

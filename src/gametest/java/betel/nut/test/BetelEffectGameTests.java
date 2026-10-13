@@ -9,7 +9,8 @@ import betel.nut.item.BetelNutItem;
 import betel.nut.item.EnderBetelTeleportHandler;
 import betel.nut.item.ModItems;
 import java.util.List;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -23,7 +24,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 
-public final class BetelEffectGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelEffectGameTests {
     private record Reward(Holder<MobEffect> effect, int seconds, int amplifier) {}
     private record Food(Item item, List<Reward> rewards) {}
     private static Reward reward(Holder<MobEffect> effect, int seconds, int amplifier) {
@@ -36,6 +39,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         var p = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation());
         var connection = new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection, p, cookie);
         p.setGameMode(GameType.SURVIVAL);
         BetelNutEntityComponents.ADDICTION.get(p).clearAddiction(p);
@@ -47,7 +51,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
                 "Expected " + effect + " duration=" + ticks + " amplifier=" + amplifier + "; actual=" + actual);
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void allNineteenFoodsConsumeAndGrantTheirDocumentedRewards(GameTestHelper h) {
         var p = player(h);
         var state = BetelNutEntityComponents.ADDICTION.get(p);
@@ -97,7 +101,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void dependenceWeakensBenefitsButNotHungerOrGlowing(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         int[] days = {0, 2, 3, 4, 5, 7};
@@ -113,7 +117,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         state.clearAddiction(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void honeyClearsPoisonWithoutCuringDependenceOrDisease(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         state.setAddictionValue(3); state.setOralExposureDays(3); state.maintainOralEffects(p);
@@ -125,7 +129,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         state.clearAddiction(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void honeyStillHealsOnceAtFullDependence(GameTestHelper h) throws ReflectiveOperationException {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         state.setAddictionValue(7); p.setHealth(10);
@@ -137,7 +141,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         state.clearAddiction(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void oralStageTwoBlocksEveryNutBeforeAnyReward(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         state.setOralExposureDays(BetelNutConfig.get().oralCancerStage2Days); state.maintainOralEffects(p);
@@ -151,7 +155,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         state.clearAddiction(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void syntheticUsesToleranceAndRejectsRepeatAtFinish(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         int old = BetelNutMidnightConfig.hechengTianxiaPositiveDurationSeconds;
@@ -180,7 +184,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void syntheticCrashPersistsAndRecoversWithoutExtraBlindness(GameTestHelper h) throws ReflectiveOperationException {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         var save = new CompoundTag(); save.putInt("dailySchema", 2); save.putInt("hechengTianxiaPositiveTicks", 1);
@@ -207,7 +211,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         state.clearAddiction(p); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void echoAftermathMatchesAppliedDurationEvenWithAddictionDisabled(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         var config = BetelNutConfig.get(); boolean enabled = config.enableAddictionSystem;
@@ -226,7 +230,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void legacySyntheticDefaultsUpgradeOnceAndPreserveCustomValues(GameTestHelper h) throws ReflectiveOperationException {
         int positive = BetelNutMidnightConfig.hechengTianxiaPositiveDurationSeconds;
         int coma = BetelNutMidnightConfig.hechengTianxiaComaDurationSeconds;
@@ -257,7 +261,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void failedOrDisabledEnderTeleportGrantsNoProtection(GameTestHelper h) {
         var p = player(h); var config = BetelNutConfig.get(); boolean enabled = config.enableEnderBetelTeleport;
         try {
@@ -270,7 +274,7 @@ public final class BetelEffectGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void successfulEnderTeleportUsesScaledFiveSecondProtection(GameTestHelper h) {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
         var config = BetelNutConfig.get(); boolean enabled = config.enableEnderBetelTeleport;

@@ -17,6 +17,6 @@ public final class BetelNutClusterItem extends BlockItem {
     }
 
     @Override public String getDescriptionId() {
-        return this.unripe ? "item.betel-nut-mod.unripe_betel_nut_cluster" : super.getDescriptionId();
+        return this.unripe ? "item.betel_nut_mod.unripe_betel_nut_cluster" : super.getDescriptionId();
     }
 }

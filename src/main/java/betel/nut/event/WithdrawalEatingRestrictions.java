@@ -1,5 +1,6 @@
 package betel.nut.event;
 
+import betel.nut.platform.BetelPlatform;
 import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.component.BetelNutAddictionComponent;
@@ -8,7 +9,6 @@ import betel.nut.item.ModItemTags;
 import betel.nut.item.RecoveryDrinkItem;
 import betel.nut.effect.ModEffects;
 import betel.nut.message.BetelMessages;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 public final class WithdrawalEatingRestrictions {
 	public enum RestrictionLevel {
 		NONE("none", ""),
-		MOUTH_LOCKED("mouth_locked", "message.betel-nut-mod.mouth_locked"),
+		MOUTH_LOCKED("mouth_locked", "message.betel_nut_mod.mouth_locked"),
 		SOFT_FOODS("soft_food_only", BetelMessages.EATING_RESTRICTION_STAGE2),
 		ENCHANTED_GOLDEN_APPLE_ONLY("enchanted_golden_apple_only",
 				BetelMessages.EATING_RESTRICTION_STAGE3),
@@ -61,7 +61,7 @@ public final class WithdrawalEatingRestrictions {
 			return;
 		}
 
-		UseItemCallback.EVENT.register(WithdrawalEatingRestrictions::onUseItem);
+		BetelPlatform.onUseItem(WithdrawalEatingRestrictions::onUseItem);
 		registered = true;
 		BetelNutMod.LOGGER.info("Withdrawal eating restriction handler registered.");
 	}

@@ -11,7 +11,7 @@ public final class ModConfiguredFeatures {
 			NoneFeatureConfiguration.CODEC);
 
 	public static void register() {
-		Registry.register(BuiltInRegistries.FEATURE, BetelNutMod.id("betel_palm_tree"), BETEL_PALM_TREE);
+		betel.nut.platform.BetelRegistries.add(BuiltInRegistries.FEATURE, BetelNutMod.id("betel_palm_tree"), BETEL_PALM_TREE);
 		BetelNutMod.LOGGER.info("Registered betel palm configured feature type");
 	}
 

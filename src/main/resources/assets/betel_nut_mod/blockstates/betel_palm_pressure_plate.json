@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "betel_nut_mod:block/betel_palm_pressure_plate_up"
+    },
+    "powered=true": {
+      "model": "betel_nut_mod:block/betel_palm_pressure_plate_down"
+    }
+  }
+}

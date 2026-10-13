@@ -1,0 +1,65 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:amethyst_betel_nut"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.processing.mineral_flavors.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.processing.mineral_flavors.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "quartz_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:quartz_betel_nut"
+          }
+        ]
+      }
+    },
+    "lapis_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:lapis_betel_nut"
+          }
+        ]
+      }
+    },
+    "amethyst_betel_nut": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "betel_nut_mod:amethyst_betel_nut"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "quartz_betel_nut"
+    ],
+    [
+      "lapis_betel_nut"
+    ],
+    [
+      "amethyst_betel_nut"
+    ]
+  ],
+  "parent": "betel_nut_mod:processing/basic_flavors",
+  "rewards": {
+    "experience": 20
+  }
+}

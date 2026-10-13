@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:betel_nut_residue_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "betel_nut_mod:betel_nut_residue"
+  }
+}

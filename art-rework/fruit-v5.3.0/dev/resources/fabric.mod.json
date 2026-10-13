@@ -1,6 +1,0 @@
-{
-  "schemaVersion":1,"id":"betel_fruit_preview","version":"1.0.0",
-  "name":"Whole Bunch Verification","environment":"client",
-  "entrypoints":{"client":["betel.nut.preview.FruitPreviewClient"]},
-  "depends":{"betel-nut-mod":"*"}
-}

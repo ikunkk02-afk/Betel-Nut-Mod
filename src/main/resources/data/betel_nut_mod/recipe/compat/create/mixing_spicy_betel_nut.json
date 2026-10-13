@@ -1,0 +1,38 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "minecraft:sweet_berries"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  ],
+  "results": [
+    {
+      "id": "betel_nut_mod:spicy_betel_nut",
+      "count": 2
+    }
+  ],
+  "heat_requirement": "heated",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "count": 1,
+      "id": "betel_nut_mod:betel_palm_sapling"
+    },
+    "title": {
+      "translate": "advancement.betel_nut_mod.cultivation.sapling.title"
+    },
+    "description": {
+      "translate": "advancement.betel_nut_mod.cultivation.sapling.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "betel_nut_mod:betel_palm_sapling"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ],
+  "parent": "betel_nut_mod:cultivation/ripe_harvest"
+}

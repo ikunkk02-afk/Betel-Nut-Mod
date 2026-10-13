@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:bamboo_jungle",
+    "minecraft:river",
+    "minecraft:beach",
+    "minecraft:mangrove_swamp"
+  ],
+  "features": "betel_nut_mod:betel_palm_tree",
+  "step": "vegetal_decoration"
+}

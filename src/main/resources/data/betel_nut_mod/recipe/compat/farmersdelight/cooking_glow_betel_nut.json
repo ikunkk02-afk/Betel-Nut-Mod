@@ -1,0 +1,33 @@
+{
+  "type": "farmersdelight:cooking",
+  "recipe_book_tab": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    },
+    {
+      "item": "minecraft:glow_berries"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:glow_betel_nut",
+    "count": 2
+  },
+  "cookingtime": 160,
+  "experience": 0.35,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ]
+}

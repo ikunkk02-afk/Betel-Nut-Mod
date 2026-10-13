@@ -1,154 +1,80 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
-	id 'maven-publish'
+ id 'java-library'
+ id 'maven-publish'
+ id 'net.neoforged.moddev' version '2.0.148'
 }
-
-apply from: "scripts/skyblock-persistence-check.gradle"
-
-version = project.mod_version
-group = project.maven_group
-
+version = mod_version
+group = mod_group_id
+base.archivesName = 'betel-nut-mod-neoforge'
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-	maven {
-		name = "Ladysnake Mods"
-		url = "https://maven.ladysnake.org/releases"
-	}
-	maven {
-		name = "Modrinth"
-		url = "https://api.modrinth.com/maven"
-	}
+ maven { url = 'https://api.modrinth.com/maven' }
+ maven { url = 'https://maven.createmod.net'; content { includeGroup 'net.createmod.ponder' } }
 }
-
-loom {
-	splitEnvironmentSourceSets()
-
-	mods {
-		"betel-nut-mod" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
-
+sourceSets { gametest { compileClasspath += main.output; runtimeClasspath += main.output } }
+configurations {
+ gametestImplementation.extendsFrom implementation
+ gametestRuntimeOnly.extendsFrom runtimeOnly
 }
-
-fabricApi {
-	configureDataGeneration {
-		client = true
-	}
-	configureTests {
-		createSourceSet = true
-		modId = "betel_art_tests"
-		enableGameTests = true
-		eula = true
-	}
-}
-
-if (project.hasProperty('artPreview')) {
-	apply from: "art-rework/preview-client.gradle"
-}
-if (project.hasProperty('worldgenProbe')) {
-	apply from: "art-rework/worldgen/probe.gradle"
-}
-if (project.hasProperty('featuresPreview')) {
-	apply from: "art-rework/features-v5/preview.gradle"
-}
-if (project.hasProperty('compactHudPreview')) {
-	apply from: "art-rework/compact-hud-v5.0.1/preview.gradle"
-}
-if (project.hasProperty('dailyPenaltiesPreview')) {
-	apply from: "art-rework/daily-penalties-v5.0.2/preview.gradle"
-}
-if (project.hasProperty('oralEffectsPreview')) {
-	apply from: "art-rework/oral-effects-v5.0.3/preview.gradle"
-}
-if (project.hasProperty('recipeCompatTests')) {
-	apply from: "art-rework/recipes-v5.1.0/compat-tests.gradle"
-	sourceSets.gametest.java.srcDir 'art-rework/fruit-v5.3.0/compat-test/java'
-}
-if (project.hasProperty('recoveryPreview')) {
-	apply from: "art-rework/recovery-v5.2.0/preview.gradle"
-}
-if (project.hasProperty('fruitPreview')) {
-	apply from: "art-rework/fruit-v5.3.0/preview.gradle"
-}
-if (project.hasProperty('tradesPreview')) {
-	apply from: "art-rework/trades-v5.4.0/preview.gradle"
-}
-if (project.hasProperty('effectsPreview')) {
-	apply from: "art-rework/effects-v5.5.0/preview.gradle"
-}
-if (project.hasProperty('skyblockPreview')) {
-	apply from: "art-rework/skyblock-v5.6.0/preview.gradle"
-}
-if (project.hasProperty('advancementsPreview')) {
-	apply from: "art-rework/advancements-v5.7.0/preview.gradle"
-}
-
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-	modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-base:${project.cca_version}"
-	modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-entity:${project.cca_version}"
-	modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-world:${project.cca_version}"
-	modImplementation include("maven.modrinth:midnightlib:${project.midnightlib_version}")
-	
+ gametestCompileOnly 'maven.modrinth:R2OftAxM:XTVZDOol'
+ gametestCompileOnly 'maven.modrinth:LNytGWDc:UjX6dr61'
+ gametestCompileOnly('net.createmod.ponder:ponder-neoforge:1.0.82+mc1.21.1') { transitive = false }
+ if (project.hasProperty('createOnly')) runtimeOnly 'maven.modrinth:LNytGWDc:UjX6dr61'
+ if (project.hasProperty('compatMods')) {
+  runtimeOnly 'maven.modrinth:LNytGWDc:UjX6dr61'
+  runtimeOnly 'maven.modrinth:R2OftAxM:XTVZDOol'
+ }
+ implementation 'maven.modrinth:midnightlib:1.9.2+1.21.1-neoforge'
+ jarJar('maven.modrinth:midnightlib:1.9.2+1.21.1-neoforge') {
+  version { strictly '[1.9.2+1.21.1-neoforge,1.10)'; prefer '1.9.2+1.21.1-neoforge' }
+ }
 }
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+neoForge {
+ version = project.neo_version
+ parchment { mappingsVersion = project.parchment_mappings_version; minecraftVersion = project.parchment_minecraft_version }
+ addModdingDependenciesTo(sourceSets.gametest)
+ mods {
+  create(project.mod_id) {
+   sourceSet sourceSets.main
+   if (project.hasProperty('portTests')) sourceSet sourceSets.gametest
+  }
+ }
+ runs {
+  client { client() }
+  portSmoke {
+   client()
+   sourceSet = sourceSets.gametest
+   gameDirectory = file(project.findProperty('portSmokeDir') ?: 'run-client-port')
+   systemProperty 'betel.portSmoke', 'true'
+   programArguments.addAll '--width', '1440', '--height', '900', '--username', 'PortSmoke'
+  }
+  server { server(); programArgument '--nogui' }
+  naturalProbe {
+   server()
+   sourceSet = sourceSets.gametest
+   gameDirectory = file('run-worldgen-port')
+   systemProperty 'betel.worldgenProbe', 'true'
+   jvmArgument '-Xmx3G'
+   programArgument '--nogui'
+  }
+  gameTestServer {
+   type = 'gameTestServer'
+   sourceSet = sourceSets.gametest
+   systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+  }
+  configureEach { logLevel = org.slf4j.event.Level.INFO }
+ }
 }
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+var metadata = tasks.register('generateModMetadata', ProcessResources) {
+ var props = [mod_id:mod_id, mod_version:mod_version, neo_version:neo_version]
+ inputs.properties props
+ expand props
+ from 'src/main/templates'
+ into 'build/generated/modMetadata'
 }
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
-}
-
-def licenseProjectName = project.name
-
-jar {
-	inputs.property "projectName", licenseProjectName
-
-	from("LICENSE") {
-		rename { "${it}_${licenseProjectName}" }
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
-}
+sourceSets.main.resources.srcDir metadata
+neoForge.ideSyncTask metadata
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 21 }
+jar { from('LICENSE') }
+publishing { publications { mavenJava(MavenPublication) { from components.java } } }

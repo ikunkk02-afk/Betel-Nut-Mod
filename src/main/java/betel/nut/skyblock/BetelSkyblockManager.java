@@ -1,5 +1,6 @@
 package betel.nut.skyblock;
 
+import betel.nut.platform.BetelPlatform;
 import java.util.List;
 import java.util.Set;
 
@@ -13,9 +14,6 @@ import betel.nut.component.BetelNutWorldComponents;
 import betel.nut.component.BetelSkyblockPlayerComponent;
 import betel.nut.component.BetelSkyblockWorldComponent;
 import betel.nut.item.ModItems;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -69,16 +67,16 @@ public final class BetelSkyblockManager {
 	public static void register() {
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel Skyblock event handlers registered");
 
-		ServerLifecycleEvents.SERVER_STARTED.register(server -> scheduleStartupCheck("server started"));
-		ServerWorldEvents.LOAD.register((server, level) -> {
+		BetelPlatform.onServerStarted(server -> scheduleStartupCheck("server started"));
+		BetelPlatform.onWorldLoad((server, level) -> {
 			if (level.dimension() == Level.OVERWORLD) {
 				BetelNutMod.LOGGER.info("[Betel Nut Mod] Betel Skyblock overworld load event received");
 				scheduleStartupCheck("overworld load");
 			}
 		});
-		ServerTickEvents.START_SERVER_TICK.register(BetelSkyblockManager::runScheduledStartupCheck);
-		ServerTickEvents.END_SERVER_TICK.register(BetelSkyblockManager::handleSkyblockPlayers);
-		ServerLifecycleEvents.SERVER_STOPPED.register(server -> resetStartupCheckState());
+		BetelPlatform.onServerTickStart(BetelSkyblockManager::runScheduledStartupCheck);
+		BetelPlatform.onServerTick(BetelSkyblockManager::handleSkyblockPlayers);
+		BetelPlatform.onServerStopped(server -> resetStartupCheckState());
 		EndFrameWaterRitualManager.register();
 		SkyblockComposting.register();
 	}
@@ -182,7 +180,7 @@ public final class BetelSkyblockManager {
 		BetelSkyblockPlayerComponent playerData = BetelNutEntityComponents.SKYBLOCK_PLAYER.get(player);
 		if (!playerData.hasEatenFirstBetelNutInSkyblock()) {
 			playerData.markEatenFirstBetelNutInSkyblock();
-			player.sendSystemMessage(Component.translatable("message.betel-nut-mod.skyblock_first_residue"));
+			player.sendSystemMessage(Component.translatable("message.betel_nut_mod.skyblock_first_residue"));
 			player.giveExperiencePoints(1);
 			player.playNotifySound(SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.8F, 1.0F);
 			BetelNutMod.LOGGER.info("Player {} ate their first betel nut in Betel Skyblock mode.",
@@ -465,7 +463,7 @@ public final class BetelSkyblockManager {
 					(float) config.betelSkyblockVoidProtectionDamageAmount);
 		}
 		applySpawnProtection(player);
-		player.sendSystemMessage(Component.translatable("message.betel-nut-mod.void_rescue.classic"));
+		player.sendSystemMessage(Component.translatable("message.betel_nut_mod.void_rescue.classic"));
 	}
 
 	private static void handleOneBlockVoidProtection(ServerPlayer player, ServerLevel overworld,
@@ -487,7 +485,7 @@ public final class BetelSkyblockManager {
 					(float) config.betelSkyblockVoidProtectionDamageAmount);
 		}
 		applySpawnProtection(player);
-		player.sendSystemMessage(Component.translatable("message.betel-nut-mod.void_rescue.one_block"));
+		player.sendSystemMessage(Component.translatable("message.betel_nut_mod.void_rescue.one_block"));
 	}
 
 	private static boolean teleportPlayerToSkyblockSpawn(ServerPlayer player, ServerLevel level, BlockPos spawnPos) {
@@ -539,7 +537,7 @@ public final class BetelSkyblockManager {
 					|| player.getY() < BetelNutConfig.get().betelSkyblockVoidProtectionMinY) continue;
 			giveSurvivalSupplies(player, oneBlock || BetelNutMidnightConfig.classicGiveGuideBook);
 			worldData.markSurvivalSuppliesProvided();
-			player.sendSystemMessage(Component.translatable("message.betel-nut-mod.skyblock_supplies_upgrade"));
+			player.sendSystemMessage(Component.translatable("message.betel_nut_mod.skyblock_supplies_upgrade"));
 			return;
 		}
 	}
@@ -554,7 +552,7 @@ public final class BetelSkyblockManager {
 	}
 
 	private static void sendOneBlockWelcomeMessage(ServerPlayer player) {
-		player.sendSystemMessage(Component.translatable("message.betel-nut-mod.one_block_welcome"));
+		player.sendSystemMessage(Component.translatable("message.betel_nut_mod.one_block_welcome"));
 	}
 
 	private static void generateInitialIslandIfNeeded(ServerLevel level) {
@@ -851,15 +849,15 @@ public final class BetelSkyblockManager {
 				"Betel Nut Mod",
 				0,
 				List.of(
-						guidePage("book.betel-nut-mod.skyblock_guide.page1"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page2"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page3"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page4"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page5"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page6"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page7"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page8"),
-						guidePage("book.betel-nut-mod.skyblock_guide.page9")),
+						guidePage("book.betel_nut_mod.skyblock_guide.page1"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page2"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page3"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page4"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page5"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page6"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page7"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page8"),
+						guidePage("book.betel_nut_mod.skyblock_guide.page9")),
 				true));
 		return book;
 	}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button_inventory",
+  "textures": {
+    "texture": "betel_nut_mod:block/betel_palm_planks"
+  }
+}

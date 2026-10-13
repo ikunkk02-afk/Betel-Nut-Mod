@@ -10,7 +10,8 @@ import betel.nut.villager.ModVillagerTrades;
 import com.mojang.authlib.GameProfile;
 import java.util.HashSet;
 import java.util.UUID;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -36,12 +37,15 @@ import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public final class BetelAdvancementGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelAdvancementGameTests {
     private static ServerPlayer player(GameTestHelper h) {
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "adv-test"), false);
         var p = new ServerPlayer(h.getLevel().getServer(), h.getLevel(), cookie.gameProfile(), cookie.clientInformation());
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new io.netty.channel.embedded.EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         h.getLevel().getServer().getPlayerList().placeNewPlayer(connection, p, cookie);
         p.setGameMode(GameType.SURVIVAL);
         return p;
@@ -64,7 +68,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         return new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false);
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void allVisibleNodesAndLegacyCriteriaLoad(GameTestHelper h) {
         var manager = h.getLevel().getServer().getAdvancements();
         int visible = 0, roots = 0;
@@ -90,7 +94,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void collectionAccumulatesWithoutEatingOrKeepingEveryItem(GameTestHelper h) {
         var p = player(h);
         try {
@@ -109,7 +113,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void obtainingASaplingDoesNotCountAsPlanting(GameTestHelper h) {
         var p = player(h); var pos = h.absolutePos(new BlockPos(2, 2, 2)); var level = h.getLevel();
         try {
@@ -124,7 +128,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void harvestRequiresShearsAndTracksRipeness(GameTestHelper h) {
         var p = player(h); var level = h.getLevel(); var pos = h.absolutePos(new BlockPos(2, 2, 2));
         try {
@@ -145,7 +149,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void boneMealOwnershipCannotCompleteComposting(GameTestHelper h) {
         var p = player(h); var level = h.getLevel(); var pos = h.absolutePos(new BlockPos(2, 2, 2));
         try {
@@ -162,7 +166,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void owningAPackDoesNotCountAsOpeningIt(GameTestHelper h) {
         var p = player(h);
         try {
@@ -174,7 +178,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void sealRequiresARealCompletedMerchantTransaction(GameTestHelper h) {
         var p = player(h);
         try {
@@ -194,7 +198,7 @@ public final class BetelAdvancementGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void recoveryRequiresAnActualImprovement(GameTestHelper h) {
         var p = player(h); var data = BetelNutEntityComponents.ADDICTION.get(p);
         try {

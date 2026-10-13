@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +28,9 @@ import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
-public final class BetelTradeGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public final class BetelTradeGameTests {
     private static ModVillagerTrades.Entry entry(String id) {
         return ModVillagerTrades.catalog().stream().filter(e -> e.id().equals(id)).findFirst().orElseThrow();
     }
@@ -57,7 +60,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         return count;
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void catalogRegistrationAndRestartsKeepVanillaEntries(GameTestHelper h) {
         Set<String> ids = new HashSet<>();
         var originals = originals(VillagerProfession.FARMER, 1);
@@ -68,7 +71,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         for (var e : ModVillagerTrades.catalog()) {
             h.assertTrue(ids.add(e.id()) && e.level() >= 1 && e.level() <= 5, "Unique IDs and valid career levels");
             for (var pools : List.of(VillagerTrades.TRADES, VillagerTrades.EXPERIMENTAL_TRADES)) {
-                long count = Arrays.stream(pools.get(e.profession()).get(e.level())).filter(candidate -> candidate == e).count();
+                long count = Arrays.stream(pools.getOrDefault(e.profession(), VillagerTrades.TRADES.get(e.profession())).get(e.level())).filter(candidate -> candidate == e).count();
                 h.assertTrue(count == 1, "Exactly one candidate in normal and experimental pools: " + e.id());
             }
             var a = e.createOffer(new BetelNutConfig());
@@ -81,7 +84,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void switchesRebuildPoolsWithoutEmptyVanillaSlots(GameTestHelper h) {
         var c = BetelNutConfig.get();
         boolean master = c.enableFarmerTrades, fish = c.enableFishermanTrades, cleric = c.enableClericTrades;
@@ -121,9 +124,9 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void allTradesExecuteThroughRealMerchantMenu(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
+        var player = PortTestPlayers.join(h);
         for (var e : ModVillagerTrades.catalog()) {
             player.getInventory().clearContent();
             var trade = e.createOffer(new BetelNutConfig());
@@ -147,7 +150,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void secondaryIngredientsAreMandatoryAndMaturityMatters(GameTestHelper h) {
         for (String id : List.of("relief", "golden_paste_service", "golden_paste", "enchanted_paste_service", "synthetic_world")) {
             var trade = offer(id);
@@ -164,7 +167,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void offerFactoriesReadNewPricesWithoutRewritingSavedOffers(GameTestHelper h) {
         var c = BetelNutConfig.get();
         int old = c.clericTradeReliefEmeraldCost;
@@ -178,9 +181,9 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void outOfStockRefusesFurtherTradesAndRestockRestoresThem(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
+        var player = PortTestPlayers.join(h);
         player.getInventory().clearContent();
         var v = villager(h, VillagerProfession.CLERIC, 1);
         var trade = offer("relief");
@@ -197,7 +200,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         menu.removed(player); h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void nativeVillagerSaveKeepsOffersStockAndComponents(GameTestHelper h) {
         var v = villager(h, VillagerProfession.CLERIC, 5);
         var offers = new MerchantOffers();
@@ -217,7 +220,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void oldOffersSurviveCatalogRefresh(GameTestHelper h) {
         var v = villager(h, VillagerProfession.FARMER, 3);
         var legacy = new MerchantOffer(new ItemCost(Items.EMERALD), new ItemStack(ModItems.RAW_BETEL_NUT, 4), 16, 2, 0.05F);
@@ -232,7 +235,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void defaultsAndOldConfigCustomPricesValidate(GameTestHelper h) throws Exception {
         var old = new Gson().fromJson("{\"configVersion\":14,\"enableFarmerTrades\":false,\"farmerTradeRawBetelSellCount\":23,\"farmerTradeFlavorEmeraldCost\":9}", BetelNutConfig.class);
         var validate = BetelNutConfig.class.getDeclaredMethod("validated"); validate.setAccessible(true); validate.invoke(old);
@@ -253,7 +256,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void realVillagersDrawNormalOffersFromProfessionPools(GameTestHelper h) {
         for (var profession : List.of(VillagerProfession.FARMER, VillagerProfession.FISHERMAN, VillagerProfession.CLERIC)) {
             boolean foundMod = false, foundVanilla = false;
@@ -272,7 +275,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void harvestCannotBeImmediatelyBoughtBackAtAnyDiscount(GameTestHelper h) {
         Set<Item> purchased = new HashSet<>(); Set<Item> sold = new HashSet<>();
         for (var e : ModVillagerTrades.catalog()) {
@@ -290,7 +293,7 @@ public final class BetelTradeGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void tradesCommandRunsFromServerAndUsesCurrentCatalog(GameTestHelper h) throws Exception {
         var server = h.getLevel().getServer();
         int result = server.getCommands().getDispatcher().execute("betel trades info", server.createCommandSourceStack().withSuppressedOutput());

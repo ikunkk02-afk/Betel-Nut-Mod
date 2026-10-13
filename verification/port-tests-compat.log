@@ -1,0 +1,462 @@
+Calculating task graph as no cached configuration is available for tasks: runGameTestServer build
+> Task :processTestResources NO-SOURCE
+> Task :processGametestResources UP-TO-DATE
+> Task :writeGameTestServerLegacyClasspath UP-TO-DATE
+> Task :generateModMetadata UP-TO-DATE
+> Task :jarJar UP-TO-DATE
+> Task :downloadAssets UP-TO-DATE
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :prepareGameTestServerRun UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :sourcesJar
+> Task :processResources
+> Task :classes
+> Task :compileTestJava NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :jar
+> Task :assemble
+> Task :build
+> Task :compileGametestJava
+> Task :gametestClasses
+
+> Task :runGameTestServer
+WARN StatusConsoleListener Advanced terminal features are not available in this environment
+[15:04:19] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserverdev, --gameDir, ., --fml.fmlVersion, 4.0.45, --fml.mcVersion, 1.21.1, --fml.neoForgeVersion, 21.1.259, --fml.neoFormVersion, 20240808.144430]
+[15:04:19] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.12.1+1-LTS
+[15:04:19] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 11.0.5+main.901c6ea8 starting: java version 21.0.12.1 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
+[15:04:19] [main/INFO] [ne.ne.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserverdev
+[15:04:19] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=union:/C:/Users/shouy/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.16.4+mixin.0.8.7/26d01f0567ab46e9ca0d2ed89d0ecc11aadbd433/sponge-mixin-0.16.4+mixin.0.8.7.jar%2394!/ Service=ModLauncher Env=SERVER
+[15:04:19] [main/INFO] [ne.ne.fm.lo.mo.lo.JarInJarDependencyLocator/]: Found 5 dependencies adding them to mods collection
+[15:04:19] [main/INFO] [ne.ne.fm.lo.mo.ModDiscoverer/]: 
+     Mod List:
+		Name Version (Mod Id)
+
+		Betel Nut Mod 5.7.0 (betel_nut_mod)
+		Create 6.0.10 (create)
+		Farmer's Delight 1.3.4 (farmersdelight)
+		Flywheel 1.0.6 (flywheel)
+		MidnightLib 1.9.2 (midnightlib)
+		Minecraft 1.21.1 (minecraft)
+		NeoForge 21.1.259 (neoforge)
+		Ponder 1.0.82+mc1.21.1 (ponder)
+[15:04:20] [main/INFO] [mixin/]: Compatibility level set to JAVA_21
+[15:04:20] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserverdev' with arguments [--gameDir, .]
+[15:04:20] [main/WARN] [mixin/]: Reference map 'ponder.refmap.json' for ponder-common.mixins.json could not be read. If this is a development environment you can ignore this message
+[15:04:21] [main/WARN] [mixin/]: Error loading class: org/jetbrains/annotations/ApiStatus$ScheduledForRemoval (java.lang.ClassNotFoundException: org.jetbrains.annotations.ApiStatus$ScheduledForRemoval)
+[15:04:21] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[15:04:27] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15:04:27] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, location] and [teleport, targets] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15:04:27] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, destination] and [teleport, targets] with inputs: [Player, 0123, @e, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15:04:27] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets] and [teleport, destination] with inputs: [Player, 0123, dd12be42-52a9-4a91-a8a1-11c01849e498]
+[15:04:27] [main/WARN] [minecraft/Commands]: Ambiguity between arguments [teleport, targets, location] and [teleport, targets, destination] with inputs: [0.1 -0.5 .9, 0 0 0]
+[15:04:27] [modloading-worker-0/INFO] [ne.ne.ne.co.NeoForgeMod/NEOFORGE-MOD]: NeoForge mod loading, version 21.1.259, for MC 1.21.1
+[15:04:27] [modloading-worker-0/INFO] [co.si.cr.Create/]: Create 6.0.10 initializing! Commit hash: ac0c444d9828da3453ae8cc65338e8de063286fb
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: Betel nut config loaded successfully: D:\Betel-Nut-Mod-main\betelnutmod-NeoForge-1.21.1\run\config\betel_nut.json
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] MidnightLib config loaded.
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] classicIslandY = 128
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] oneBlockY = 128
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] residueCompostChance = 0.3
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] residueBlockCompostChance = 1.0
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] enableEndFrameWaterRitual = true
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualEnderEyeCost = 16
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualHechengBetelCost = 12
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualFrameReward = 12
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] endFrameRitualCheckIntervalTicks = 20
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaPositiveDurationSeconds = 120
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaComaDurationSeconds = 5
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaNegativeDurationSeconds = 60
+[15:04:28] [modloading-worker-0/INFO] [betel_nut_mod/]: [Betel Nut Mod] hechengTianxiaAllowRepeatBeforeAftermath = false
+[15:04:28] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel palm blocks
+[15:04:28] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel nut items
+[15:04:28] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registering betel nut item group
+[15:04:28] [modloading-sync-worker/INFO] [betel_nut_mod/]: Registered betel palm configured feature type
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Withdrawal eating restriction handler registered.
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel nut addiction system initialized successfully
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock event handlers registered
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: [Betel Nut Mod] End frame water ritual handler registered.
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel nut debug commands registered successfully
+[15:04:29] [modloading-sync-worker/INFO] [betel_nut_mod/]: Betel Nut Mod 5.7.0 initialized for NeoForge
+[15:04:29] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[15:04:29] [NeoForge Version Check/INFO] [ne.ne.fm.VersionChecker/]: [create] Starting version check at https://api.modrinth.com/updates/create/forge_updates.json?neoforge=only
+[15:04:29] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/moddev/artifacts/neoforge-21.1.259.jar%23125!/assets/.mcassetsroot' uses unexpected schema
+[15:04:29] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/Betel-Nut-Mod-main/betelnutmod-NeoForge-1.21.1/build/moddev/artifacts/neoforge-21.1.259.jar%23125!/data/.mcassetsroot' uses unexpected schema
+[15:04:29] [main/INFO] [co.si.cr.Create/]: Created 166 recipes which will be injected into the game
+[15:04:29] [main/INFO] [co.si.cr.Create/]: Created 1 tags which will be injected into the game
+[15:04:29] [main/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: [betel_nut_mod]
+[15:04:30] [NeoForge Version Check/INFO] [ne.ne.fm.VersionChecker/]: [create] Found status: OUTDATED Current: 6.0.10 Target: 6.0.10+mc1.21.1
+[15:04:30] [main/INFO] [minecraft/RecipeManager]: Loaded 3215 recipes
+[15:04:31] [main/INFO] [minecraft/AdvancementTree]: Loaded 2799 advancements
+[15:04:31] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock overworld load event received
+[15:04:31] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock startup check scheduled: overworld load
+[15:04:32] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[15:04:32] [worldgen/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 2%
+[15:04:32] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 122 ms
+[15:04:32] [Server thread/INFO] [minecraft/GameTestServer]: Started game test server
+[15:04:32] [Server thread/INFO] [ne.ne.ne.se.pe.PermissionAPI/]: Successfully initialized permission handler neoforge:default_handler
+[15:04:32] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:32] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock startup check scheduled: server started
+[15:04:32] [Server thread/INFO] [minecraft/GameTestServer]: 121 tests are now running at position 2649851, -59, -10243859!
+[15:04:33] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'defaultBatch:0' (50 tests)...
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Checking Betel Skyblock world...
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Current dimension: overworld
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Is Betel Skyblock preset: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Is Betel One Block Skyblock preset: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Classic Betel Skyblock enabled: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel One Block Skyblock enabled: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Has generated island: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Island position: x=0, y=128, z=0
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Has generated one-block island: false
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] One-block island position: x=0, y=128, z=0
+[15:04:33] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Betel Skyblock disabled because current world is not a skyblock preset.
+[15:04:33] [Server thread/INFO] [minecraft/GameTestServer]: [                                                                                                                         ]
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 276 at (6.5, -60.0, 2.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 277 at (9.5, -60.0, 5.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 278 at (9.5, -60.0, 9.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 279 at (-1.5, -60.0, -0.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 282 at (4.5, -60.0, -2.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 283 at (7.5, -60.0, -6.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 284 at (7.5, -60.0, 4.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:33] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 285 at (1.5, -60.0, -3.5)
+[15:04:33] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock has made the advancement [What a Deal!]
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 334 at (-4.5, -60.0, 7.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 335 at (7.5, -60.0, 9.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = true
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = true
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 336 at (3.5, -60.0, -4.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = true
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = true
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 337 at (-9.5, -60.0, 2.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 338 at (5.5, -60.0, 4.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 348 at (3.5, -60.0, 1.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test has completed the challenge [Beyond the Void]
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test has completed the challenge [Beyond the Void]
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 349 at (-0.5, -60.0, 7.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 350 at (5.5, -60.0, 3.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 351 at (-7.5, -60.0, 1.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 355 at (-0.5, -60.0, -5.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: Synthetic world betel coma started for effect-test: comaTicks=100
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: Synthetic world betel aftermath started for effect-test: negativeTicks=1200
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 548 at (6.5, -60.0, -0.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 549 at (0.5, -60.0, 9.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock has made the advancement [What a Deal!]
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 555 at (-1.5, -60.0, 9.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] generating island at x=0, y=244, z=0
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Generating classic Betel Skyblock with residue block terrain.
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Placed one grass block at x=0, y=244, z=0
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Placed one dirt block at x=1, y=244, z=0
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] world spawn set to x=0, y=248, z=0
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] island generation finished; setBlockState calls = 1989
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:34] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 556 at (1.5, -60.0, -5.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 557 at (5.5, -60.0, 5.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:34] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 565 at (8.5, -60.0, 2.5)
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:34] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test has made the advancement [Stone Age]
+[15:04:35] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++                                                                         ]
+[15:04:35] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:35] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:35] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'defaultBatch:1' (50 tests)...
+[15:04:35] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++++                                                                       ]
+[15:04:35] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 569 at (-9.5, -60.0, -8.5)
+[15:04:35] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 573 at (-4.5, -60.0, -7.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: Started synthetic world betel aftereffect for effect-test: positiveTicks=600, comaTicks=100, negativeTicks=1200
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 574 at (2.5, 245.0, -2.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 575 at (10.5, -60.0, -7.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 576 at (9.5, -60.0, 2.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 577 at (0.5, -60.0, -8.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 578 at (7.5, -60.0, 0.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 579 at (-5.5, -60.0, -5.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 580 at (-1.5, 245.0, -2.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 581 at (4.5, -60.0, 1.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 582 at (3.5, -60.0, 6.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 583 at (-6.5, -60.0, -5.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test has made the advancement [What a Deal!]
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 586 at (7.5, -60.0, -5.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 591 at (3.5, -60.0, -7.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 595 at (-3.5, -60.0, 6.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 596 at (0.5, -60.0, -5.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 597 at (8.5, -60.0, 5.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 598 at (-8.5, -60.0, 9.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 599 at (-5.5, -60.0, -1.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: Started synthetic world betel aftereffect for effect-test: positiveTicks=2400, comaTicks=100, negativeTicks=1200
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] generating one-block island at x=0, y=244, z=0
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] one-block world spawn set to x=0, y=246, z=0
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] one-block island generation finished; setBlockState calls = 76
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 624 at (4.5, -60.0, 1.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: Player skyblock-test joined Betel One Block Skyblock for the first time and received starter items.
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:36] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 625 at (-1.5, -60.0, -6.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 628 at (-9.5, -60.0, 3.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 633 at (-0.5, -60.0, -4.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 635 at (-9.5, -60.0, 2.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 636 at (-1.5, -60.0, 4.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 637 at (-6.5, -60.0, -8.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 639 at (-7.5, -60.0, -1.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 647 at (-0.5, -60.0, 10.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 650 at (8.5, -60.0, -2.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test has completed the challenge [Betel Underground]
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test has completed the challenge [Dazzling World]
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test has completed the challenge [Craft the World]
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test has completed the challenge [Flavor Collector]
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test has completed the challenge [Craft the World]
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock has made the advancement [Hunt and Gather]
+[15:04:36] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++++++++_+++++++++++++++++++++++++++++++++++_+++++                         ]
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 652 at (6.5, -60.0, -4.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:36] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 653 at (-1.5, -60.0, -1.5)
+[15:04:36] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:37] [Server thread/INFO] [minecraft/GameTestRunner]: Running test batch 'defaultBatch:2' (21 tests)...
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                     ]
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                     ]
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 676 at (5.5, -60.0, -7.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: effect-test[embedded] logged in with entity id 678 at (5.5, -60.0, 2.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 679 at (-6.5, -60.0, 10.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 680 at (1.5, -60.0, -4.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 681 at (-8.5, -60.0, -6.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 682 at (4.5, -60.0, 8.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 683 at (3.5, -60.0, -2.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=false, fisherman=true, cleric=true
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=false, cleric=false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 708 at (-6.5, -60.0, 5.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++          ]
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 709 at (-0.5, -60.0, 9.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: adv-test[embedded] logged in with entity id 710 at (3.5, -60.0, 6.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: adv-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: gameplay-test[embedded] logged in with entity id 711 at (-0.5, -60.0, 6.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: port-mock[embedded] logged in with entity id 712 at (4.5, -60.0, 0.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock joined the game
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: skyblock-test[embedded] logged in with entity id 714 at (-7.5, -60.0, 10.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: skyblock-test joined the game
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Loading skyblock world component...
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelSkyIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] hasGeneratedBetelOneBlockIsland = false
+[15:04:37] [Server thread/INFO] [betel_nut_mod/]: Refreshed betel trade pools: master=true, fisherman=true, cleric=true
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: recovery-test[embedded] logged in with entity id 723 at (7.5, -60.0, 0.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test joined the game
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test has made the advancement [Bring Home the Beacon]
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock has made the advancement [Bring Home the Beacon]
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ]
+[15:04:37] [Server thread/INFO] [minecraft/PlayerList]: wood-test-player[embedded] logged in with entity id 724 at (-9.5, -60.0, 3.5)
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player joined the game
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++]
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: ========= 121 GAME TESTS COMPLETE IN 5.415 s ======================
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: All 121 required tests passed :)
+[15:04:37] [Server thread/INFO] [minecraft/GameTestServer]: ====================================================
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[15:04:37] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:37] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:37] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: port-mock lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: recovery-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: effect-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: port-mock lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: effect-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: recovery-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: effect-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: effect-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: port-mock lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: port-mock lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: recovery-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: recovery-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: gameplay-test lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: gameplay-test left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: port-mock lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: port-mock left the game
+[15:04:38] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: wood-test-player lost connection: Server closed
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: wood-test-player left the game
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:overworld
+[15:04:38] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saving skyblock world component...
+[15:04:38] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelSkyIsland = false
+[15:04:38] [Server thread/INFO] [betel_nut_mod/]: [Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = false
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_end
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[Test Level]'/minecraft:the_nether
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[15:04:38] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[15:04:38] [Server thread/INFO] [minecraft/GameTestServer]: Game test server shutting down
+
+BUILD SUCCESSFUL in 24s
+13 actionable tasks: 5 executed, 8 up-to-date
+Configuration cache entry stored.

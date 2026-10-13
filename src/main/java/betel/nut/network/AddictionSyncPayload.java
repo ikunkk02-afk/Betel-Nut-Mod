@@ -4,8 +4,6 @@ import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.component.BetelNutAddictionComponent;
 import betel.nut.component.BetelNutEntityComponents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -30,12 +28,13 @@ public record AddictionSyncPayload(
 			}, buf -> new AddictionSyncPayload(buf.readVarInt(), buf.readVarInt(), buf.readVarInt(),
 					buf.readVarInt(), buf.readVarInt(), buf.readVarInt(), buf.readBoolean(), buf.readVarInt(), buf.readVarInt()));
 
-	public static void register() {
-		PayloadTypeRegistry.playS2C().register(TYPE, CODEC);
-	}
+	public static java.util.function.Consumer<AddictionSyncPayload> clientReceiver = p -> {};
+ public static void register(net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent event) {
+  event.registrar("1").playToClient(TYPE, CODEC, (payload, context) -> clientReceiver.accept(payload));
+ }
 
 	public static void send(ServerPlayer player) {
-		if (player.connection == null || !ServerPlayNetworking.canSend(player, TYPE)) {
+		if (player.connection == null || !player.connection.hasChannel(TYPE)) {
 			return;
 		}
 
@@ -44,7 +43,7 @@ public record AddictionSyncPayload(
 				"[BetelNut Debug] Sync to client: addictionValue={}, stage={}, withdrawalSeverity={}, nextWithdrawalTicks={}",
 				payload.addictionValue(), payload.addictionStage(), payload.withdrawalSeverity(),
 				payload.nextWithdrawalTicks());
-		ServerPlayNetworking.send(player, payload);
+		net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload);
 	}
 
 	public static AddictionSyncPayload fromPlayer(ServerPlayer player) {

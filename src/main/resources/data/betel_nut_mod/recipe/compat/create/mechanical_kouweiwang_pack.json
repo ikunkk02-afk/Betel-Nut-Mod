@@ -1,0 +1,47 @@
+{
+  "type": "create:mechanical_crafting",
+  "category": "misc",
+  "accept_mirrored": false,
+  "pattern": [
+    "ABC",
+    "DEF",
+    " PS"
+  ],
+  "key": {
+    "A": {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    "B": {
+      "item": "betel_nut_mod:spicy_betel_nut"
+    },
+    "C": {
+      "item": "betel_nut_mod:sweet_betel_nut"
+    },
+    "D": {
+      "item": "betel_nut_mod:refreshing_betel_nut"
+    },
+    "E": {
+      "item": "betel_nut_mod:night_betel_nut"
+    },
+    "F": {
+      "item": "betel_nut_mod:energizing_betel_nut"
+    },
+    "P": {
+      "item": "betel_nut_mod:empty_pack"
+    },
+    "S": {
+      "item": "betel_nut_mod:brand_seal"
+    }
+  },
+  "result": {
+    "id": "betel_nut_mod:kouweiwang_pack",
+    "count": 1
+  },
+  "show_notification": false,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}

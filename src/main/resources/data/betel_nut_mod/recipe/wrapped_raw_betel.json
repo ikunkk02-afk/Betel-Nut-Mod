@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:raw_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:betel_leaf"
+    },
+    {
+      "item": "betel_nut_mod:shell_powder"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:wrapped_raw_betel",
+    "count": 1
+  }
+}

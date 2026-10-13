@@ -49,13 +49,13 @@ public final class LotteryTicketItem extends Item {
             stack.shrink(1);
             ItemStack reward = reward(prize);
             if (!reward.isEmpty()) BetelPackItem.give(serverPlayer, reward);
-            player.displayClientMessage(Component.translatable("message.betel-nut-mod.lottery." + prize), false);
+            player.displayClientMessage(Component.translatable("message.betel_nut_mod.lottery." + prize), false);
             player.getCooldowns().addCooldown(this, 10);
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
     @Override public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
-        lines.add(Component.translatable("tooltip.betel-nut-mod.ticket").withStyle(ChatFormatting.YELLOW));
-        lines.add(Component.translatable("tooltip.betel-nut-mod.ticket_odds").withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("tooltip.betel_nut_mod.ticket").withStyle(ChatFormatting.YELLOW));
+        lines.add(Component.translatable("tooltip.betel_nut_mod.ticket_odds").withStyle(ChatFormatting.GRAY));
     }
 }

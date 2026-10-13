@@ -7,9 +7,8 @@ import com.mojang.authlib.GameProfile;
 import io.netty.channel.embedded.EmbeddedChannel;
 import java.util.List;
 import java.util.UUID;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,7 +39,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class BetelWoodGameTests implements FabricGameTest {
+@GameTestHolder("betel_nut_mod")
+@PrefixGameTestTemplate(false)
+public class BetelWoodGameTests {
     private static BlockPos site(GameTestHelper h) {
         var base = h.absolutePos(new BlockPos(2, 2, 2));
         for (var pos : BlockPos.betweenClosed(base.offset(-1, 0, -1), base.offset(3, 4, 3)))
@@ -58,6 +59,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         var player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
+        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
         level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
         player.setGameMode(GameType.SURVIVAL);
         return player;
@@ -84,7 +86,7 @@ public class BetelWoodGameTests implements FabricGameTest {
                 .filter(e -> e.getItem().is(ModBlocks.BETEL_PALM_DOOR_ITEM)).mapToInt(e -> e.getItem().getCount()).sum();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void doorPlacesInFourDirectionsAndConsumesOneItem(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -100,7 +102,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void blockedDoorPlacementLeavesItemsAndWorldIntact(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -117,7 +119,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void adjacentDoorsUseOppositeHinges(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -130,7 +132,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void manualAndRedstoneControlSynchronizeBothHalves(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -150,7 +152,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void breakingEitherHalfDropsExactlyOneDoor(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -166,7 +168,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void removingSupportDropsOneDoor(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -178,7 +180,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE, timeoutTicks = 80)
+    @GameTest(template = "empty", timeoutTicks = 80)
     public void droppedItemOpensDoorAndPlateReleases(GameTestHelper h) {
         var pos = site(h);
         var plate = pos.south();
@@ -203,7 +205,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         });
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void playersAndMobsTriggerButSpectatorsDoNot(GameTestHelper h) {
         var pos = site(h);
         var player = player(h);
@@ -225,7 +227,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void woodRecipesAndAutomaticBookUnlocks(GameTestHelper h) {
         var level = h.getLevel();
         var manager = level.getRecipeManager();
@@ -248,7 +250,7 @@ public class BetelWoodGameTests implements FabricGameTest {
         h.succeed();
     }
 
-    @GameTest(template = EMPTY_STRUCTURE)
+    @GameTest(template = "empty")
     public void tagsFuelFireAndCreativeEntriesAreAvailable(GameTestHelper h) {
         h.assertTrue(ModBlocks.BETEL_PALM_DOOR.defaultBlockState().is(BlockTags.WOODEN_DOORS), "Door has wooden door block tag");
         h.assertTrue(new ItemStack(ModBlocks.BETEL_PALM_DOOR_ITEM).is(ItemTags.WOODEN_DOORS), "Door has wooden door item tag");
@@ -258,8 +260,8 @@ public class BetelWoodGameTests implements FabricGameTest {
                 && new ItemStack(ModBlocks.BETEL_PALM_PRESSURE_PLATE_ITEM).is(ItemTags.WOODEN_PRESSURE_PLATES), "Plate has wooden tags");
         for (var block : List.of(ModBlocks.BETEL_PALM_DOOR, ModBlocks.BETEL_PALM_TRAPDOOR, ModBlocks.BETEL_PALM_PRESSURE_PLATE)) {
             h.assertTrue(block.defaultBlockState().is(BlockTags.MINEABLE_WITH_AXE), "Wood is mined efficiently with an axe");
-            h.assertTrue(FlammableBlockRegistry.getDefaultInstance().get(block) != null, "Wood can burn");
-            h.assertTrue(FuelRegistry.INSTANCE.get(block.asItem()) > 0, "Wood can fuel a furnace");
+            h.assertTrue(block.defaultBlockState().isFlammable(h.getLevel(),BlockPos.ZERO,net.minecraft.core.Direction.UP), "Wood can burn");
+            h.assertTrue(new ItemStack(block.asItem()).getBurnTime(net.minecraft.world.item.crafting.RecipeType.SMELTING) > 0, "Wood can fuel a furnace");
         }
         CreativeModeTabs.tryRebuildTabContents(h.getLevel().enabledFeatures(), false, h.getLevel().registryAccess());
         for (var key : List.of(ModItemGroups.BETEL_NUT_GROUP_KEY, CreativeModeTabs.BUILDING_BLOCKS, CreativeModeTabs.REDSTONE_BLOCKS)) {

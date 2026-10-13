@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pressure_plate_down",
+  "textures": {
+    "texture": "betel_nut_mod:block/betel_palm_planks"
+  }
+}

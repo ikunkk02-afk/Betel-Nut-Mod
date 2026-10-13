@@ -1,5 +1,6 @@
 package betel.nut.villager;
 
+import betel.nut.platform.BetelPlatform;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -10,8 +11,6 @@ import betel.nut.BetelNutConfig;
 import betel.nut.BetelNutMod;
 import betel.nut.block.ModBlocks;
 import betel.nut.item.ModItems;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
@@ -99,7 +98,11 @@ public final class ModVillagerTrades {
     public static void register() {
         if (registered) return;
         registered = true;
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> refresh());
+        BetelPlatform.onServerStarting(server -> refresh());
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.village.VillagerTradesEvent event) -> {
+            for (Entry entry : CATALOG) if (entry.profession() == event.getType() && enabled(entry.profession(), BetelNutConfig.get()))
+                event.getTrades().get(entry.level()).add(entry);
+        });
     }
 
     /** Rebuild only our candidates; existing villagers' saved offers remain untouched. */
@@ -112,11 +115,10 @@ public final class ModVillagerTrades {
         }
         for (Entry entry : CATALOG) {
             if (!enabled(entry.profession(), BetelNutConfig.get())) continue;
-            TradeOfferHelper.registerVillagerOffers(entry.profession(), entry.level(), (factories, rebalanced) -> {
-                // Fabric can share a profession's level map between the normal and experimental pools.
-                if (!rebalanced || VillagerTrades.TRADES.get(entry.profession())
-                        != VillagerTrades.EXPERIMENTAL_TRADES.get(entry.profession())) factories.add(entry);
-            });
+            var normal = VillagerTrades.TRADES.get(entry.profession());
+            var experimental = VillagerTrades.EXPERIMENTAL_TRADES.get(entry.profession());
+            append(normal, entry);
+            if (experimental != normal) append(experimental, entry);
         }
         BetelNutMod.LOGGER.info("Refreshed betel trade pools: master={}, fisherman={}, cleric={}",
                 BetelNutConfig.get().enableFarmerTrades, BetelNutConfig.get().enableFishermanTrades,
@@ -124,12 +126,18 @@ public final class ModVillagerTrades {
     }
 
     /** The command and trade factories use the same catalog and current configuration. */
+    private static void append(it.unimi.dsi.fastutil.ints.Int2ObjectMap<VillagerTrades.ItemListing[]> levels, Entry entry) {
+        if (levels == null) return;
+        var old = levels.get(entry.level());
+        if (old == null) old = new VillagerTrades.ItemListing[0];
+        var next = Arrays.copyOf(old, old.length + 1); next[old.length] = entry; levels.put(entry.level(), next);
+    }
     public static Component describe(BetelNutConfig config) {
-        var text = Component.translatable("command.betel-nut-mod.trades.info", status(config.enableFarmerTrades));
+        var text = Component.translatable("command.betel_nut_mod.trades.info", status(config.enableFarmerTrades));
         for (var profession : List.of(VillagerProfession.FARMER, VillagerProfession.FISHERMAN, VillagerProfession.CLERIC)) {
             var name = Component.translatable("entity.minecraft.villager."
                     + BuiltInRegistries.VILLAGER_PROFESSION.getKey(profession).getPath());
-            text.append("\n").append(Component.translatable("command.betel-nut-mod.trades.profession",
+            text.append("\n").append(Component.translatable("command.betel_nut_mod.trades.profession",
                     name, status(enabled(profession, config))));
             for (Entry entry : CATALOG) {
                 if (entry.profession() != profession) continue;
@@ -139,17 +147,17 @@ public final class ModVillagerTrades {
                 var b = offer.getCostB();
                 var result = offer.getResult();
                 Component extra = b.isEmpty() ? Component.empty() : Component.translatable(
-                        "command.betel-nut-mod.trades.extra", b.getHoverName(), b.getCount());
-                text.append("\n").append(Component.translatable("command.betel-nut-mod.trades.entry",
+                        "command.betel_nut_mod.trades.extra", b.getHoverName(), b.getCount());
+                text.append("\n").append(Component.translatable("command.betel_nut_mod.trades.entry",
                         entry.level(), a.getHoverName(), a.getCount(), extra,
                         result.getHoverName(), result.getCount(), offer.getMaxUses()));
             }
         }
-        return text.append("\n").append(Component.translatable("command.betel-nut-mod.trades.saved_note"));
+        return text.append("\n").append(Component.translatable("command.betel_nut_mod.trades.saved_note"));
     }
 
     private static Component status(boolean enabled) {
-        return Component.translatable("command.betel-nut-mod.trades." + (enabled ? "enabled" : "disabled"));
+        return Component.translatable("command.betel_nut_mod.trades." + (enabled ? "enabled" : "disabled"));
     }
 
     private static Entry buy(String id, int level, ItemLike item, ToIntFunction<BetelNutConfig> count,

@@ -5,9 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import org.ladysnake.cca.api.v3.component.Component;
 
-public class BetelSkyblockWorldComponent implements Component {
+public class BetelSkyblockWorldComponent extends net.minecraft.world.level.saveddata.SavedData implements BetelPersistentData {
 	private static final String HAS_GENERATED_BETEL_SKY_ISLAND_KEY = "hasGeneratedBetelSkyIsland";
 	private static final String ISLAND_X_KEY = "islandX";
 	private static final String ISLAND_Y_KEY = "islandY";
@@ -36,7 +35,7 @@ public class BetelSkyblockWorldComponent implements Component {
 	private boolean survivalSuppliesProvided;
 
 	public boolean hasSurvivalSuppliesProvided() { return this.survivalSuppliesProvided; }
-	public void markSurvivalSuppliesProvided() { this.survivalSuppliesProvided = true; }
+	public void markSurvivalSuppliesProvided() { setDirty(); this.survivalSuppliesProvided = true; }
 
 	public BetelSkyblockWorldComponent(Level level) {
 	}
@@ -73,7 +72,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		return this.betelOneBlockIslandResetPending;
 	}
 
-	public void markGenerated(BlockPos islandCenter) {
+	public void markGenerated(BlockPos islandCenter) { setDirty();
 		this.hasGeneratedBetelSkyIsland = true;
 		this.islandX = islandCenter.getX();
 		this.islandY = islandCenter.getY();
@@ -82,11 +81,11 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.survivalSuppliesProvided = true;
 	}
 
-	public void markSkyblockSpawnSet() {
+	public void markSkyblockSpawnSet() { setDirty();
 		this.hasSetSkyblockSpawn = true;
 	}
 
-	public void markOneBlockGenerated(BlockPos oneBlockCenter) {
+	public void markOneBlockGenerated(BlockPos oneBlockCenter) { setDirty();
 		this.hasGeneratedBetelOneBlockIsland = true;
 		this.oneBlockX = oneBlockCenter.getX();
 		this.oneBlockY = oneBlockCenter.getY();
@@ -95,11 +94,11 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.survivalSuppliesProvided = true;
 	}
 
-	public void markBetelOneBlockSpawnSet() {
+	public void markBetelOneBlockSpawnSet() { setDirty();
 		this.hasSetBetelOneBlockSpawn = true;
 	}
 
-	public void resetBetelSkyIslandGeneration() {
+	public void resetBetelSkyIslandGeneration() { setDirty();
 		this.hasGeneratedBetelSkyIsland = false;
 		this.islandX = 0;
 		this.islandY = 128;
@@ -108,7 +107,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		this.betelSkyIslandResetPending = true;
 	}
 
-	public void resetBetelOneBlockIslandGeneration() {
+	public void resetBetelOneBlockIslandGeneration() { setDirty();
 		this.hasGeneratedBetelOneBlockIsland = false;
 		this.oneBlockX = 0;
 		this.oneBlockY = 128;
@@ -160,4 +159,7 @@ public class BetelSkyblockWorldComponent implements Component {
 		BetelNutMod.LOGGER.info("[Betel Nut Mod] Saved hasGeneratedBetelOneBlockIsland = {}",
 				this.hasGeneratedBetelOneBlockIsland);
 	}
+    @Override public CompoundTag save(CompoundTag tag, HolderLookup.Provider lookup) {
+        writeToNbt(tag, lookup); return tag;
+    }
 }

@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "betel_worldgen_probe",
-  "version": "1.0.0",
-  "name": "Development Natural World Generation Probe",
-  "environment": "server",
-  "entrypoints": {"main": ["betel.nut.probe.NaturalWorldgenProbe"]},
-  "depends": {"betel-nut-mod": "*"}
-}

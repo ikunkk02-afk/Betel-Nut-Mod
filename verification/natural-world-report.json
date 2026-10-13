@@ -1,0 +1,202 @@
+{
+  "seed": 20261011,
+  "spawnChance": 0.08,
+  "groveAttemptsPerChunk": 1,
+  "naturalTerrain": true,
+  "samples": [
+    {
+      "biome": "minecraft:sparse_jungle",
+      "center": [
+        -64,
+        64,
+        -448
+      ],
+      "chunksScanned": 169,
+      "featureInjected": true,
+      "trees": 6,
+      "actualRootBiomes": {
+        "minecraft:sparse_jungle": 6
+      },
+      "roots": [
+        [
+          -105,
+          77,
+          -534
+        ],
+        [
+          -99,
+          78,
+          -540
+        ],
+        [
+          -97,
+          75,
+          -530
+        ],
+        [
+          -103,
+          81,
+          -544
+        ],
+        [
+          -91,
+          71,
+          -538
+        ],
+        [
+          -90,
+          72,
+          -533
+        ]
+      ]
+    },
+    {
+      "biome": "minecraft:jungle",
+      "center": [
+        128,
+        64,
+        -416
+      ],
+      "chunksScanned": 169,
+      "featureInjected": true,
+      "trees": 7,
+      "actualRootBiomes": {
+        "minecraft:jungle": 7
+      },
+      "roots": [
+        [
+          124,
+          73,
+          -401
+        ],
+        [
+          141,
+          71,
+          -397
+        ],
+        [
+          222,
+          69,
+          -453
+        ],
+        [
+          227,
+          63,
+          -460
+        ],
+        [
+          231,
+          63,
+          -456
+        ],
+        [
+          232,
+          63,
+          -459
+        ],
+        [
+          229,
+          64,
+          -452
+        ]
+      ]
+    },
+    {
+      "biome": "minecraft:bamboo_jungle",
+      "center": [
+        -480,
+        64,
+        -1760
+      ],
+      "chunksScanned": 625,
+      "featureInjected": true,
+      "trees": 5,
+      "actualRootBiomes": {
+        "minecraft:bamboo_jungle": 5
+      },
+      "roots": [
+        [
+          -604,
+          64,
+          -1889
+        ],
+        [
+          -604,
+          64,
+          -1883
+        ],
+        [
+          -582,
+          65,
+          -1928
+        ],
+        [
+          -523,
+          67,
+          -1775
+        ],
+        [
+          -520,
+          67,
+          -1765
+        ]
+      ]
+    },
+    {
+      "biome": "minecraft:river",
+      "center": [
+        -48,
+        64,
+        -464
+      ],
+      "chunksScanned": 169,
+      "featureInjected": true,
+      "trees": 8,
+      "actualRootBiomes": {
+        "minecraft:sparse_jungle": 8
+      },
+      "roots": [
+        [
+          -104,
+          81,
+          -549
+        ],
+        [
+          -97,
+          80,
+          -547
+        ],
+        [
+          -105,
+          77,
+          -534
+        ],
+        [
+          -99,
+          78,
+          -540
+        ],
+        [
+          -97,
+          75,
+          -530
+        ],
+        [
+          -103,
+          81,
+          -544
+        ],
+        [
+          -91,
+          71,
+          -538
+        ],
+        [
+          -90,
+          72,
+          -533
+        ]
+      ]
+    }
+  ]
+}

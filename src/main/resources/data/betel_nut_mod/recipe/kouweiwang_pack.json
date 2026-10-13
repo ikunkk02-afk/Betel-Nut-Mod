@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "betel_nut_mod:roasted_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:spicy_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:sweet_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:refreshing_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:night_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:energizing_betel_nut"
+    },
+    {
+      "item": "betel_nut_mod:empty_pack"
+    },
+    {
+      "item": "betel_nut_mod:brand_seal"
+    }
+  ],
+  "result": {
+    "id": "betel_nut_mod:kouweiwang_pack",
+    "count": 1
+  }
+}

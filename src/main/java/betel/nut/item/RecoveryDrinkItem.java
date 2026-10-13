@@ -48,7 +48,7 @@ public final class RecoveryDrinkItem extends Item {
                 && !BetelNutEntityComponents.ADDICTION.get(serverPlayer).canTakeReliefPotion(serverPlayer)) {
             var state = BetelNutEntityComponents.ADDICTION.get(serverPlayer);
             BetelMessages.send(serverPlayer, state.hasTakenReliefToday(serverPlayer)
-                    ? "message.betel-nut-mod.relief_already_used" : "message.betel-nut-mod.relief_not_needed");
+                    ? "message.betel_nut_mod.relief_already_used" : "message.betel_nut_mod.relief_not_needed");
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
         return super.use(level, player, hand);
@@ -79,8 +79,8 @@ public final class RecoveryDrinkItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
         super.appendHoverText(stack, context, lines, flag);
-        lines.add(Component.translatable("tooltip.betel-nut-mod.recovery_drink").withStyle(ChatFormatting.AQUA));
-        lines.add(Component.translatable("tooltip.betel-nut-mod." + switch (kind) {
+        lines.add(Component.translatable("tooltip.betel_nut_mod.recovery_drink").withStyle(ChatFormatting.AQUA));
+        lines.add(Component.translatable("tooltip.betel_nut_mod." + switch (kind) {
             case GOLDEN_PASTE -> "golden_apple_paste";
             case ENCHANTED_PASTE -> "enchanted_golden_apple_paste";
             case RELIEF -> "relief_potion";

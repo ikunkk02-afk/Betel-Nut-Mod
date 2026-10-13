@@ -1,0 +1,34 @@
+{
+  "type": "create:mechanical_crafting",
+  "category": "misc",
+  "accept_mirrored": false,
+  "pattern": [
+    "ABC",
+    " D "
+  ],
+  "key": {
+    "A": {
+      "item": "betel_nut_mod:energizing_betel_nut"
+    },
+    "B": {
+      "item": "betel_nut_mod:quartz_betel_nut"
+    },
+    "C": {
+      "item": "betel_nut_mod:amethyst_betel_nut"
+    },
+    "D": {
+      "item": "minecraft:golden_apple"
+    }
+  },
+  "result": {
+    "id": "betel_nut_mod:synthetic_world_betel",
+    "count": 3
+  },
+  "show_notification": false,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ]
+}
