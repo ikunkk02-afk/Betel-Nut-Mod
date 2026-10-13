@@ -86,7 +86,7 @@
 ## 从第一串果实开始
 
 ```mermaid
-flowchart LR
+flowchart TB
     A["种植槟榔树"] --> B["剪刀采收果串"]
     B --> C["拆分生果"]
     C --> D["营火烤制"]
