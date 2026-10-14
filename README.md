@@ -10,7 +10,7 @@
 <p>
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-62a043?style=flat-square" alt="Minecraft 1.21.1">
   <img src="https://img.shields.io/badge/Loader-Fabric-c9b89d?style=flat-square" alt="Fabric">
-  <img src="https://img.shields.io/badge/Version-5.7.0-2f6f4e?style=flat-square" alt="源码版本 5.7.0">
+  <img src="https://img.shields.io/badge/Version-5.8.0-2f6f4e?style=flat-square" alt="源码版本 5.8.0">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82b6?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain"><img src="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml/badge.svg?branch=main" alt="Fabric 分支构建状态"></a>
 </p>
@@ -32,6 +32,10 @@
 </div>
 
 ---
+
+当前源码 **5.8.0** 已加入概率贝壳掉落、砍树回收和骨粉催果。5.8.0 可从 [分支构建产物](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain) 获取或自行构建；下方发布页链接对应已发布的 5.7.0。
+
+更新规则见 [原料与骨粉催果 5.8.0](docs/production-5.8.0.md)。
 
 ## 玩法一览
 
@@ -88,21 +92,39 @@
 
 ```mermaid
 flowchart TB
-    A["种植槟榔树"] --> B["剪刀采收果串"]
-    B --> C["拆分生果"]
-    C --> D["营火烤制"]
+    A["完整槟榔树"] -->|"自然生长或骨粉催果"| B["青果串 / 黄果串"]
+    B -->|"剪刀采收后拆分"| C["3 / 5 个生槟榔"]
+    C -->|"营火烤制"| D["烤槟榔"]
     D --> E["分级口味加工"]
-    C --> F["贝壳粉与叶子包裹"]
+    M["挖掘泥土 / 沙砾"] -->|"10% 额外掉落"| S["贝壳"]
+    S -->|"1 个制成 4 份"| P["贝壳粉"]
+    L["树叶破坏 / 自然凋落"] -->|"50% 掉落"| F["槟榔叶"]
+    C --> W["生果 + 贝壳粉 + 槟榔叶"]
+    P --> W
+    F --> W
+    W --> R["裹叶生槟榔"]
     E --> G["交易与混合装"]
     E --> H["食用后的槟榔渣"]
-    F --> H
+    R --> H
     H --> I["堆肥与空岛扩建"]
 ```
 
 - **寻找树群**：疏林丛林中较常见，普通丛林、竹林与邻近丛林的河岸高地也有机会出现。自然生成调整只影响新生成的区块。
-- **剪刀采收**：手持剪刀右键果串，青果串可拆出 **3 个生果**，成熟黄果串可拆出 **5 个生果**。黄果串搭配槟榔叶还能制作树苗。
-- **持续生产**：保留完整根部、树干和树冠，在光照与区块加载条件满足时等待重新结果。普通破坏树叶获得叶子；剪刀可收集完整树叶。
+- **采果与育苗**：手持剪刀右键果串，青果串拆出 **3 个生果**，成熟黄果串拆出 **5 个生果**。砍掉挂果的支撑树干也会掉落对应完整果串；每块绿色冠轴原木额外掉落 **1 棵树苗**，黄果串 + 槟榔叶也可合成树苗。
+- **骨粉催果**：保留根部土壤、连续树干、绿色冠轴和树冠，对任意一段竖直树干使用 **1 个骨粉**，立即催熟现有青果串并补齐最多 **3 串黄果串**。也可直接对青果串用骨粉一次催熟，支持发射器。新果串及其下方要留空；满成熟果、断干或空间堵塞时不消耗骨粉。自然结果仍需光照与区块加载。
+- **收集叶子**：普通破坏或自然凋落的树叶有 **50%** 概率掉落 **1 片槟榔叶**，不掉生槟榔或果串；剪刀、精准采集可收集完整树叶。
+- **获取贝壳**：挖掘泥土或沙砾有 **10%** 概率额外掉落 **1 个普通贝壳**，原有材料掉落保留；渔夫交易与钓鱼路线继续可用。**远古贝壳仍从古城宝箱获取**。
 - **查看目标**：默认按 **L** 打开进度界面。收藏节点记录曾获得的物品，采收、种植、交易、拆包等节点要求实际完成动作。
+
+| 制作步骤 | 投入 | 产出 |
+| --- | --- | --- |
+| 拆分青果串 / 黄果串 | 1 串完整果串 | 3 / 5 个生槟榔 |
+| 贝壳制粉 | 1 个贝壳 | 4 份贝壳粉 |
+| 包叶生食 | 1 个生槟榔 + 1 份贝壳粉 + 1 片槟榔叶 | 1 个裹叶生槟榔 |
+| 营火烤制 | 1 个生槟榔 | 1 个烤槟榔，30 秒 |
+| 育苗 | 1 串成熟黄果串 + 1 片槟榔叶 | 1 棵槟榔树苗 |
+
+从烤槟榔继续制作甜味、火辣、清凉等基础口味，再加工进阶与综合口味；具体原料见下方口味配方文档。
 
 ### 农夫乐事厨具联动
 
@@ -110,7 +132,7 @@ flowchart TB
 
 锅内同类槟榔需要分开放入原料槽。普通槟榔成品无需纸或碗，恢复饮品需要玻璃瓶。完整配方见 [口味加工表](docs/variant-processing-5.1.0.md) 与 [恢复用品说明](docs/recovery-and-food-5.2.0.md)。
 
-机械动力的 33 条自动化生产配方位于 [NeoForge 分支](https://github.com/ikunkk02-afk/Betel-Nut-Mod/tree/codex/neoforge-1.21.1)。
+机械动力的 **35 条兼容配方**位于 [NeoForge 分支](https://github.com/ikunkk02-afk/Betel-Nut-Mod/tree/codex/neoforge-1.21.1)，包含泥土／沙砾水洗分离贝壳路线。该路线见 [NeoForge 5.8.0 原料与催果说明](https://github.com/ikunkk02-afk/Betel-Nut-Mod/blob/codex/neoforge-1.21.1/docs/production-5.8.0.md)。
 
 ## 身体状态与恢复
 
@@ -159,6 +181,7 @@ flowchart TB
 
 | 想了解什么 | 阅读 |
 | --- | --- |
+| 贝壳来源、砍树掉落与骨粉催果 | [5.8.0 原料生产](docs/production-5.8.0.md) |
 | 完整果串、再生与树苗来源 | [果串采收](docs/whole-bunch-harvest-5.3.0.md) |
 | 原料、产量与农夫乐事锅内加工 | [口味配方](docs/variant-processing-5.1.0.md) |
 | 各种槟榔的增益与后效 | [食用效果](docs/betel-effects-5.5.0.md) |

@@ -26,7 +26,8 @@ def generate():
     leaf=read(DATA/'loot_table/blocks/betel_palm_leaves.json')
     # Keep vanilla shears/Silk Touch whole-leaf collection for building.
     leaf['pools']=leaf['pools'][:1]+[{
-        'rolls':1,'conditions':[deepcopy(leaf['pools'][1]['conditions'][0]),{'condition':'minecraft:survives_explosion'}],
+        'rolls':1,'conditions':[deepcopy(leaf['pools'][1]['conditions'][0]),{'condition':'minecraft:survives_explosion'},
+                              {'condition':'minecraft:random_chance','chance':0.5}],
         'entries':[{'type':'minecraft:item','name':MOD+'betel_leaf'}]}]
     save(DATA/'loot_table/blocks/betel_palm_leaves.json',leaf)
     save(DATA/'loot_table/blocks/betel_nut_cluster.json',{'type':'minecraft:block','pools':[
@@ -74,10 +75,10 @@ def generate():
         'block.betel-nut-mod.betel_nut_cluster':('成熟槟榔果串','Ripe Betel Nut Bunch'),
         'item.betel-nut-mod.unripe_betel_nut_cluster':('未成熟槟榔果串','Unripe Betel Nut Bunch'),
         'tooltip.betel-nut-mod.cluster.harvest':('持剪刀右键采收完整青果串或黄果串，采后不留果梗。','Right-click with shears to harvest a whole green or yellow bunch; no stalk remains.'),
-        'tooltip.betel-nut-mod.cluster.regrow':('完整槟榔树会重新长出青果串，光照充足时逐渐成熟。','Intact palms regrow green bunches, which ripen in sufficient light.'),
+        'tooltip.betel-nut-mod.cluster.regrow':('完整树干使用骨粉可补齐最多3串黄果；青果串用骨粉立即成熟。','Bone meal on an intact trunk fills up to 3 ripe bunches; it also ripens green bunches instantly.'),
         'tooltip.betel-nut-mod.cluster.ripe':('黄色：拆成 5 个生槟榔，或配槟榔叶制作 1 棵树苗。','Yellow: unpack into 5 raw betel nuts, or combine with a betel leaf for 1 sapling.'),
         'tooltip.betel-nut-mod.cluster.unripe':('绿色：拆成 3 个生槟榔，用于普通槟榔加工。','Green: unpack into 3 raw betel nuts for normal processing.'),
-        'tooltip.betel-nut-mod.sapling.seed':('成熟黄果串 + 槟榔叶可制作树苗。','Craft a sapling from a ripe yellow bunch and a betel leaf.'),
+        'tooltip.betel-nut-mod.sapling.seed':('砍伐绿色冠轴可获得树苗；黄果串 + 槟榔叶也可育苗。','Felling green crownshaft logs yields saplings; a ripe bunch plus a betel leaf also makes one.'),
     }
     for locale,index in [('zh_cn',0),('en_us',1)]:
         path=ASSETS/f'lang/{locale}.json';values=read(path)

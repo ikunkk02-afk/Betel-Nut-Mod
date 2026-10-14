@@ -6,6 +6,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BonemealableBlock;
 import betel.nut.worldgen.BetelPalmTreeGenerator;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -17,7 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** The same harvestable log, with the slim stem and crownshaft of a real areca palm. */
-public class BetelPalmLogBlock extends RotatedPillarBlock {
+public class BetelPalmLogBlock extends RotatedPillarBlock implements BonemealableBlock {
 	public static final BooleanProperty CROWNSHAFT = BooleanProperty.create("crownshaft");
 	private static final VoxelShape Y_SHAPE = Block.box(5, 0, 5, 11, 16, 11);
 	private static final VoxelShape X_SHAPE = Block.box(0, 5, 5, 16, 11, 11);
@@ -83,6 +85,77 @@ public class BetelPalmLogBlock extends RotatedPillarBlock {
 				level.setBlock(fruitPos, ModBlocks.BETEL_NUT_CLUSTER.defaultBlockState()
 						.setValue(BetelNutClusterBlock.FACING, direction).setValue(BetelNutClusterBlock.AGE, 1), Block.UPDATE_ALL);
 				return;
+			}
+		}
+	}
+
+	/** Allow cultivation from any upright part of the intact trunk. */
+	private static BlockPos findFruitingNode(LevelReader level, BlockPos pos) {
+		BlockState clicked = level.getBlockState(pos);
+		if (!clicked.is(ModBlocks.BETEL_PALM_LOG) || clicked.getValue(AXIS) != Direction.Axis.Y) return null;
+		for (int offset = -2; offset <= 32; offset++) {
+			BlockPos candidate = pos.above(offset);
+			if (!level.hasChunkAt(candidate)) continue;
+			if (offset > 0 && !level.getBlockState(candidate).is(ModBlocks.BETEL_PALM_LOG)) break;
+			if (isFruitingNode(level, candidate)) return candidate;
+		}
+		return null;
+	}
+
+	private static boolean isAttachedFruit(BlockState state, Direction direction) {
+		return state.is(ModBlocks.BETEL_NUT_CLUSTER)
+				&& state.getValue(BetelNutClusterBlock.FACING) == direction;
+	}
+
+	private static boolean hasFruitSpace(LevelReader level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		return (state.isAir() || state.is(ModBlocks.BETEL_NUT_CLUSTER)
+				&& state.getValue(BetelNutClusterBlock.AGE) == 0)
+				&& level.getBlockState(pos.below()).isAir();
+	}
+
+	@Override
+	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+		BlockPos anchor = findFruitingNode(level, pos);
+		if (anchor == null) return false;
+		int count = 0;
+		boolean space = false;
+		for (Direction direction : Direction.Plane.HORIZONTAL) {
+			BlockPos fruitPos = anchor.relative(direction);
+			BlockState fruit = level.getBlockState(fruitPos);
+			if (isAttachedFruit(fruit, direction) && fruit.getValue(BetelNutClusterBlock.AGE) > 0) {
+				if (fruit.getValue(BetelNutClusterBlock.AGE) < 2) return true;
+				count++;
+			} else if (hasFruitSpace(level, fruitPos)) space = true;
+		}
+		return count < 3 && space;
+	}
+
+	@Override
+	public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+		return true;
+	}
+
+	@Override
+	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+		BlockPos anchor = findFruitingNode(level, pos);
+		if (anchor == null) return;
+		int count = 0;
+		for (Direction direction : Direction.Plane.HORIZONTAL) {
+			BlockPos fruitPos = anchor.relative(direction);
+			BlockState fruit = level.getBlockState(fruitPos);
+			if (isAttachedFruit(fruit, direction) && fruit.getValue(BetelNutClusterBlock.AGE) > 0) {
+				count++;
+				level.setBlock(fruitPos, fruit.setValue(BetelNutClusterBlock.AGE, 2), Block.UPDATE_ALL);
+			}
+		}
+		Direction direction = Direction.from2DDataValue(random.nextInt(4));
+		for (int attempt = 0; attempt < 4 && count < 3; attempt++, direction = direction.getClockWise()) {
+			BlockPos fruitPos = anchor.relative(direction);
+			if (hasFruitSpace(level, fruitPos)) {
+				level.setBlock(fruitPos, ModBlocks.BETEL_NUT_CLUSTER.defaultBlockState()
+						.setValue(BetelNutClusterBlock.FACING, direction).setValue(BetelNutClusterBlock.AGE, 2), Block.UPDATE_ALL);
+				count++;
 			}
 		}
 	}

@@ -56,8 +56,8 @@ write("cultivation/harvest", "root", "unripe_betel_nut_cluster", ("整串采收"
       ("A Whole Bunch", "Right-click a green or ripe bunch with shears to harvest it."), event())
 write("cultivation/ripe_harvest", "cultivation/harvest", "betel_nut_cluster", ("等到金黄", "用剪刀采下一串成熟黄果；每串可拆为五颗生槟榔。"),
       ("Worth the Wait", "Shear a ripe yellow bunch; it yields five raw nuts when processed."), event(), frame="goal", xp=10)
-write("cultivation/sapling", "cultivation/ripe_harvest", "betel_palm_sapling", ("留作种子", "获得一棵槟榔树苗：黄果串与槟榔叶可用于育苗。"),
-      ("Save Some for Planting", "Obtain a palm sapling: combine a ripe bunch with a betel leaf."), inventory("betel_palm_sapling"))
+write("cultivation/sapling", "cultivation/ripe_harvest", "betel_palm_sapling", ("留作种子", "获得槟榔树苗：砍伐绿色冠轴，或用黄果串与槟榔叶育苗。"),
+      ("Save Some for Planting", "Obtain a palm sapling by felling a green crownshaft or combining a ripe bunch with a betel leaf."), inventory("betel_palm_sapling"))
 write("cultivation/plant", "cultivation/sapling", "betel_palm_sapling", ("种下新一轮", "亲手将槟榔树苗种在泥土上，开始下一轮收成。"),
       ("The Next Harvest", "Plant a betel palm sapling on soil to begin another harvest cycle."),
       {"planted": {"trigger": "minecraft:placed_block", "conditions": {"location": [
@@ -88,8 +88,8 @@ for name in ("synthetic_world", "rich_world_betel", "underground_betel"):
     data["parent"] = MOD + "processing/mineral_flavors"
     data["display"]["hidden"] = False
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-write("collection/shell", "processing/wrap", "shell", ("河岸来客", "获得普通贝壳，可向渔夫购买或从钓鱼杂物中获得。"),
-      ("From the Water", "Obtain a shell from a fisherman or fishing junk loot."), inventory("shell"))
+write("collection/shell", "processing/wrap", "shell", ("河岸来客", "挖掘泥土或沙砾有10%概率获得贝壳，也可向渔夫购买或钓鱼获得。"),
+      ("From the Water", "Dirt and gravel drop shells at 10%; fishermen and fishing are also sources."), inventory("shell"))
 write("collection/ancient_shell", "collection/shell", "ancient_shell", ("古城遗物", "获得远古贝壳；探索尚未开启的古城宝箱。"),
       ("An Ancient Relic", "Obtain an ancient shell; search unopened ancient city chests."), inventory("ancient_shell"), frame="goal", xp=25)
 write("collection/echo", "collection/ancient_shell", "echo_betel", ("回声留存", "获得回响槟榔；以远古贝壳、回响碎片与裹叶生槟榔加工。"),

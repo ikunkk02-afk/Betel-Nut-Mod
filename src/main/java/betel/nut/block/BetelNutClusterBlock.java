@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -36,7 +37,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /** A renewable fruit bunch attached to a palm stem, below the green crownshaft. */
-public class BetelNutClusterBlock extends Block {
+public class BetelNutClusterBlock extends Block implements BonemealableBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
 	// The bunch hugs the supporting trunk and extends below its anchor block.
@@ -121,6 +122,24 @@ public class BetelNutClusterBlock extends Block {
 	public static ItemStack harvestedBunch(BlockState state) {
 		return new ItemStack(state.getValue(AGE) == 2
 				? ModBlocks.BETEL_NUT_CLUSTER_ITEM : ModBlocks.UNRIPE_BETEL_NUT_CLUSTER_ITEM);
+	}
+
+	@Override
+	public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+		return state.getValue(AGE) == 1 && state.canSurvive(level, pos);
+	}
+
+	@Override
+	public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+		return true;
+	}
+
+	@Override
+	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+		BlockState current = level.getBlockState(pos);
+		if (current.is(this) && isValidBonemealTarget(level, pos, current)) {
+			level.setBlock(pos, current.setValue(AGE, 2), Block.UPDATE_ALL);
+		}
 	}
 
 	@Override

@@ -15,6 +15,27 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "betel-nut-mod:betel_palm_log",
+          "properties": {
+            "crownshaft": "true"
+          }
+        },
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "betel-nut-mod:betel_palm_sapling"
+        }
+      ]
     }
   ],
   "random_sequence": "betel-nut-mod:blocks/betel_palm_log"
