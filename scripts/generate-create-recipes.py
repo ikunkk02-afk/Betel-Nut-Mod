@@ -105,7 +105,15 @@ for name, materials in [
 ]:
     process('mixing_' + name, 'mixing', [*[item(m) for m in materials], item('minecraft:glass_bottle'), fluid('honey', 250)], name, heat='heated')
 
-assert len(generated) == 33
+add('washing_dirt', {'type': 'create:splashing', 'ingredients': [item('minecraft:dirt')],
+    'results': [{'id': MOD + 'shell', 'count': 1, 'chance': 0.25}]})
+gravel = {'type': 'create:splashing', 'ingredients': [item('minecraft:gravel')],
+    'results': [{'id': 'minecraft:flint', 'chance': 0.25}, {'id': 'minecraft:iron_nugget', 'chance': 0.125},
+                {'id': MOD + 'shell', 'count': 1, 'chance': 0.25}], 'neoforge:conditions': CONDITIONS}
+gravel_path = ROOT / 'src/main/resources/data/create/recipe/splashing/gravel.json'
+gravel_path.parent.mkdir(parents=True, exist_ok=True)
+gravel_path.write_text(json.dumps(gravel, indent=2) + '\n', encoding='utf-8')
+assert len(generated) == 34
 OUTPUT.mkdir(parents=True, exist_ok=True)
 for name, data in sorted(generated.items()):
     (OUTPUT / (name + '.json')).write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')

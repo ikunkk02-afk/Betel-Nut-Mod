@@ -43,18 +43,48 @@ public final class CreateRecipeChecks {
     public static void validateAll(GameTestHelper h) {
         var recipes = h.getLevel().getRecipeManager().getRecipes().stream().filter(r ->
                 r.id().getNamespace().equals(BetelNutMod.MOD_ID) && r.id().getPath().startsWith("compat/create/")).toList();
-        h.assertTrue(recipes.size() == 33, "All 33 dedicated production routes decode");
+        h.assertTrue(recipes.size() == 34, "All 34 dedicated production routes decode");
         for (var holder : recipes) {
             var r = holder.value();
             h.assertTrue(!r.getResultItem(h.getLevel().registryAccess()).isEmpty(), "Every route has a real result: " + holder.id());
             if (r instanceof ProcessingRecipe<?, ?> processing) {
                 h.assertTrue(processing.validate().isEmpty(), "Create validates " + holder.id() + processing.validate());
                 var results = processing.rollResults(h.getLevel().random);
-                h.assertTrue(results.size() == 1 && !results.getFirst().isEmpty(), "Guaranteed output without random junk");
+                if (!holder.id().getPath().endsWith("washing_dirt"))
+                    h.assertTrue(results.size() == 1 && !results.getFirst().isEmpty(), "Guaranteed output without random junk");
             } else {
                 h.assertTrue(r instanceof MechanicalCraftingRecipe || r instanceof SequencedAssemblyRecipe
                         || r.getType() == RecipeType.SMOKING, "Only supported native recipe types");
             }
+        }
+    }
+
+    public static void washing(GameTestHelper h) {
+        var level = h.getLevel();
+        var washing = com.simibubi.create.content.kinetics.fan.processing.AllFanProcessingTypes.SPLASHING;
+        for (var input : new Item[]{Items.DIRT, Items.GRAVEL}) {
+            var id = input == Items.DIRT ? BetelNutMod.id("compat/create/washing_dirt")
+                    : ResourceLocation.parse("create:splashing/gravel");
+            var loaded = (ProcessingRecipe<?, ?>) level.getRecipeManager().byKey(id).orElseThrow().value();
+            h.assertTrue(loaded.validate().isEmpty(), "Water washing recipe validates");
+            h.assertTrue(washing.canProcess(new ItemStack(input), level), "Real water fan recognizes dirt/gravel");
+            int shells = 0, flint = 0, iron = 0;
+            for (int i = 0; i < 256; i++) {
+                // Use the fan's real stack-processing path, including recipe lookup and chance rolls.
+                var output = washing.process(new ItemStack(input, 64), level);
+                h.assertTrue(output != null, "Real fan finds the washing recipe");
+                for (var stack : output) {
+                    if (stack.is(ModItems.SHELL)) shells += stack.getCount();
+                    else if (stack.is(Items.FLINT)) flint += stack.getCount();
+                    else if (stack.is(Items.IRON_NUGGET)) iron += stack.getCount();
+                    else h.assertTrue(false, "Washing never produces ancient shells or unapproved items");
+                    h.assertTrue(!stack.is(input), "The input is consumed, rather than returned for free repeat washing");
+                }
+            }
+            h.assertTrue(shells > 3500 && shells < 4700, "Batch washing yields shells near 25 percent");
+            if (input == Items.GRAVEL)
+                h.assertTrue(flint > 3500 && flint < 4700 && iron > 1500 && iron < 2600, "Vanilla Create flint and iron chances remain");
+            else h.assertTrue(flint == 0 && iron == 0, "Dirt washing only yields ordinary shells");
         }
     }
 

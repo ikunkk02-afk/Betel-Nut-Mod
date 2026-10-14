@@ -117,11 +117,14 @@ public class BetelFruitGameTests {
 	@GameTest(template="empty")
 	public void leavesYieldOnlyLeafMaterialAndKeepWholeBlockTools(GameTestHelper h) {
 		var pos=site(h);var level=h.getLevel();var state=ModBlocks.BETEL_PALM_LEAVES.defaultBlockState();
-		for(int i=0;i<100;i++) {
+		int leaves = 0;
+		for(int i=0;i<256;i++) {
 			var loot=Block.getDrops(state,level,pos,null,null,ItemStack.EMPTY);
-			h.assertTrue(loot.size()==1&&loot.getFirst().is(ModItems.BETEL_LEAF)&&loot.getFirst().getCount()==1,
-					"Normal foliage yields one leaf and never loose fruit or saplings");
+			h.assertTrue(loot.isEmpty() || loot.size()==1&&loot.getFirst().is(ModItems.BETEL_LEAF)&&loot.getFirst().getCount()==1,
+					"Foliage yields only leaf material, never loose fruit or saplings");
+			leaves += loot.size();
 		}
+		h.assertTrue(leaves > 60 && leaves < 190, "Leaf drops include successes and misses");
 		var loot=Block.getDrops(state,level,pos,null,null,new ItemStack(Items.SHEARS));
 		h.assertTrue(loot.size()==1&&loot.getFirst().is(ModBlocks.BETEL_PALM_LEAVES_ITEM),"Shears preserve the building leaf block");
 		var silk=new ItemStack(Items.DIAMOND_AXE);
@@ -131,7 +134,7 @@ public class BetelFruitGameTests {
 		h.assertTrue(loot.size()==1&&loot.getFirst().is(ModBlocks.BETEL_PALM_LEAVES_ITEM),"Silk Touch also preserves foliage for building");
 		level.setBlock(pos,state.setValue(net.minecraft.world.level.block.LeavesBlock.DISTANCE,7),3);
 		level.getBlockState(pos).randomTick(level,pos,RandomSource.create(1));
-		h.assertTrue(level.getBlockState(pos).isAir()&&drops(h,pos,ModItems.BETEL_LEAF)==1&&nuts(h,pos)==0,
+		h.assertTrue(level.getBlockState(pos).isAir()&&drops(h,pos,ModItems.BETEL_LEAF)<=1&&nuts(h,pos)==0,
 				"Actual natural decay drops a leaf, never fruit");h.succeed();
 	}
 

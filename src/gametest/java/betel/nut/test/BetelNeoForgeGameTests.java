@@ -86,4 +86,5 @@ public final class BetelNeoForgeGameTests {
  @GameTest(template="empty") public void leafWrappingRequiresOrderedDeployerSteps(GameTestHelper h)throws Exception{createCheck(h,"wrapping");}
  @GameTest(template="empty") public void mechanicalAssemblyRequiresSealsAndRareMaterials(GameTestHelper h)throws Exception{createCheck(h,"crafting");}
  @GameTest(template="empty") public void genericAutomationCannotBypassDedicatedRoutes(GameTestHelper h)throws Exception{createCheck(h,"automation");}
+ @GameTest(template="empty") public void waterFanSeparatesShellsAndPreservesGravelProducts(GameTestHelper h)throws Exception{createCheck(h,"washing");}
 }

@@ -27,7 +27,8 @@ dependencies {
  }
  implementation 'maven.modrinth:midnightlib:1.9.2+1.21.1-neoforge'
  jarJar('maven.modrinth:midnightlib:1.9.2+1.21.1-neoforge') {
-  version { strictly '[1.9.2+1.21.1-neoforge,1.10)'; prefer '1.9.2+1.21.1-neoforge' }
+  // Modrinth does not publish the version listing needed to resolve dynamic ranges.
+  version { strictly '1.9.2+1.21.1-neoforge' }
  }
 }
 neoForge {
@@ -48,6 +49,13 @@ neoForge {
    gameDirectory = file(project.findProperty('portSmokeDir') ?: 'run-client-port')
    systemProperty 'betel.portSmoke', 'true'
    programArguments.addAll '--width', '1440', '--height', '900', '--username', 'PortSmoke'
+  }
+  productionSmoke {
+   client()
+   sourceSet = sourceSets.gametest
+   gameDirectory = file('run-client-production-580')
+   systemProperty 'betel.productionSmoke', 'true'
+   programArguments.addAll '--width', '1440', '--height', '900', '--username', 'ProductionSmoke'
   }
   server { server(); programArgument '--nogui' }
   naturalProbe {

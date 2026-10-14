@@ -10,7 +10,7 @@
 <p>
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-62a043?style=flat-square" alt="Minecraft 1.21.1">
   <img src="https://img.shields.io/badge/Loader-NeoForge-e88742?style=flat-square" alt="NeoForge">
-  <img src="https://img.shields.io/badge/Version-5.7.1-2f6f4e?style=flat-square" alt="源码版本 5.7.1">
+  <img src="https://img.shields.io/badge/Version-5.8.0-2f6f4e?style=flat-square" alt="源码版本 5.8.0">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82b6?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1"><img src="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml/badge.svg?branch=codex%2Fneoforge-1.21.1" alt="NeoForge 分支构建状态"></a>
 </p>
@@ -33,15 +33,19 @@
 
 ---
 
+当前源码 **5.8.0** 已加入泥土／沙砾水洗分离贝壳、概率挖掘掉落及骨粉催果。5.8.0 可从 [分支构建产物](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1) 获取或自行构建；下方发布页链接对应已发布的 5.7.1。
+
+更新规则见 [贝壳分离与骨粉催果 5.8.0](docs/production-5.8.0.md)。
+
 ## 玩法一览
 
-本分支将 Fabric 5.7.0 的完整玩法移植到 NeoForge，并在 **5.7.1** 重整了机械动力生产线。你可以经营槟榔种植园，用手工或厨具加工口味，也可以把采收后的果串送进自动化工厂。
+本分支提供 NeoForge 版槟榔生存玩法与机械动力联动。**5.8.0** 从原料获取、骨粉催果到水洗、制粉和包叶补齐了生产流程；你可以经营种植园，用手工或厨具加工口味，也可以建立自动化工厂。
 
 | 玩法 | 你可以做什么 |
 | --- | --- |
 | 🌴 种植与采收 | 探索自然树群、培育四种树冠的槟榔树，收获会再生的青果串与黄果串。 |
 | 🔥 加工与口味 | 营火烤制、贝壳制粉、包叶生食，逐步制作 **17 种变种槟榔**。 |
-| ⚙️ 机械动力 | 用 **33 条可选配方**串联切割、研磨、烟熏、分步包叶、注液与机械合成。 |
+| ⚙️ 机械动力 | 用 **35 条可选配方**串联切割、研磨、烟熏、分步包叶、注液与机械合成。 |
 | 🧺 交易与收藏 | 与农民、渔夫和牧师交易，收集三款品牌混合装、封签与奖券。 |
 | 💚 身体状态 | 管理按世界日期累计的依赖、戒断与口腔暴露，使用 HUD 与恢复饮品。 |
 | 🪵 建筑与空岛 | 使用完整槟榔木材系列，挑战两种空岛，并完成 **28 个可见进度节点**。 |
@@ -89,7 +93,10 @@ Create 与 Farmer's Delight 均为可选联动；本模组也能独立运行。�
 
 ## 从第一串果实开始
 
-手持剪刀右键树上的果串：青果串拆出 **3 个生果**，成熟黄果串拆出 **5 个生果**，黄果串搭配槟榔叶可制作树苗。保留完整根部、树干与树冠，在满足光照和区块加载条件时等待再次结果。
+- **收获果串**：持剪刀右键采收完整青果串或黄果串，再拆成 **3 / 5 个生槟榔**。砍掉挂果的支撑树干也会回收完整果串；每块绿色冠轴原木额外掉落 **1 棵树苗**，黄果串 + 槟榔叶也可育苗。
+- **收集叶子**：树叶普通破坏或自然凋落有 **50%** 概率掉落 **1 片槟榔叶**，不掉生果或果串。剪刀、精准采集保留完整树叶；完整树叶经动力锯切割可得 **2 片槟榔叶**。
+- **骨粉催果**：保留根部土壤、连续树干、绿色冠轴与树冠，对任意一段竖直树干使用 **1 个骨粉**，立即催熟青果串并补齐最多 **3 串黄果串**；也可对青果串单独施肥一次催熟。支持发射器；新果串及其下方要留空，满成熟果、断干或空间堵塞时不消耗骨粉。自然结果仍检查光照和区块加载。
+- **获取贝壳**：挖泥土或沙砾有 **10%** 概率额外掉落 **1 个普通贝壳**，也可从渔夫交易或钓鱼获得。批量产出可用下方水洗路线；**远古贝壳仍只从古城宝箱获取**。
 
 生果可以用营火烤制，也可以用贝壳粉和叶子包裹。不同口味提供短时增益与后效，三款混合装各包含六种槟榔和一张奖券，包装仍需品牌封签。
 
@@ -101,15 +108,22 @@ Create 与 Farmer's Delight 均为可选联动；本模组也能独立运行。�
 
 ## 机械动力生产线
 
-5.7.1 沿用现有物品重排机器与工序，让不同加工阶段各有分工。
+5.8.0 共提供 **35 条机械动力兼容配方**：原有 33 条加工路线，加上泥土水洗和沙砾水洗补充。先准备生果、槟榔叶和贝壳粉，再选择包叶或烤果调味路线。
 
 ```mermaid
 flowchart TB
-    A["果串"] -->|动力锯| B["生槟榔"]
-    B -->|烟熏| C["烤槟榔"]
-    B -->|机械手加粉、包叶| D["裹叶生槟榔"]
-    C -->|搅拌调味| E["甜味 / 火辣 / 清凉底料"]
-    E -->|注蜜、加热或冷拌| F["进阶口味"]
+    T["完整槟榔树"] -->|"骨粉催果 + 剪刀采收"| A["果串"]
+    A -->|"动力锯：3 / 5 个"| B["生槟榔"]
+    M["泥土 / 沙砾物品"] -->|"鼓风机吹水：25%"| S["贝壳"]
+    S -->|"磨石：1 换 4"| P["贝壳粉"]
+    L["完整槟榔树叶"] -->|"动力锯：1 换 2"| V["槟榔叶"]
+    B -->|"先加粉，再包叶"| D["裹叶生槟榔"]
+    P --> D
+    V --> D
+    B -->|"烟熏"| C["烤槟榔"]
+    C -->|"搅拌调味"| E["甜味 / 火辣 / 清凉底料"]
+    V --> E
+    E -->|"注蜜、加热或冷拌"| F["进阶口味"]
     D --> G["特殊槟榔机械合成"]
     F --> G
     F --> H["混合装机械合成"]
@@ -117,8 +131,10 @@ flowchart TB
 
 | 工序 | 机器与材料 |
 | --- | --- |
+| 催果与采收 | 发射器对完整竖直树干使用骨粉；机械手持剪刀采收完整果串，保持树干与树冠完整。 |
+| 水洗分离贝壳 | 鼓风机吹过水，批量处理传送带、置物台或地上的泥土／沙砾物品；每份原料有 **25%** 概率产出 1 个贝壳。 |
 | 原料处理 | 动力锯切果串、原木和树叶；磨石将贝壳磨成贝壳粉。 |
-| 生果包叶 | 机械手依次加入贝壳粉、槟榔叶，一轮制作一个裹叶生槟榔。 |
+| 生果包叶 | 1 个生槟榔经机械手依次加入 **1 份贝壳粉 → 1 片槟榔叶**，一轮制作 1 个裹叶生槟榔。 |
 | 分层调味 | 从烤果制作基础口味，再用对应底料继续加工；冷热工序各有分工。 |
 | 蜂蜜裹浆 | 注液器为甜味槟榔注入 **125 mB 蜂蜜**，制成蜂蜜槟榔。 |
 | 稀有加工与包装 | 机械合成器仍需指定的稀有材料；混合装消耗六种口味、空包装和封签。 |
@@ -126,7 +142,13 @@ flowchart TB
 
 原有手工配方保留；Create 自动导入的相关手工配方受到限制，使机器加工走明确的生产路线。Create 与 Farmer's Delight 可同时启用。
 
-**[查看全部 33 条配方、材料用量与加热要求 →](docs/create-production-5.7.1.md)**
+水洗会消耗泥土／沙砾，每组 64 个原料平均产约 **16 个贝壳 → 64 份贝壳粉**，单批产量仍会波动。沙砾原有 **25% 燧石、12.5% 铁粒**产出保留；水洗不会产出远古贝壳。
+
+搭建包叶线时，先将生果送入传送带，用第一个机械手加粉、第二个机械手包叶，机械手各消耗对应材料。烤果路线则接烟熏工序和动力搅拌器，基础口味再进入注蜜、加热浸提或冷拌步骤，最后送机械合成器制作特殊口味和混合装。
+
+**[查看 5.8.0 贝壳水洗、砍树与骨粉催果规则 →](docs/production-5.8.0.md)**
+
+**[查看原有 33 条加工配方、材料用量与加热要求 →](docs/create-production-5.7.1.md)**
 
 ## 身体状态与空岛生存
 
@@ -164,6 +186,7 @@ flowchart TB
 
 | 想了解什么 | 阅读 |
 | --- | --- |
+| 贝壳水洗、原料掉落与骨粉催果 | [5.8.0 原料生产](docs/production-5.8.0.md) |
 | 每台机器的材料、产量与工序 | [机械动力 5.7.1 生产线](docs/create-production-5.7.1.md) |
 | 加载器适配、模型与存档实现 | [NeoForge 移植记录](docs/neoforge-port-5.7.0.md) |
 | 完整果串、再生与树苗来源 | [果串采收](docs/whole-bunch-harvest-5.3.0.md) |
@@ -174,7 +197,7 @@ flowchart TB
 | 开局资源、堆肥与末地路线 | [空岛生存](docs/skyblock-5.6.0.md) |
 | 两个进度页与动作判定 | [进度系统](docs/advancements-5.7.0.md) |
 
-共同玩法文档保留 Fabric 版本的历史标题；NeoForge 安装信息和机械动力配方以本页及 5.7.1 生产线文档为准。
+共同玩法文档保留历史版本标题；当前原料与催果规则以本页及 5.8.0 文档为准，原有机器加工配方见 5.7.1 生产线文档。
 
 ## 开发构建
 
@@ -197,12 +220,13 @@ Windows PowerShell 将 `./gradlew` 替换为 `.\gradlew.bat`。安装包输出�
 ./gradlew -PportTests -PcreateOnly runGameTestServer
 ./gradlew -PportTests -PcompatMods runGameTestServer
 ./gradlew -PportTests -PcompatMods runPortSmoke
+./gradlew -PportTests -PcreateOnly runProductionSmoke
 python -X utf8 scripts/verify-port.py
 ```
 
 `-PcreateOnly` 为开发运行添加 Create；`-PcompatMods` 添加 Create 与 Farmer's Delight。重复客户端检查可用 `-PportSmokeDir=新的目录名` 指定独立运行目录。
 
-三种依赖环境各验证 **126 项 GameTest**。当前版本的验证记录、客户端检查和产物哈希见 [verification/report.json](verification/report.json)，游戏内截图见 [截图目录](verification/screenshots)。测试与预览入口不进入发布 JAR。
+5.8.0 在独立运行、仅 Create、Create + Farmer's Delight 三种环境各通过 **133 项 GameTest**；专门的客户端检查验证了右键骨粉请求、3 串成熟果实同步与单次骨粉消耗。历史移植验证见 [verification/report.json](verification/report.json) 与 [截图目录](verification/screenshots)。测试与预览入口不进入发布 JAR。
 
 </details>
 
