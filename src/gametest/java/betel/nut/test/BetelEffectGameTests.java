@@ -9,6 +9,7 @@ import betel.nut.item.BetelNutItem;
 import betel.nut.item.EnderBetelTeleportHandler;
 import betel.nut.item.ModItems;
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
@@ -16,11 +17,14 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 
 public final class BetelEffectGameTests implements FabricGameTest {
@@ -45,6 +49,149 @@ public final class BetelEffectGameTests implements FabricGameTest {
         var actual = p.getEffect(effect);
         h.assertTrue(actual != null && actual.getDuration() == ticks && actual.getAmplifier() == amplifier,
                 "Expected " + effect + " duration=" + ticks + " amplifier=" + amplifier + "; actual=" + actual);
+    }
+
+    private static List<Item> betelFoods(GameTestHelper h) {
+        var foods = BuiltInRegistries.ITEM.stream().filter(item -> item instanceof BetelNutItem).toList();
+        h.assertTrue(foods.size() == 19, "Exercise every registered edible betel nut");
+        return foods;
+    }
+
+    private static void finishBite(ServerPlayer p, InteractionHand hand) throws ReflectiveOperationException {
+        p.startUsingItem(hand);
+        // Exercise vanilla's hand replacement as well as the item's returned stack.
+        var complete = LivingEntity.class.getDeclaredMethod("completeUsingItem");
+        complete.setAccessible(true);
+        complete.invoke(p);
+    }
+
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void everyBetelFoodReturnsOneResidueOnLastBiteInEitherHand(GameTestHelper h)
+            throws ReflectiveOperationException {
+        var p = player(h);
+        var state = BetelNutEntityComponents.ADDICTION.get(p);
+        var config = BetelNutConfig.get();
+        boolean teleport = config.enableEnderBetelTeleport;
+        boolean repeat = BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath;
+        try {
+            config.enableEnderBetelTeleport = false;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = true;
+            for (var item : betelFoods(h)) for (var hand : InteractionHand.values()) {
+                state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                p.setItemInHand(hand, new ItemStack(item));
+                finishBite(p, hand);
+                var result = p.getItemInHand(hand);
+                h.assertTrue(result.is(ModItems.BETEL_NUT_RESIDUE) && result.getCount() == 1,
+                        "Last bite leaves one residue in " + hand + ": " + item);
+                h.assertTrue(p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 1,
+                        "No extra residue on last bite: " + item);
+            }
+        } finally {
+            config.enableEnderBetelTeleport = teleport;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = repeat;
+            state.clearAddiction(p); p.removeAllEffects();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void everyBetelFoodGrantsOneResiduePerCreativeBite(GameTestHelper h)
+            throws ReflectiveOperationException {
+        var p = player(h);
+        p.setGameMode(GameType.CREATIVE);
+        var state = BetelNutEntityComponents.ADDICTION.get(p);
+        var config = BetelNutConfig.get();
+        boolean teleport = config.enableEnderBetelTeleport;
+        boolean repeat = BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath;
+        try {
+            config.enableEnderBetelTeleport = false;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = true;
+            for (var item : betelFoods(h)) for (int count : new int[] {1, 2}) {
+                state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                p.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(item, count));
+                for (int bite = 1; bite <= 2; bite++) {
+                    finishBite(p, InteractionHand.OFF_HAND);
+                    var remaining = p.getOffhandItem();
+                    h.assertTrue(remaining.is(item) && remaining.getCount() == count,
+                            "Creative retains the original nuts: " + item);
+                    h.assertTrue(p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == bite,
+                            "Exactly one residue for each creative bite: " + item);
+                }
+            }
+        } finally {
+            config.enableEnderBetelTeleport = teleport;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = repeat;
+            state.clearAddiction(p); p.removeAllEffects();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void everyBetelFoodDropsOneResidueWhenInventoryIsFull(GameTestHelper h)
+            throws ReflectiveOperationException {
+        var p = player(h);
+        var state = BetelNutEntityComponents.ADDICTION.get(p);
+        var config = BetelNutConfig.get();
+        boolean teleport = config.enableEnderBetelTeleport;
+        boolean repeat = BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath;
+        try {
+            config.enableEnderBetelTeleport = false;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = true;
+            for (var mode : new GameType[] {GameType.SURVIVAL, GameType.CREATIVE}) {
+                p.setGameMode(mode);
+                for (var item : betelFoods(h)) {
+                    state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                    for (int slot = 0; slot < p.getInventory().items.size(); slot++) {
+                        p.getInventory().items.set(slot, new ItemStack(Items.STONE, 64));
+                    }
+                    p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item, 2));
+                    var existingDrops = h.getLevel().getEntitiesOfClass(ItemEntity.class,
+                            p.getBoundingBox().inflate(8)).stream().map(ItemEntity::getUUID).toList();
+                    finishBite(p, InteractionHand.MAIN_HAND);
+                    int remaining = mode == GameType.CREATIVE ? 2 : 1;
+                    h.assertTrue(p.getMainHandItem().is(item) && p.getMainHandItem().getCount() == remaining,
+                            "Correct remaining nuts with full inventory: " + item);
+                    var drops = h.getLevel().getEntitiesOfClass(ItemEntity.class,
+                            p.getBoundingBox().inflate(8), drop -> !existingDrops.contains(drop.getUUID())
+                                    && drop.getItem().is(ModItems.BETEL_NUT_RESIDUE));
+                    h.assertTrue(drops.size() == 1 && drops.getFirst().getItem().getCount() == 1,
+                            "Exactly one residue drops with full inventory in " + mode + ": " + item);
+                    h.assertTrue(p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 0,
+                            "A full inventory cannot also receive residue");
+                    drops.forEach(ItemEntity::discard);
+                }
+            }
+        } finally {
+            config.enableEnderBetelTeleport = teleport;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = repeat;
+            state.clearAddiction(p); p.removeAllEffects();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void interruptedOrBlockedBitesDoNotGrantResidue(GameTestHelper h) {
+        var p = player(h);
+        var state = BetelNutEntityComponents.ADDICTION.get(p);
+        try {
+            for (var item : betelFoods(h)) {
+                state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                p.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item, 2));
+                p.startUsingItem(InteractionHand.MAIN_HAND);
+                p.releaseUsingItem();
+                h.assertTrue(p.getMainHandItem().getCount() == 2
+                                && p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 0,
+                        "Interrupted bite grants no residue: " + item);
+                p.addEffect(new MobEffectInstance(ModEffects.MOUTH_LOCKED, 100));
+                var result = p.getMainHandItem().finishUsingItem(h.getLevel(), p);
+                h.assertTrue(result.is(item) && result.getCount() == 2
+                                && p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 0,
+                        "Blocked bite grants no residue: " + item);
+            }
+        } finally {
+            state.clearAddiction(p); p.removeAllEffects();
+        }
+        h.succeed();
     }
 
     @GameTest(template = EMPTY_STRUCTURE)

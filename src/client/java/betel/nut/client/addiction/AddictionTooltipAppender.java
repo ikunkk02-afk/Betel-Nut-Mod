@@ -5,6 +5,7 @@ import java.util.List;
 import betel.nut.addiction.AddictionStageUtil;
 import betel.nut.item.BetelNutItem;
 import betel.nut.item.ModItemTags;
+import betel.nut.item.ModItems;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -23,10 +24,17 @@ public final class AddictionTooltipAppender {
 
 	private static void append(ItemStack stack, Item.TooltipContext context, TooltipFlag type,
 			List<Component> lines) {
+		if (stack.is(ModItems.BETEL_NUT_RESIDUE)) {
+			lines.add(Component.translatable("tooltip.betel-nut-mod.residue.source")
+					.withStyle(ChatFormatting.GRAY));
+			return;
+		}
 		if (!stack.is(ModItemTags.BETEL_FOODS) && !(stack.getItem() instanceof BetelNutItem)) {
 			return;
 		}
 
+		lines.add(Component.translatable("tooltip.betel-nut-mod.residue.on_eat")
+				.withStyle(ChatFormatting.GRAY));
 		lines.add(Component.translatable("betel_nut_mod.tooltip.addiction.risk")
 				.withStyle(ChatFormatting.GRAY));
 

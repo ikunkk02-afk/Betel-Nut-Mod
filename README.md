@@ -10,7 +10,7 @@
 <p>
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-62a043?style=flat-square" alt="Minecraft 1.21.1">
   <img src="https://img.shields.io/badge/Loader-Fabric-c9b89d?style=flat-square" alt="Fabric">
-  <img src="https://img.shields.io/badge/Version-5.8.0-2f6f4e?style=flat-square" alt="源码版本 5.8.0">
+  <img src="https://img.shields.io/badge/Version-5.8.1-2f6f4e?style=flat-square" alt="源码版本 5.8.1">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82b6?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain"><img src="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml/badge.svg?branch=main" alt="Fabric 分支构建状态"></a>
 </p>
@@ -33,7 +33,7 @@
 
 ---
 
-当前源码 **5.8.0** 已加入概率贝壳掉落、砍树回收和骨粉催果。5.8.0 可从 [分支构建产物](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Amain) 获取或自行构建；下方发布页链接对应已发布的 5.7.0。
+当前源码 **5.8.1** 补齐创造模式食用槟榔返还槟榔渣；全部 19 种可食用槟榔每次吃完都会获得 1 个渣，背包满时掉落。槟榔与槟榔渣的物品提示已注明获取方式。5.8.0 的概率贝壳掉落、砍树回收和骨粉催果继续保留；下方发布页链接对应已发布的 5.7.0。
 
 更新规则见 [原料与骨粉催果 5.8.0](docs/production-5.8.0.md)。
 

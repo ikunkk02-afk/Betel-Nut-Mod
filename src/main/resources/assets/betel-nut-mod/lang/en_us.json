@@ -19,6 +19,8 @@
   "item.betel-nut-mod.rich_world_betel": "Dazzling World Betel Nut",
   "item.betel-nut-mod.underground_betel": "Betel Underground",
   "item.betel-nut-mod.betel_nut_residue": "Betel Nut Residue",
+  "tooltip.betel-nut-mod.residue.source": "Obtained by eating any betel nut; each nut produces 1 residue.",
+  "tooltip.betel-nut-mod.residue.on_eat": "Grants 1 betel nut residue when eaten",
   "block.betel-nut-mod.betel_nut_residue_block": "Betel Nut Residue Block",
   "block.betel-nut-mod.betel_palm_log": "Betel Palm Log",
   "block.betel-nut-mod.betel_palm_planks": "Betel Palm Planks",
