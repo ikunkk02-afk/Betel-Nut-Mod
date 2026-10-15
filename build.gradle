@@ -9,6 +9,23 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+	// Resolve the same MidnightLib release directly from its immutable official CDN URL.
+	// The standard CDN misinterprets the '+' in this release's filename after a Maven redirect.
+	exclusiveContent {
+		forRepository {
+			ivy {
+				name = "MidnightLibPinned"
+				url = uri("https://cdn-raw.modrinth.com/data/codAaoxh/versions/3tCMjbnf/")
+				patternLayout {
+					artifact "midnightlib-fabric-1.9.2+1.21.1.[ext]"
+				}
+				metadataSources { artifact() }
+			}
+		}
+		filter {
+			includeVersion "maven.modrinth", "midnightlib", "1.9.2+1.21.1-fabric"
+		}
+	}
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
