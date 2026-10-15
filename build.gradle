@@ -8,6 +8,18 @@ group = mod_group_id
 base.archivesName = 'betel-nut-mod-neoforge'
 java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
 repositories {
+ // The raw CDN preserves '+' in the official filename; keep the Maven version for jar-in-jar.
+ exclusiveContent {
+  forRepository {
+   ivy {
+    name = 'midnightLibPinned'
+    url = 'https://cdn-raw.modrinth.com/data/codAaoxh/versions/Puk24qHu'
+    patternLayout { artifact 'midnightlib-neoforge-1.9.2+1.21.1.[ext]' }
+    metadataSources { artifact() }
+   }
+  }
+  filter { includeVersion 'maven.modrinth', 'midnightlib', '1.9.2+1.21.1-neoforge' }
+ }
  maven { url = 'https://api.modrinth.com/maven' }
  maven { url = 'https://maven.createmod.net'; content { includeGroup 'net.createmod.ponder' } }
 }

@@ -14,3 +14,11 @@
 SHA-256：`6fd9abd19263c93e742a1b40d065d4b99924abfe7b6a7c273bc6ab55efcb5037`。
 
 原始本地日志保存在验证目录下的 `verification/residue-5.8.1.log`，仓库保留本摘要。
+
+## 依赖解析复验
+
+2026-10-15 21:11–21:12（Asia/Shanghai），改用 Modrinth 官方原始 CDN 的固定 MidnightLib 1.9.2 文件，绕过 Maven 重定向后的加号编码问题。Gradle 的依赖坐标仍为 `maven.modrinth:midnightlib:1.9.2+1.21.1-neoforge`。
+
+再次执行 `.\gradlew.bat build runGameTestServer -PportTests --console=plain`：`BUILD SUCCESSFUL in 45s`，全部 **137 项 GameTest** 通过。本地原始日志：`verification/residue-5.8.1-cdn.log`。
+
+直接从官方 CDN 获取的依赖和 JAR 内嵌依赖均为 60,347 字节，SHA-256 均为 `adb29c10b3bdc2fd1a1cb8f4cbeb0280f7d15af1a76ee3074d2db1eec7fe28e7`，与原缓存一致。`META-INF/jarjar/metadata.json` 的 artifactVersion 保持 `1.9.2+1.21.1-neoforge`，range 保持 `[1.9.2+1.21.1-neoforge,)`。生产 JAR 字节数和 SHA-256 与上方记录一致。
