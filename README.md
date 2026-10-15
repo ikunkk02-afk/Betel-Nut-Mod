@@ -10,7 +10,7 @@
 <p>
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-62a043?style=flat-square" alt="Minecraft 1.21.1">
   <img src="https://img.shields.io/badge/Loader-NeoForge-e88742?style=flat-square" alt="NeoForge">
-  <img src="https://img.shields.io/badge/Version-5.8.0-2f6f4e?style=flat-square" alt="源码版本 5.8.0">
+  <img src="https://img.shields.io/badge/Version-5.8.1-2f6f4e?style=flat-square" alt="源码版本 5.8.1">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82b6?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1"><img src="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml/badge.svg?branch=codex%2Fneoforge-1.21.1" alt="NeoForge 分支构建状态"></a>
 </p>
@@ -33,7 +33,7 @@
 
 ---
 
-当前源码 **5.8.0** 已加入泥土／沙砾水洗分离贝壳、概率挖掘掉落及骨粉催果。5.8.0 可从 [分支构建产物](https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1) 获取或自行构建；下方发布页链接对应已发布的 5.7.1。
+当前源码 **5.8.1** 修复创造模式食用后未给予槟榔渣的问题；全部 **19 种可食用槟榔**每次吃完均获得 **1 个槟榔渣**，物品提示也会说明来源。5.8.0 加入的泥土／沙砾水洗分离贝壳、概率挖掘掉落及骨粉催果仍保留。5.8.1 可在本地构建；下方发布页链接对应已发布的 5.7.1。
 
 更新规则见 [贝壳分离与骨粉催果 5.8.0](docs/production-5.8.0.md)。
 
@@ -97,6 +97,7 @@ Create 与 Farmer's Delight 均为可选联动；本模组也能独立运行。�
 - **收集叶子**：树叶普通破坏或自然凋落有 **50%** 概率掉落 **1 片槟榔叶**，不掉生果或果串。剪刀、精准采集保留完整树叶；完整树叶经动力锯切割可得 **2 片槟榔叶**。
 - **骨粉催果**：保留根部土壤、连续树干、绿色冠轴与树冠，对任意一段竖直树干使用 **1 个骨粉**，立即催熟青果串并补齐最多 **3 串黄果串**；也可对青果串单独施肥一次催熟。支持发射器；新果串及其下方要留空，满成熟果、断干或空间堵塞时不消耗骨粉。自然结果仍检查光照和区块加载。
 - **获取贝壳**：挖泥土或沙砾有 **10%** 概率额外掉落 **1 个普通贝壳**，也可从渔夫交易或钓鱼获得。批量产出可用下方水洗路线；**远古贝壳仍只从古城宝箱获取**。
+- **获取槟榔渣**：食用任意一种可食用槟榔，每颗获得 **1 个槟榔渣**，生存和创造模式均生效。生存模式吃完手中最后一颗时由槟榔渣替换；其余情况放入背包，背包满时掉落。生槟榔原料仍需先加工或包叶。
 
 生果可以用营火烤制，也可以用贝壳粉和叶子包裹。不同口味提供短时增益与后效，三款混合装各包含六种槟榔和一张奖券，包装仍需品牌封签。
 
@@ -227,6 +228,8 @@ python -X utf8 scripts/verify-port.py
 `-PcreateOnly` 为开发运行添加 Create；`-PcompatMods` 添加 Create 与 Farmer's Delight。重复客户端检查可用 `-PportSmokeDir=新的目录名` 指定独立运行目录。
 
 5.8.0 在独立运行、仅 Create、Create + Farmer's Delight 三种环境各通过 **133 项 GameTest**；专门的客户端检查验证了右键骨粉请求、3 串成熟果实同步与单次骨粉消耗。历史移植验证见 [verification/report.json](verification/report.json) 与 [截图目录](verification/screenshots)。测试与预览入口不进入发布 JAR。
+
+5.8.1 独立运行通过 **137 项 GameTest**，新增覆盖全部 19 种槟榔的主副手食用、创造模式连续食用与生存／创造满背包溢出，并确认受限食用不会产生槟榔渣。本地验证记录见 [verification/residue-5.8.1.md](verification/residue-5.8.1.md)。
 
 </details>
 

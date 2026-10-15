@@ -16,7 +16,7 @@ public class BetelNutFoodItem extends Item {
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
 		ItemStack result = super.finishUsingItem(stack, level, entity);
 
-		if (level.isClientSide() || !(entity instanceof ServerPlayer player) || player.isCreative()) {
+		if (level.isClientSide() || !(entity instanceof ServerPlayer player)) {
 			return result;
 		}
 
@@ -26,9 +26,7 @@ public class BetelNutFoodItem extends Item {
 			return residue;
 		}
 
-		if (!player.getInventory().add(residue)) {
-			player.drop(residue, false);
-		}
+		player.getInventory().placeItemBackInInventory(residue);
 
 		return result;
 	}

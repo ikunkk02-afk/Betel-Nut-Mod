@@ -386,5 +386,7 @@
   "advancement.betel_nut_mod.skyblock.end_frame_ritual.title": "Lightning over Water",
   "advancement.betel_nut_mod.skyblock.end_frame_ritual.description": "Complete the skyblock end-frame ritual; villagers and eyes of ender offer another route.",
   "advancement.betel_nut_mod.skyblock.enter_end.title": "Beyond the Void",
-  "advancement.betel_nut_mod.skyblock.enter_end.description": "Reach the End from enabled Betel Skyblock using any valid route."
+  "advancement.betel_nut_mod.skyblock.enter_end.description": "Reach the End from enabled Betel Skyblock using any valid route.",
+  "tooltip.betel_nut_mod.residue.source": "Obtained by eating any betel nut. Each nut produces 1 betel nut residue.",
+  "tooltip.betel_nut_mod.residue.on_eat": "Eating grants 1 betel nut residue."
 }

@@ -386,5 +386,7 @@
   "advancement.betel_nut_mod.skyblock.end_frame_ritual.title": "水中召雷",
   "advancement.betel_nut_mod.skyblock.end_frame_ritual.description": "在槟榔空岛完成末地框架仪式；也可以走村民和末影之眼路线。",
   "advancement.betel_nut_mod.skyblock.enter_end.title": "越过虚空",
-  "advancement.betel_nut_mod.skyblock.enter_end.description": "从已启用的槟榔空岛出发进入末地，可使用任意有效路线。"
+  "advancement.betel_nut_mod.skyblock.enter_end.description": "从已启用的槟榔空岛出发进入末地，可使用任意有效路线。",
+  "tooltip.betel_nut_mod.residue.source": "食用任意一种槟榔后获得，每颗产生 1 个槟榔渣。",
+  "tooltip.betel_nut_mod.residue.on_eat": "食用后获得 1 个槟榔渣"
 }
