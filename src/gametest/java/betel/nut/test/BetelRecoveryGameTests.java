@@ -59,15 +59,15 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
     }
 
     @GameTest(template=EMPTY_STRUCTURE)
-    public void stageTwoSoftFoodsCannotAdmitGoldenApplesOrBetel(GameTestHelper h) {
+    public void stageTwoAllowsBetelButStillRejectsGoldenApplesAndHardFoods(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);disease(p,5);
         s.applyMilkRelief(p,p.level().getGameTime());
         h.assertTrue(s.getCleanTime()>p.level().getGameTime(),"Test disease restriction during temporary relief");
         for(Item item:List.of(Items.BREAD,Items.BAKED_POTATO,Items.PUMPKIN_PIE,Items.CAKE,Items.MUSHROOM_STEW,Items.HONEY_BOTTLE,
-                ModItems.GOLDEN_APPLE_PASTE,ModItems.ENCHANTED_GOLDEN_APPLE_PASTE,ModItems.RELIEF_POTION))
-            h.assertTrue(allowed(p,item),"Stage II allows soft food or medicine: "+item);
-        for(Item item:List.of(Items.GOLDEN_APPLE,Items.ENCHANTED_GOLDEN_APPLE,Items.APPLE,Items.COOKED_BEEF,Items.CARROT,
-                ModItems.ROASTED_BETEL_NUT,ModItems.WRAPPED_RAW_BETEL,ModItems.SWEET_BETEL_NUT)) {
+                ModItems.GOLDEN_APPLE_PASTE,ModItems.ENCHANTED_GOLDEN_APPLE_PASTE,ModItems.RELIEF_POTION,
+                ModItems.ROASTED_BETEL_NUT,ModItems.WRAPPED_RAW_BETEL,ModItems.SWEET_BETEL_NUT))
+            h.assertTrue(allowed(p,item),"Stage II allows soft food, medicine or the betel exception: "+item);
+        for(Item item:List.of(Items.GOLDEN_APPLE,Items.ENCHANTED_GOLDEN_APPLE,Items.APPLE,Items.COOKED_BEEF,Items.CARROT)) {
             h.assertTrue(!allowed(p,item),"Stage II rejects hard food: "+item);
             ItemStack stack=new ItemStack(item,2);stack.finishUsingItem(p.level(),p);
             h.assertTrue(stack.getCount()==2,"Rejected food cannot finish consuming");
@@ -97,17 +97,24 @@ public final class BetelRecoveryGameTests implements FabricGameTest {
     }
 
     @GameTest(template=EMPTY_STRUCTURE)
-    public void fiveRealEatingDatesStopFurtherChewingAtStageTwo(GameTestHelper h) {
+    public void sevenRealEatingDatesPassStageTwoAndStopAtLockedJaw(GameTestHelper h) {
         var p=player(h);var s=BetelNutEntityComponents.ADDICTION.get(p);var world=p.server.overworld();long before=world.getDayTime();
         try {
             world.setDayTime(3000000000L);s.beginCalendarSession(p);
-            for(int day=0;day<5;day++) {
-                world.setDayTime(3000000000L+day*24000L);drink(p,ModItems.WRAPPED_RAW_BETEL,1);
-                h.assertTrue(s.getAddictionValue()==day+1&&s.getOralExposureDays()==day+1,"Each actual eating date counts once until soft-food restriction");
+            for(int day=0;day<7;day++) {
+                world.setDayTime(3000000000L+day*24000L);
+                h.assertTrue(drink(p,ModItems.WRAPPED_RAW_BETEL,1).is(ModItems.BETEL_NUT_RESIDUE),"Each eating date through day seven consumes betel and returns residue");
+                h.assertTrue(s.getAddictionValue()==day+1&&s.getOralExposureDays()==day+1,"Betel continues daily progression through stage II");
+                if(day==4||day==5) {
+                    h.assertTrue(allowed(p,ModItems.WRAPPED_RAW_BETEL)&&allowed(p,Items.BREAD)&&!allowed(p,Items.APPLE),"Days five and six allow betel and soft foods, while hard food stays blocked");
+                    h.assertTrue(drink(p,ModItems.WRAPPED_RAW_BETEL,1).is(ModItems.BETEL_NUT_RESIDUE),"More betel on the same date remains edible at stage II");
+                    h.assertTrue(s.getAddictionValue()==day+1&&s.getOralExposureDays()==day+1,"Repeated betel never adds a second eating day");
+                }
             }
-            world.setDayTime(3000000000L+5*24000L);
-            h.assertTrue(drink(p,ModItems.WRAPPED_RAW_BETEL,1).getCount()==1,"Sixth date cannot force chewing past cancer II");
-            h.assertTrue(s.getAddictionValue()==5&&s.getOralExposureDays()==5,"Blocked chewing adds no dependence or exposure");
+            h.assertTrue(!allowed(p,ModItems.WRAPPED_RAW_BETEL)&&!allowed(p,Items.BREAD),"Seventh eating date locks the jaw immediately");
+            world.setDayTime(3000000000L+7*24000L);
+            h.assertTrue(drink(p,ModItems.WRAPPED_RAW_BETEL,1).is(ModItems.WRAPPED_RAW_BETEL),"Locked jaw cannot consume betel on the next date");
+            h.assertTrue(s.getAddictionValue()==7&&s.getOralExposureDays()==7,"Blocked chewing adds no dependence or exposure");
         } finally {world.setDayTime(before);s.clearAddiction(p);}
         h.succeed();
     }
