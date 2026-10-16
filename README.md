@@ -10,7 +10,7 @@
 <p>
   <img src="https://img.shields.io/badge/Minecraft-1.21.1-62a043?style=flat-square" alt="Minecraft 1.21.1">
   <img src="https://img.shields.io/badge/Loader-NeoForge-e88742?style=flat-square" alt="NeoForge">
-  <img src="https://img.shields.io/badge/Version-5.8.1-2f6f4e?style=flat-square" alt="源码版本 5.8.1">
+  <img src="https://img.shields.io/badge/Version-5.8.2-2f6f4e?style=flat-square" alt="源码版本 5.8.2">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-3b82b6?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml?query=branch%3Acodex%2Fneoforge-1.21.1"><img src="https://github.com/ikunkk02-afk/Betel-Nut-Mod/actions/workflows/build.yml/badge.svg?branch=codex%2Fneoforge-1.21.1" alt="NeoForge 分支构建状态"></a>
 </p>
@@ -33,7 +33,7 @@
 
 ---
 
-当前源码 **5.8.1** 修复创造模式食用后未给予槟榔渣的问题；全部 **19 种可食用槟榔**每次吃完均获得 **1 个槟榔渣**，物品提示也会说明来源。5.8.0 加入的泥土／沙砾水洗分离贝壳、概率挖掘掉落及骨粉催果仍保留。5.8.1 可在本地构建；下方发布页链接对应已发布的 5.7.1。
+当前源码 **5.8.2** 允许在二级口腔癌的软食限制下继续食用全部 **19 种槟榔**；普通硬食与完整金苹果仍禁用，三级口腔癌或无法张嘴仍禁止食用槟榔。每次食用返还槟榔渣及 5.8.0 的原料与骨粉催果玩法继续保留。下方链接仍对应此前已发布版本。
 
 更新规则见 [贝壳分离与骨粉催果 5.8.0](docs/production-5.8.0.md)。
 
@@ -229,7 +229,7 @@ python -X utf8 scripts/verify-port.py
 
 5.8.0 在独立运行、仅 Create、Create + Farmer's Delight 三种环境各通过 **133 项 GameTest**；专门的客户端检查验证了右键骨粉请求、3 串成熟果实同步与单次骨粉消耗。历史移植验证见 [verification/report.json](verification/report.json) 与 [截图目录](verification/screenshots)。测试与预览入口不进入发布 JAR。
 
-5.8.1 独立运行通过 **137 项 GameTest**，新增覆盖全部 19 种槟榔的主副手食用、创造模式连续食用与生存／创造满背包溢出，并确认受限食用不会产生槟榔渣。本地验证记录见 [verification/residue-5.8.1.md](verification/residue-5.8.1.md)。
+5.8.2 独立运行通过 **137 项 GameTest**，新增覆盖全部 19 种槟榔的主副手食用、创造模式连续食用与生存／创造满背包溢出，并确认受限食用不会产生槟榔渣。本地验证记录见 [verification/residue-5.8.2.md](verification/residue-5.8.2.md)。
 
 </details>
 

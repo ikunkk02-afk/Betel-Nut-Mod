@@ -286,16 +286,62 @@ public final class BetelEffectGameTests {
     }
 
     @GameTest(template = "empty")
-    public void oralStageTwoBlocksEveryNutBeforeAnyReward(GameTestHelper h) {
+    public void stageTwoBetelExceptionCoversEveryFlavorAndBothHands(GameTestHelper h)
+            throws ReflectiveOperationException {
         var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
-        state.setOralExposureDays(BetelNutConfig.get().oralCancerStage2Days); state.maintainOralEffects(p);
+        var config = BetelNutConfig.get(); boolean teleport = config.enableEnderBetelTeleport;
+        boolean repeat = BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath;
+        try {
+            config.enableEnderBetelTeleport = false;
+            // The separate synthetic-repeat test covers that independent restriction.
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = true;
+            h.assertTrue(edibleNuts().size() == 19, "All nineteen registered edible nuts are covered");
+            for (var item : edibleNuts()) for (var hand : InteractionHand.values()) {
+                state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                state.setOralExposureDays(config.oralCancerStage2Days); state.maintainOralEffects(p);
+                var stack = new ItemStack(item); p.setItemInHand(hand, stack);
+                h.assertTrue(stack.use(p.level(), p, hand).getResult().consumesAction(),
+                        "Stage II can start every betel flavor in either hand: " + item);
+                finishEatingInHand(p, hand);
+                h.assertTrue(p.getItemInHand(hand).is(ModItems.BETEL_NUT_RESIDUE)
+                        && p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 1,
+                        "Stage II actually consumes betel and yields exactly one residue: " + item);
+                h.assertTrue(state.getAddictionValue() == 1
+                        && state.getOralExposureDays() == config.oralCancerStage2Days + 1,
+                        "Allowed betel still advances daily dependence and oral exposure: " + item);
+
+                state.clearAddiction(p); p.removeAllEffects(); p.getInventory().clearContent();
+                state.setOralExposureDays(config.oralCancerStage2Days); state.maintainOralEffects(p);
+                stack = new ItemStack(item, 2); p.setItemInHand(hand, stack);
+                h.assertTrue(stack.use(p.level(), p, hand).getResult().consumesAction(),
+                        "Betel can start before the jaw locks: " + item);
+                state.setOralExposureDays(config.oralCancerStage3Days); state.maintainOralEffects(p);
+                finishEatingInHand(p, hand);
+                h.assertTrue(p.getItemInHand(hand).is(item) && p.getItemInHand(hand).getCount() == 2
+                        && state.getAddictionValue() == 0
+                        && p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 0,
+                        "A jaw locking during use blocks the bite, rewards and residue: " + item);
+            }
+        } finally {
+            config.enableEnderBetelTeleport = teleport;
+            BetelNutMidnightConfig.hechengTianxiaAllowRepeatBeforeAftermath = repeat;
+            state.clearAddiction(p); p.removeAllEffects();
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public void oralStageThreeBlocksEveryNutBeforeAnyReward(GameTestHelper h) {
+        var p = player(h); var state = BetelNutEntityComponents.ADDICTION.get(p);
+        state.setOralExposureDays(BetelNutConfig.get().oralCancerStage3Days); state.maintainOralEffects(p);
         for (var item : net.minecraft.core.registries.BuiltInRegistries.ITEM) {
             if (!(item instanceof BetelNutItem)) continue;
             var stack = new ItemStack(item, 2);
             stack.finishUsingItem(h.getLevel(), p);
             h.assertTrue(stack.getCount() == 2 && state.getAddictionValue() == 0, "Blocked nut cannot consume or grant a reward: " + item);
         }
-        h.assertTrue(p.getActiveEffects().size() == 1 && p.hasEffect(ModEffects.ORAL_CANCER), "Only the existing oral disease remains");
+        h.assertTrue(p.getActiveEffects().size() == 2 && p.hasEffect(ModEffects.ORAL_CANCER)
+                && p.hasEffect(ModEffects.MOUTH_LOCKED), "Only the existing oral disease and locked jaw remain");
         h.assertTrue(p.getInventory().countItem(ModItems.BETEL_NUT_RESIDUE) == 0,
                 "Disease-blocked nuts never yield residue");
         state.clearAddiction(p); h.succeed();

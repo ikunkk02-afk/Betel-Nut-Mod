@@ -25,7 +25,7 @@ jobs:
       if [ "${{ matrix.environment }}" = "compat" ]; then args="-PcompatMods"; fi
       if [ "${{ matrix.environment }}" = "create" ]; then args="-PcreateOnly"; fi
       ./gradlew -PportTests $args runGameTestServer --console=plain | tee gametests.log
-      grep -q 'All 137 required tests passed' gametests.log
+      grep -q 'All 138 required tests passed' gametests.log
    - name: Build release
      run: ./gradlew build
    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

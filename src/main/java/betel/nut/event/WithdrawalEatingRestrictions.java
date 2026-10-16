@@ -174,8 +174,10 @@ public final class WithdrawalEatingRestrictions {
     }
 
     private static boolean isAllowedAsSoftFood(ItemStack stack, BetelNutConfig config) {
+        // Betel is a gameplay exception to the soft-food gate, but never to a locked jaw.
+        if (isBetelNut(stack)) return true;
         // Hard solids cannot become soft through an old config or a broad liquid-food tag.
-        if (isBetelNut(stack) || stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) return false;
+        if (stack.is(Items.GOLDEN_APPLE) || stack.is(Items.ENCHANTED_GOLDEN_APPLE)) return false;
         if (stack.is(Items.MILK_BUCKET)) return config.allowMilkInStage2;
         return stack.is(Items.POTION) || stack.is(ModItemTags.LIQUID_FOODS)
                 || stack.is(ModItemTags.WITHDRAWAL_STAGE2_ALLOWED_FOODS);
